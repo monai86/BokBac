@@ -1,53 +1,33 @@
-# ═══════════════════════════════════════════════════════════════
-# Git Ignore Rules for MicrobialWorld
-# ═══════════════════════════════════════════════════════════════
+# Backup files (keep local only)
+index.backup.html
+*.backup.*
 
-# Build & Dependencies
-node_modules/
-.netlify/
-.vercel/
-*.log
-npm-debug.log*
-
-# System Files
+# System files
 .DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
 Thumbs.db
+*.log
 
-# IDE & Editor
+# IDE files
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
 
-# Test Artifacts
-testsprite-screenshots/
-testsprite-baseline/
-screenshots/
-diff_*.png
-
-# Environment & Secrets (keep these safe!)
-.env
-.env.local
-.env.*.local
-firebase-config.js
-!config/firebase-config.js
-!public/firebase-config.js
-
-# Backup Files
-*.backup
-*.bak
-*.old
-
-# Temporary Files
+# Temporary files
 *.tmp
 *.temp
-coverage/
-dist/
-build/
 
+# Node modules (if using npm later)
+node_modules/
+
+# Environment variables (security)
+.env
+.env.local
+
+# Deployment config that may have sensitive info
+# (keep netlify.toml and _headers as they are safe)
+
+# Test outputs
+test-results/
+coverage/

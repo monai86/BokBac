@@ -1,0 +1,22 @@
+[build]
+  # No build command - static site
+  publish = "."
+
+[[headers]]
+  # Cache static assets
+  for = "*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+
+[[headers]]
+  for = "*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+
+[[headers]]
+  # Security headers
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
