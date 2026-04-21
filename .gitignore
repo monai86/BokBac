@@ -1,4 +1,53 @@
-.netlify
-node_modules
+# ═══════════════════════════════════════════════════════════════
+# Git Ignore Rules for MicrobialWorld
+# ═══════════════════════════════════════════════════════════════
+
+# Build & Dependencies
+node_modules/
+.netlify/
+.vercel/
 *.log
+npm-debug.log*
+
+# System Files
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE & Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Test Artifacts
+testsprite-screenshots/
+testsprite-baseline/
+screenshots/
+diff_*.png
+
+# Environment & Secrets (keep these safe!)
+.env
+.env.local
+.env.*.local
+firebase-config.js
+!config/firebase-config.js
+!public/firebase-config.js
+
+# Backup Files
+*.backup
+*.bak
+*.old
+
+# Temporary Files
+*.tmp
+*.temp
+coverage/
+dist/
+build/
+
