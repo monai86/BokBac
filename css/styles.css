@@ -229,6 +229,32 @@ input, select, textarea {
 .skeleton-title { height: 20px; width: 60%; margin-bottom: 12px; }
 .skeleton-card { height: 120px; }
 
+/* Tooltips */
+.tooltip-wrapper {
+  position: relative;
+  display: inline-flex;
+}
+.tooltip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(15, 10, 30, 0.95);
+  border: 1px solid rgba(167,139,250,0.25);
+  color: #e2e8f0;
+  font-size: 11px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+  z-index: 100;
+}
+.tooltip-wrapper:hover .tooltip { opacity: 1; }
+
 /* Buttons */
 .btn {
   padding: 12px 20px;
