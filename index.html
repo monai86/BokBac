@@ -22,7 +22,88 @@
   <div id="root"></div>
   <script src="./firebase-config.js" onerror="console.warn('firebase-config.js not found, using fallback config');"></script>
   <script type="text/babel">
-    const { useState, useEffect, useMemo, useCallback } = React;
+    const { useState, useEffect, useMemo, useCallback, useRef } = React;
+
+    // ══════════════════════════════════════
+    // LIQUID GLASS HOOK
+    // ══════════════════════════════════════
+    function useLiquidGlass(containerRef) {
+      useEffect(() => {
+        const container = (containerRef && containerRef.current) || document.body;
+        const handlers = new Map();
+
+        const attach = (el) => {
+          if (handlers.has(el)) return;
+          const specular = el.querySelector(':scope > .lg-specular');
+
+          const onMove = (e) => {
+            const rect = el.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const cx = rect.width / 2;
+            const cy = rect.height / 2;
+
+            if (specular) {
+              specular.style.left = x + 'px';
+              specular.style.top = y + 'px';
+            }
+
+            const maxTilt = 5;
+            const rx = ((y - cy) / cy) * -maxTilt;
+            const ry = ((x - cx) / cx) * maxTilt;
+            el.style.transform =
+              `perspective(1000px) rotateX(${rx}deg) rotateY(${ry}deg) scale3d(1.01, 1.01, 1.01)`;
+            el.style.transition = 'transform 0.1s ease-out';
+
+            const angle = Math.atan2(y - cy, x - cx) * (180 / Math.PI) + 135;
+            el.style.setProperty('--lg-border-angle', angle + 'deg');
+          };
+
+          const onLeave = () => {
+            el.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+            el.style.transition = 'transform 0.6s cubic-bezier(0.23, 1, 0.32, 1)';
+            el.style.setProperty('--lg-border-angle', '135deg');
+          };
+
+          el.addEventListener('mousemove', onMove);
+          el.addEventListener('mouseleave', onLeave);
+          handlers.set(el, { onMove, onLeave });
+        };
+
+        const detach = (el) => {
+          const h = handlers.get(el);
+          if (!h) return;
+          el.removeEventListener('mousemove', h.onMove);
+          el.removeEventListener('mouseleave', h.onLeave);
+          handlers.delete(el);
+        };
+
+        // Initial scan
+        container.querySelectorAll('.lg-surface').forEach(attach);
+
+        // Observe future additions/removals
+        const observer = new MutationObserver((mutations) => {
+          mutations.forEach(m => {
+            m.addedNodes.forEach(node => {
+              if (node.nodeType !== 1) return;
+              if (node.classList && node.classList.contains('lg-surface')) attach(node);
+              if (node.querySelectorAll) node.querySelectorAll('.lg-surface').forEach(attach);
+            });
+            m.removedNodes.forEach(node => {
+              if (node.nodeType !== 1) return;
+              if (handlers.has(node)) detach(node);
+              if (node.querySelectorAll) node.querySelectorAll('.lg-surface').forEach(detach);
+            });
+          });
+        });
+        observer.observe(container, { childList: true, subtree: true });
+
+        return () => {
+          observer.disconnect();
+          Array.from(handlers.keys()).forEach(detach);
+        };
+      }, [containerRef]);
+    }
 
     // ══════════════════════════════════════
     // FIREBASE CONFIGURATION
@@ -150,11 +231,15 @@
       if (!isOpen) return null;
       return (
         <div className="modal-overlay">
-          <div className="modal-content fade-in">
-            <h3 style={{ fontSize: 18, fontWeight: 700, marginBottom: 16, color: 'var(--text)' }}>{title}</h3>
-            <div>{children}</div>
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12, marginTop: 24 }}>
-              {actions}
+          <div className="modal-content fade-in lg-surface">
+            <div className="lg-specular" />
+            <div className="lg-caustic" />
+            <div className="lg-content">
+              <h3 style={{ fontSize: 18, fontWeight: 700, marginBottom: 16, color: 'var(--text)' }}>{title}</h3>
+              <div>{children}</div>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12, marginTop: 24 }}>
+                {actions}
+              </div>
             </div>
           </div>
         </div>
@@ -425,6 +510,9 @@
       const [loadingAuth, setLoadingAuth] = useState(true);
       const [settings, setSettings] = useState(() => JSON.parse(localStorage.getItem('mbsettings') || '{}'));
 
+      // Activate Liquid Glass interactive effects (mouse tracking + tilt)
+      useLiquidGlass(null);
+
       // Global custom prompt state
       const [promptState, setPromptState] = useState({ isOpen: false, title: '', value: '', onConfirm: null });
       const [alertState, setAlertState] = useState({ isOpen: false, title: '', text: '' });
@@ -604,7 +692,9 @@
     function Header({ page, setPage, user, logout, exitGuest }) {
       const initials = user?.displayName ? user.displayName.charAt(0).toUpperCase() : '?';
       return (
-        <header className="nav-bar">
+        <header className="nav-bar lg-surface">
+          <div className="lg-specular" />
+          <div className="lg-caustic" />
           <div className="brand">
             <span className="emoji">🦠</span>
             <div>
@@ -3767,8 +3857,8 @@
                 <div style={{ display: 'grid', gap: 12 }}>
                   {results.slice(0, 5).map((bug, i) => {
                     const g = GROUPS.find(x => x.id === bug.group);
-                    return (
-                      <div key={bug.id} className={`result-card ${i === 0 ? 'top' : ''}`} style={i === 0 ? { borderColor: `${g?.color}44` } : {}}>
+                    const innerContent = (
+                      <>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 10 }}>
                           <div style={{ width: 40, height: 40, borderRadius: 12, background: `${g?.color}18`, border: `1px solid ${g?.color}33`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 15, fontWeight: 800, color: g?.color, flexShrink: 0 }}>#{i + 1}</div>
                           <div style={{ flex: 1, minWidth: 0 }}>
@@ -3789,6 +3879,20 @@
                             <p style={{ fontSize: 12, color: '#94a3b8', lineHeight: 1.6 }}>{bug.notes?.substring(0, 200)}...</p>
                           </div>
                         )}
+                      </>
+                    );
+                    if (i === 0) {
+                      return (
+                        <div key={bug.id} className="lg-surface" style={{ padding: 18 }}>
+                          <div className="lg-specular" />
+                          <div className="lg-caustic" />
+                          <div className="lg-content">{innerContent}</div>
+                        </div>
+                      );
+                    }
+                    return (
+                      <div key={bug.id} className="result-card">
+                        {innerContent}
                       </div>
                     );
                   })}
