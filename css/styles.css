@@ -82,10 +82,10 @@ html {
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  padding: 1px;
+  padding: 1.5px;
   background: conic-gradient(
     from var(--lg-border-angle, 135deg),
-    var(--lg-border-light) 0%,
+    rgba(255,255,255,0.55) 0%,
     rgba(167,139,250,0.25) 25%,
     var(--lg-border-dark) 50%,
     rgba(201,168,76,0.2) 75%,
