@@ -16,9 +16,6 @@
     href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Inter:wght@400;500;600;700;800&family=Prompt:wght@400;500;600;700;800&display=swap"
     rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
-  <script>
-    (function() { try { var t = localStorage.getItem("theme"); if (t === "light") document.documentElement.setAttribute("data-theme", "light"); } catch(e) {} })();
-  </script>
 </head>
 
 <body>
@@ -630,18 +627,6 @@
             </button>
           </nav>
           <div className="nav-user">
-            <button
-              onClick={() => {
-                const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
-                document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
-                try { localStorage.setItem('theme', isDark ? 'light' : 'dark'); } catch (e) {}
-              }}
-              className="theme-toggle"
-              title="Toggle light/dark mode"
-              style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', color: 'var(--text)', padding: '6px 10px', borderRadius: 8, cursor: 'pointer', fontSize: 14, marginRight: 6 }}
-            >
-              🌓
-            </button>
             {user ? (
               <>
                 <div className="nav-avatar">{initials}</div>
