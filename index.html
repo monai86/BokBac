@@ -48,11 +48,11 @@
               specular.style.top = y + 'px';
             }
 
-            const maxTilt = 5;
+            const maxTilt = 2;
             const rx = ((y - cy) / cy) * -maxTilt;
             const ry = ((x - cx) / cx) * maxTilt;
             el.style.transform =
-              `perspective(1000px) rotateX(${rx}deg) rotateY(${ry}deg) scale3d(1.01, 1.01, 1.01)`;
+              `perspective(1000px) rotateX(${rx}deg) rotateY(${ry}deg) scale3d(1.005, 1.005, 1.005)`;
             el.style.transition = 'transform 0.1s ease-out';
 
             const angle = Math.atan2(y - cy, x - cx) * (180 / Math.PI) + 135;
