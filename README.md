@@ -2,6 +2,31 @@
 
 ระบบวินิจฉัยเชื้อแบคทีเรียแบบ Interactive สำหรับนักเทคนิคการแพทย์
 
+---
+
+## 📌 Version History (ประวัติเวอร์ชัน)
+
+| Version | Date | Description |
+|---------|------|-------------|
+| **2.0.0** | 2026-04-26 | Liquid Glass Design System + Project Modularization |
+| **1.0.0** | 2026-04-XX | Initial Release - Single File React App |
+
+**Current Version**: `2.0.0` — See [`CHANGELOG.md`](CHANGELOG.md) for detailed changes
+
+### Semantic Versioning (SemVer)
+
+โปรเจกต์นี้ใช้มาตรฐาน **Semantic Versioning** (`MAJOR.MINOR.PATCH`):
+
+- **MAJOR** (`X.0.0`): Breaking changes, incompatible modifications
+- **MINOR** (`x.Y.0`): New features, backwards compatible  
+- **PATCH** (`x.y.Z`): Bug fixes, small improvements
+
+**ไฟล์ที่เกี่ยวข้อง**:
+- [`VERSION`](VERSION) — เวอร์ชันปัจจุบัน
+- [`CHANGELOG.md`](CHANGELOG.md) — รายละเอียดการเปลี่ยนแปลงทั้งหมด
+
+---
+
 ## โครงสร้างไฟล์ (Refactored)
 
 ```
@@ -12,6 +37,9 @@
 ├── js/
 │   └── data.js             # Data constants (PAGES, LIBRARY, SUITES, etc.)
 ├── firebase-config.js      # Firebase configuration (API keys, auth settings)
+├── VERSION                 # Current version number (SemVer)
+├── CHANGELOG.md            # Detailed version history
+├── README.md               # This file
 └── index.backup.html       # Original single-file backup (for rollback)
 ```
 
@@ -245,6 +273,40 @@ cp index.backup.html index.html
 
 ---
 
-**Last Updated**: 2026-04-22
+## 🔖 Versioning Workflow (สำหรับการอัพเดตต่อไป)
+
+เมื่อมีการแก้ไขโปรเจกต์ ให้ปฏิบัติตามขั้นตอนนี้:
+
+### 1. ก่อนเริ่มแก้ไข
+- ตรวจสอบเวอร์ชันปัจจุบันใน [`VERSION`](VERSION)
+- อ่าน [`CHANGELOG.md`](CHANGELOG.md) เพื่อดูประวัติ
+
+### 2. ระหว่างแก้ไข
+- ตัดสินใจว่าเป็น **MAJOR** / **MINOR** / **PATCH**
+  - Feature ใหม่ → MINOR (`x.Y.0`)
+  - Bug fix → PATCH (`x.y.Z`)
+  - Breaking change → MAJOR (`X.0.0`)
+
+### 3. หลังแก้ไขเสร็จ
+- อัพเดตไฟล์ [`VERSION`](VERSION)
+- เพิ่ม entry ใน [`CHANGELOG.md`](CHANGELOG.md) ใต้ `## [Unreleased]`
+- อัพเดตตาราง Version History ใน [`README.md`](README.md)
+- Commit message ควรระบุว่าแก้อะไร เช่น:
+  ```
+  feat: add chart visualization (v2.1.0)
+  fix: modal not closing on mobile (v2.0.1)
+  ```
+
+### 4. Commit & Push
+```bash
+git add .
+git commit -m "feat: เพิ่ม feature X (v2.1.0)"
+git push origin main
+```
+
+---
+
+**Last Updated**: 2026-04-26
+**Current Version**: 2.0.0
 **Refactored by**: AI Assistant (Cascade)
-**Status**: Phase 1 Complete ✅
+**Status**: Phase 2 Complete ✅ (Liquid Glass + Versioning)
