@@ -32,12 +32,18 @@
 
 ```
 /Users/porschecaa/Desktop/NewML/
-├── index.html              # HTML structure + React components
+├── index.html              # HTML structure + React components + Bayesian engine
 ├── css/
-│   └── styles.css          # All CSS styles (dark theme, animations, responsive)
+│   └── styles.css          # All CSS styles (dark theme, Liquid Glass, responsive)
 ├── js/
 │   ├── data.js             # Data constants (PAGES, LIBRARY, SUITES, etc.)
 │   └── mcm_data.js         # MCM 11th edition reference data (% positivity + prevalence)
+├── scripts/                # MCM extraction & validation pipeline
+│   ├── parse_mcm_*.py      # Parsers by genus group
+│   ├── generate_mcm_js.py  # JSON → js/mcm_data.js generator
+│   ├── test_bayes.mjs      # Node.js validation suite (11 scenarios)
+│   └── mcm_extract/
+│       └── parsed/         # Intermediate JSON (committed for reproducibility)
 ├── firebase-config.js      # Firebase configuration (API keys, auth settings)
 ├── VERSION                 # Current version number (SemVer)
 ├── CHANGELOG.md            # Detailed version history
@@ -55,11 +61,18 @@
 #### `css/styles.css`
 - **Size**: ~24KB (873 lines)
 - **Features**:
-  - Dark theme with glass morphism effects
+  - Dark theme with Apple-style Liquid Glass morphism effects
   - CSS Grid/Flexbox layouts
   - Animations and transitions
   - Responsive design for mobile/tablet
   - Custom scrollbar, gradients, glow effects
+  - Standard `mask` + `-webkit-mask` (cross-browser compatible)
+
+#### `js/mcm_data.js` (auto-generated)
+- **Source**: Parsed from *Manual of Clinical Microbiology, 11th Ed. (2015)*
+- **Coverage**: 137 species — 41 with full % positivity test data, 96 with prevalence priors
+- **Groups**: Enterobacterales, Pseudomonas/NFB, Vibrionaceae, Staphylococcus, Streptococcus/Enterococcus, Neisseria, Burkholderia
+- **Regenerate**: `python3 scripts/parse_mcm_neisseria_burkholderia.py && python3 scripts/generate_mcm_js.py`
 
 #### `js/data.js`
 - **Size**: ~90KB (2,429 lines)
@@ -135,11 +148,20 @@ cp index.backup.html index.html
 - [ ] **หน้า Test Suites**: แสดง test importance by group
 - [ ] **ระบบ Login**: Google OAuth และ Guest mode ทำงาน
 
+#### Bayesian Validation Suite (Node.js)
+```bash
+# รัน 11 textbook scenarios:
+node scripts/test_bayes.mjs
+# Expected: 11/11 PASS
+```
+
 #### Console Testing
 ```javascript
 // เปิด DevTools (F12) → Console
-// รัน test suite:
-runTests()
+// Toggle legacy heuristic เพื่อเปรียบเทียบ:
+window.__USE_LEGACY_PROB = true
+// กลับมาใช้ Bayesian:
+window.__USE_LEGACY_PROB = false
 ```
 
 ---
@@ -202,15 +224,18 @@ firebase deploy --only hosting
 ### Files to Deploy
 ไฟล์ที่ต้องอัพโหลดทั้งหมด:
 ```
-index.html          ← Main HTML (ใช้ตัวใหม่ที่แยกไฟล์แล้ว)
-css/styles.css      ← CSS styles
+index.html          ← Main HTML + Bayesian engine
+css/styles.css      ← CSS styles + Liquid Glass
 js/data.js          ← Data constants
+js/mcm_data.js      ← MCM 11th biochemical reference (Bayesian engine)
 firebase-config.js  ← Firebase config (ถ้ามี)
 netlify.toml        ← Netlify config (optional)
 ```
 
 **ไม่ต้อง deploy:**
 - `index.backup.html` - ไฟล์สำรอง ไม่ต้องใช้
+- `scripts/` - pipeline scripts (server-side only)
+- `*.pdf`, `*.csv` - reference materials (gitignored)
 
 ---
 
@@ -246,11 +271,17 @@ cp index.backup.html index.html
 
 ### Phase ที่เสร็จแล้ว
 - ✅ **Phase 1**: แยก CSS และ Data constants
+- ✅ **Phase 2**: Apple-style Liquid Glass Design System + Semantic Versioning
+- ✅ **Phase 3**: MCM 11th Bayesian Probability Engine
+  - Naive Bayes classifier ด้วย % positivity จาก MCM 11th Ed.
+  - Confidence indicator (HIGH / MEDIUM / LOW / UNCERTAIN)
+  - Coverage: 137 species, 7 genus groups
+  - 11/11 validation scenarios pass
 
-### Phase ที่แนะนำ (ต้องใช้ Build Tool)
-- 🔲 **Phase 2**: แยก React components เป็นไฟล์ `.jsx` แยก - ต้องใช้ Vite/Webpack
-- 🔲 **Phase 3**: Add TypeScript
-- 🔲 **Phase 4**: Add Unit Tests (Jest/Vitest)
+### Phase ที่แนะนำ (ต่อไป)
+- 🔲 **Phase 4**: "Next best test" recommendation (Information Gain / Shannon Entropy)
+- 🔲 **Phase 5**: แยก React components เป็นไฟล์ `.jsx` แยก — ต้องใช้ Vite/Webpack
+- 🔲 **Phase 6**: Add TypeScript + Unit Tests (Jest/Vitest)
 
 ### Build Tool ที่แนะนำ
 ถ้าต้องการ refactor ต่อ:
@@ -309,6 +340,7 @@ git push origin main
 ---
 
 **Last Updated**: 2026-04-26
-**Current Version**: 3.0.0
+**Current Version**: 3.0.0 (commit `ec711b9`)
 **Refactored by**: AI Assistant (Cascade)
 **Status**: Phase 3 Complete ✅ (MCM Bayesian Engine + Liquid Glass + Versioning)
+**Algorithm**: Naive Bayes — MCM 11th Ed. gold-standard reference, 137 species, 11/11 validation pass
