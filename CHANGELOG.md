@@ -2,10 +2,31 @@
 
 All notable changes to this project will be documented in this file.
 
+
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [3.1.0] - 2026-04-26
+
+### Added
+- **Expanded MCM Bayesian coverage** — 157 species total, **93 with full biochemical test data** (+36 new)
+  - Yersinia (12 spp): *Y. enterocolitica*, *Y. pestis*, *Y. pseudotuberculosis*, etc. (Ch.39 Table 1)
+  - Aeromonas (10 spp): *A. hydrophila*, *A. caviae*, *A. veronii*, etc. (Ch.40 Table 3, numeric %)
+  - Serratia (5 spp): *S. marcescens*, *S. liquefaciens*, etc. (Ch.38 Table 4)
+  - Enterobacter (5 spp): *E. cloacae*, *E. aerogenes*, etc. (Ch.38 Table 5)
+  - Listeria (5 spp): *L. monocytogenes*, *L. innocua*, etc. (Ch.27)
+  - Bacillus (5 spp): *B. anthracis*, *B. cereus*, *B. subtilis*, etc. (Ch.26)
+  - Acinetobacter (5 spp): *A. baumannii* (++++), *A. haemolyticus*, *A. lwoffii*, etc. (Ch.43 Table 1)
+- New parser: `scripts/parse_mcm_extended.py` — unified parser for Ch.26/27/38/39/40/43
+- Validation suite expanded to **18/18 PASS** — new scenarios: Y. enterocolitica, Serratia, A. hydrophila, L. monocytogenes
+
+### Changed
+- `scripts/generate_mcm_js.py` — species mapping expanded (93 LIBRARY-matched species with MCM data)
+
+### Removed
+- `public/` folder (outdated deployment copies; root files are canonical)
+- Old `data/*.json` files from git tracking (kept locally; active data is `js/data.js` + `js/mcm_data.js`)
+- Old `tests/*.js` files from git tracking (kept locally; active validation is `scripts/test_bayes.mjs`)
 
 ## [3.0.0] - 2026-04-26
 

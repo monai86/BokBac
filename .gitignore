@@ -45,3 +45,23 @@ scripts/mcm_extract/tables/
 scripts/mcm_extract/*.txt
 # Keep the parsed JSON committed for reproducibility:
 !scripts/mcm_extract/parsed/*.json
+
+# Old data files (kept locally for reference; active data is in js/data.js)
+data/bacteria_biochem_identification.json
+data/bacteria_database_v2.json
+data/biochemical_tests_detail.json
+data/library_batch3.js
+
+# Old test files (kept locally for reference; active tests in scripts/test_bayes.mjs)
+tests/TEST_GUIDE.md
+tests/TEST_REPORT.md
+tests/console_test.js
+tests/test-runner.js
+tests/testsprite-runner.js
+tests/testsprite.config.js
+
+# Outdated deployment copies (root files are canonical)
+public/
+
+# Root CSV exports (regenerable)
+*.csv
