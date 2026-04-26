@@ -8,10 +8,11 @@
 
 | Version | Date | Description |
 |---------|------|-------------|
+| **3.0.0** | 2026-04-26 | MCM 11th Bayesian Probability Engine — Naive Bayes + clinical priors |
 | **2.0.0** | 2026-04-26 | Liquid Glass Design System + Project Modularization |
 | **1.0.0** | 2026-04-XX | Initial Release - Single File React App |
 
-**Current Version**: `2.0.0` — See [`CHANGELOG.md`](CHANGELOG.md) for detailed changes
+**Current Version**: `3.0.0` — See [`CHANGELOG.md`](CHANGELOG.md) for detailed changes
 
 ### Semantic Versioning (SemVer)
 
@@ -35,7 +36,8 @@
 ├── css/
 │   └── styles.css          # All CSS styles (dark theme, animations, responsive)
 ├── js/
-│   └── data.js             # Data constants (PAGES, LIBRARY, SUITES, etc.)
+│   ├── data.js             # Data constants (PAGES, LIBRARY, SUITES, etc.)
+│   └── mcm_data.js         # MCM 11th edition reference data (% positivity + prevalence)
 ├── firebase-config.js      # Firebase configuration (API keys, auth settings)
 ├── VERSION                 # Current version number (SemVer)
 ├── CHANGELOG.md            # Detailed version history
@@ -307,6 +309,6 @@ git push origin main
 ---
 
 **Last Updated**: 2026-04-26
-**Current Version**: 2.0.0
+**Current Version**: 3.0.0
 **Refactored by**: AI Assistant (Cascade)
-**Status**: Phase 2 Complete ✅ (Liquid Glass + Versioning)
+**Status**: Phase 3 Complete ✅ (MCM Bayesian Engine + Liquid Glass + Versioning)

@@ -21,6 +21,8 @@
 <body>
   <div id="root"></div>
   <script src="./firebase-config.js" onerror="console.warn('firebase-config.js not found, using fallback config');"></script>
+  <!-- MCM 11th edition biochemical reference data — loaded as global window.MCM_DATA -->
+  <script src="./js/mcm_data.js" onerror="console.warn('mcm_data.js not found, Bayes mode will be disabled');"></script>
   <script type="text/babel">
     const { useState, useEffect, useMemo, useCallback, useRef } = React;
 
@@ -3048,7 +3050,321 @@
       return rows.filter(row => row.n && row.n.toUpperCase().startsWith('KEY'));
     }
 
+    // ════════════════════════════════════════════════════════════════════════
+    // MCM 11th Bayesian Probability Engine (v3.0.0)
+    // ════════════════════════════════════════════════════════════════════════
+    // Maps user-facing test ids/labels (LIBRARY) → MCM canonical test ids.
+    // When a species has MCM_DATA, we use Naive Bayes with prevalence-based
+    // priors and per-test likelihoods. Otherwise we fall back to the legacy
+    // heuristic (calcProbabilityLegacy below).
+
+    const MCM_TEST_MAP = {
+      // user_test_key (normalized lowercase, alnum only)  →  MCM test id
+      indole: 'indole_production',
+      indoleent: 'indole_production',
+      vp: 'voges_proskauer',
+      vpimvic: 'voges_proskauer',
+      vpvogesproskauer: 'voges_proskauer',
+      motility: 'motility',
+      motile: 'motility',
+      ldc: 'lysine_decarboxylase',
+      ldclysinedecarboxylase: 'lysine_decarboxylase',
+      lysine: 'lysine_decarboxylase',
+      odc: 'ornithine_decarboxylase',
+      odcornithinedecarboxylase: 'ornithine_decarboxylase',
+      ornithine: 'ornithine_decarboxylase',
+      kcn: 'kcn_growth',
+      gasfromglucose: 'glucose_gas',
+      gas: 'glucose_gas',
+      adonitol: 'adonitol',
+      arabinose: 'arabinose',
+      cellobiose: 'cellobiose',
+      dulcitol: 'dulcitol',
+      lactose: 'lactose',
+      sucrose: 'sucrose',
+      mannitol: 'mannitol_d',
+      raffinose: 'raffinose',
+      rhamnose: 'rhamnose_l',
+      sorbitol: 'sorbitol_d',
+      xylose: 'xylose_d',
+      h2s: 'h2s',
+      h2stsi: 'h2s',
+      urease: 'urea',
+      urea: 'urea',
+      malonate: 'malonate',
+      onpg: 'onpg',
+      maltose: 'maltose',
+      trehalose: 'trehalose',
+      inositol: 'inositol_myo',
+      melibiose: 'melibiose',
+      // Vibrio / NFB-specific
+      argininedihydrolase: 'arginine_dihydrolase',
+      adh: 'arginine_dihydrolase',
+      arginine: 'arginine_dihydrolase',
+      salicin: 'salicin',
+      o129: 'o129_susceptibility',
+      o129susceptibility: 'o129_susceptibility',
+      nacl0: 'salt_0pct',
+      nacl0pct: 'salt_0pct',
+      '0nacl': 'salt_0pct',
+      nacl6: 'salt_6pct',
+      nacl6pct: 'salt_6pct',
+      '6nacl': 'salt_6pct',
+      '65nacl': 'salt_6pct',  // 6.5% NaCl test (Enterococcus)
+      gelatin: 'gelatin_hydrolysis',
+      gelatinhydrolysis: 'gelatin_hydrolysis',
+      // Pseudomonas-specific
+      oxidase: 'oxidase',
+      pyocyanin: 'pyocyanin',
+      pyoverdin: 'pyoverdin',
+      kingp: 'pyocyanin',  // King P medium → pyocyanin pigment
+      kingf: 'pyoverdin',  // King F medium → pyoverdin
+      growth42: 'growth_42c',
+      growth42c: 'growth_42c',
+      '42c': 'growth_42c',
+      cetrimide: 'cetrimide_growth',
+      nitrate: 'nitrate_reduction',
+      nitratereduction: 'nitrate_reduction',
+      acetamide: 'acetamide',
+      esculin: 'esculin',
+      starch: 'starch_hydrolysis',
+      starchhydrolysis: 'starch_hydrolysis',
+      glucose: 'glucose_acid',
+      glucoseof: 'glucose_acid',
+      fructose: 'fructose_acid',
+      simmonscitrate: 'citrate_simmons',
+      // Staphylococcus-specific
+      coagulase: 'coagulase',
+      catalase: 'catalase',
+      catalasecluster: 'catalase',
+      novobiocin: 'novobiocin',
+      novobiocinresistance: 'novobiocin',
+      dnase: 'dnase',
+      hemolysis: 'hemolysis',
+      clumping: 'clumping_factor',
+      clumpingfactor: 'clumping_factor',
+      mannose: 'mannose_d',
+      // Streptococcus-specific
+      pyr: 'pyr',
+      camp: 'camp',
+      camptest: 'camp',
+      hippurate: 'hippurate',
+      hippuratehydrolysis: 'hippurate',
+      bacitracin: 'bacitracin',
+      optochin: null,  // optochin not in MCM Table 1 — falls back to LIBRARY
+      // Generic citrate (Burkholderia, NFB) — distinct from IMViC citrate which
+      // we leave unmapped to avoid confusing Enterobacterales tests
+      citrate: 'citrate',
+      polysaccharide: 'polysaccharide_from_suc',
+      polysaccharidefromsuc: 'polysaccharide_from_suc',
+    };
+
+    // Convert a "+" / "-" / "V" answer to P(observation | bug) using bug's % positivity.
+    // pct: 0..100, ans: '+' or '-' or 'V' or other
+    // Returns: probability of observing this answer given this bug (0..1)
+    function mcmLikelihood(pct, ans) {
+      const p = Math.max(0, Math.min(100, pct)) / 100;
+      const a = String(ans).replace(/−/g, '-').trim().toLowerCase();
+      if (a === '+' || a.startsWith('+')) return p;
+      if (a === '-' || a.startsWith('-')) return 1 - p;
+      if (a === 'v' || a.includes('variable') || a.includes('+/-') || a.includes('-/+')) return 0.5;
+      // Other answers (e.g. hemolysis types): return null = skip
+      return null;
+    }
+
+    // Naive Bayes probability calculator using MCM data when available.
+    // Falls back to legacy heuristic for species without MCM_DATA.
+    function calcProbabilityBayes(group, answers) {
+      const candidates = LIBRARY_CLEAN.filter(b => b.group === group);
+      const answerEntries = Object.entries(answers).filter(([, v]) => v != null && v !== '');
+      const MCM = (typeof window !== 'undefined' && window.MCM_DATA) || {};
+
+      // Pre-compute log-likelihoods per candidate
+      const EPS = 0.02; // smoothing to avoid log(0); represents 2% noise floor
+      const results = candidates.map(bug => {
+        const mcm = MCM[bug.id];
+        const tests = getCanonicalBiochemRows(bug);
+        const keyTestsForBug = getKeyTestsForBug(bug);
+        let hardExcluded = false;
+        let keyMatch = 0, keyMismatch = 0;
+
+        // Step 1: Hard exclusion check (oxidase, catalase, coagulase mismatches)
+        // Use legacy LIBRARY data (always present) for these critical filters
+        for (const [ansKey, ans] of answerEntries) {
+          const cleanKey = ansKey.toLowerCase().replace(/[^a-z0-9]/g, '');
+          const isHard = HARD_EXCLUSION_TESTS.some(k => {
+            const kk = k.replace(/[^a-z0-9]/g, '');
+            return cleanKey === kk || cleanKey.includes(kk) || kk.includes(cleanKey);
+          });
+          if (!isHard) continue;
+          const testDef = tests.find(b => {
+            const bk = b.t.toLowerCase().replace(/[^a-z0-9]/g, '');
+            return bk === cleanKey || cleanKey.includes(bk) || bk.includes(cleanKey);
+          });
+          if (testDef && testMatch(testDef.r, ans) === false) {
+            hardExcluded = true;
+            break;
+          }
+        }
+
+        // Step 2: Compute log-likelihood
+        let logLik = 0;
+        let usedMcmTests = 0;
+        let legacyScore = 0, legacyTotal = 0;
+
+        for (const [ansKey, ans] of answerEntries) {
+          const cleanKey = ansKey.toLowerCase().replace(/[^a-z0-9]/g, '');
+          const mcmTestId = MCM_TEST_MAP[cleanKey] || MCM_TEST_MAP[ansKey.toLowerCase()];
+
+          // Try MCM-based likelihood first
+          if (mcm && mcmTestId && mcm.tests && mcm.tests[mcmTestId] != null) {
+            const pct = mcm.tests[mcmTestId];
+            const lik = mcmLikelihood(pct, ans);
+            if (lik != null) {
+              // Apply smoothing: max(EPS, min(1-EPS, lik))
+              const smoothed = Math.max(EPS, Math.min(1 - EPS, lik));
+              logLik += Math.log(smoothed);
+              usedMcmTests++;
+              // Track key matches for legacy bonus
+              const isKey = keyTestsForBug.some(kt => {
+                const kk = kt.t.toLowerCase().replace(/[^a-z0-9]/g, '');
+                return kk === cleanKey || cleanKey.includes(kk) || kk.includes(cleanKey);
+              });
+              if (isKey) {
+                if (smoothed > 0.5) keyMatch++;
+                else if (smoothed < 0.3) keyMismatch++;
+              }
+              continue;
+            }
+          }
+
+          // Fallback: use legacy LIBRARY +/-/V data for this test
+          const testDef = tests.find(b => {
+            const bk = b.t.toLowerCase().replace(/[^a-z0-9]/g, '');
+            return bk === cleanKey || cleanKey.includes(bk) || bk.includes(cleanKey);
+          });
+          let usedFallback = false;
+          if (testDef) {
+            const r = testDef.r.replace(/−/g, '-').toLowerCase();
+            // Convert symbol to estimated %
+            let estPct = null;
+            if (r === '+') estPct = 90;
+            else if (r === '-') estPct = 10;
+            else if (r === 'v' || r.includes('+/-') || r.includes('-/+')) estPct = 50;
+            if (estPct != null) {
+              const lik = mcmLikelihood(estPct, ans);
+              if (lik != null) {
+                const smoothed = Math.max(EPS, Math.min(1 - EPS, lik));
+                logLik += Math.log(smoothed) * 0.7; // legacy data weighted 70%
+                usedFallback = true;
+              }
+            }
+            legacyTotal++;
+            if (testMatch(testDef.r, ans) === true) legacyScore++;
+          }
+          // No data anywhere → uninformative likelihood (0.5).
+          // Adds log(0.5) ≈ -0.693, ensuring species with rich matching data
+          // outrank species with no data when both face the same question.
+          if (!usedFallback) {
+            logLik += Math.log(0.5);
+          }
+        }
+
+        // Step 3: Add log-prior from prevalence
+        // prevalence_score: 0..4. Map to prior: 0→0.05, 1→0.10, 2→0.20, 3→0.40, 4→1.0
+        const PRIOR_MAP = { 0: 0.05, 1: 0.10, 2: 0.20, 3: 0.40, 4: 1.0 };
+        const priorScore = (mcm && typeof mcm.prevalence_score === 'number') ? mcm.prevalence_score : 2;
+        const prior = PRIOR_MAP[priorScore] || 0.20;
+        const logPrior = Math.log(prior);
+
+        const logPosterior = logLik + logPrior;
+
+        return {
+          bug,
+          logPosterior,
+          hardExcluded,
+          keyMatch,
+          keyMismatch,
+          usedMcmTests,
+          mcmAvailable: !!mcm,
+        };
+      });
+
+      // Step 4: Normalize via softmax (numerically stable)
+      const maxLp = Math.max(...results.map(r => r.hardExcluded ? -Infinity : r.logPosterior));
+      const weights = results.map(r => {
+        if (r.hardExcluded) return 0;
+        return Math.exp(r.logPosterior - maxLp);
+      });
+      const totalW = weights.reduce((s, w) => s + w, 0) || 1;
+
+      // Step 5: Confidence factor based on # tests answered.
+      // Softer scaling than legacy: 1 test → 0.55, 5 tests → 0.87, 10 tests → 1.0
+      const nAnswered = answerEntries.length;
+      const SUITE_SIZE = (SUITES[group]?.tests?.length) || 8;
+      const coverageFactor = Math.min(1, 0.50 + 0.50 * (Math.log2(nAnswered + 1) / Math.log2(SUITE_SIZE + 1)));
+
+      // Step 6: Final percentages
+      const ranked = results.map((r, i) => {
+        let pct;
+        if (r.hardExcluded) {
+          pct = 0;
+        } else {
+          const rawPct = (weights[i] / totalW) * 100;
+          pct = Math.round(rawPct * coverageFactor);
+        }
+        return {
+          ...r.bug,
+          pct: Math.max(0, Math.min(99, pct)),
+          _keyMatch: r.keyMatch,
+          _keyMismatch: r.keyMismatch,
+          _excluded: r.hardExcluded,
+          _mcm: r.mcmAvailable,
+          _usedMcmTests: r.usedMcmTests,
+        };
+      }).sort((a, b) => {
+        // Primary: probability descending
+        if (b.pct !== a.pct) return b.pct - a.pct;
+        // Tie-break 1: more MCM tests matched wins
+        if ((b._usedMcmTests || 0) !== (a._usedMcmTests || 0))
+          return (b._usedMcmTests || 0) - (a._usedMcmTests || 0);
+        // Tie-break 2: more key matches wins
+        return (b._keyMatch || 0) - (a._keyMatch || 0);
+      });
+
+      // Step 7: Annotate top result with a confidence level so the UI can
+      // surface a clear high/medium/low signal in addition to raw %.
+      // - HIGH: top is far ahead (≥ 25pp gap) AND top pct ≥ 70 AND ≥3 tests answered
+      // - MEDIUM: clear leader (≥ 10pp gap) OR top pct ≥ 50
+      // - LOW: ambiguous — top < 50% or close runner-up
+      // - VERY_LOW: < 25%
+      if (ranked.length > 0) {
+        const top = ranked[0];
+        const second = ranked.find((r, i) => i > 0 && !r._excluded) || { pct: 0 };
+        const gap = top.pct - second.pct;
+        let level = 'low';
+        if (top.pct >= 70 && gap >= 25 && nAnswered >= 3) level = 'high';
+        else if (top.pct >= 50 || gap >= 10) level = 'medium';
+        else if (top.pct < 25) level = 'very_low';
+        ranked[0]._confidence = level;
+        ranked[0]._gap = gap;
+      }
+
+      return ranked;
+    }
+
+    // Main probability dispatcher — uses MCM Bayes engine.
+    // Set window.__USE_LEGACY_PROB = true (e.g. from devtools) to opt-in to the
+    // old heuristic for debugging / regression comparison.
     function calcProbability(group, answers) {
+      if (typeof window !== 'undefined' && window.__USE_LEGACY_PROB) {
+        return calcProbabilityLegacy(group, answers);
+      }
+      return calcProbabilityBayes(group, answers);
+    }
+
+    // Legacy heuristic — preserved for backward compatibility & A/B testing.
+    function calcProbabilityLegacy(group, answers) {
       const candidates = LIBRARY_CLEAN.filter(b => b.group === group);
       const answerEntries = Object.entries(answers).filter(([, v]) => v);
 
@@ -3860,12 +4176,36 @@
                         <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 10 }}>
                           <div style={{ width: 40, height: 40, borderRadius: 12, background: `${g?.color}18`, border: `1px solid ${g?.color}33`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 15, fontWeight: 800, color: g?.color, flexShrink: 0 }}>#{i + 1}</div>
                           <div style={{ flex: 1, minWidth: 0 }}>
-                            <div style={{ fontSize: 14, fontWeight: 700, fontStyle: 'italic', color: i === 0 ? g?.color : '#e2e8f0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{bug.name}</div>
+                            <div style={{ fontSize: 14, fontWeight: 700, fontStyle: 'italic', color: i === 0 ? g?.color : '#e2e8f0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                              {bug.name}
+                              {bug._mcm && bug._usedMcmTests > 0 && (
+                                <span title={`Naive Bayes scoring with MCM 11th edition data (${bug._usedMcmTests} test${bug._usedMcmTests !== 1 ? 's' : ''} matched)`}
+                                      style={{ marginLeft: 8, padding: '2px 6px', fontSize: 9, fontWeight: 700, borderRadius: 6, background: 'rgba(34,211,238,0.12)', border: '1px solid rgba(34,211,238,0.3)', color: '#22d3ee', fontStyle: 'normal', letterSpacing: 0.5, verticalAlign: 'middle' }}>
+                                  MCM·{bug._usedMcmTests}
+                                </span>
+                              )}
+                            </div>
                             {bug.thai && <div style={{ fontSize: 11, color: '#64748b', marginTop: 1 }}>{bug.thai}</div>}
                           </div>
                           <div style={{ textAlign: 'right', flexShrink: 0 }}>
                             <div style={{ fontSize: 22, fontWeight: 800, color: bug.pct >= 70 ? '#4ade80' : bug.pct >= 40 ? '#fbbf24' : '#f87171', lineHeight: 1 }}>{bug.pct}%</div>
-                            <div style={{ fontSize: 9, color: '#64748b', marginTop: 2 }}>probability</div>
+                            <div style={{ fontSize: 9, color: '#64748b', marginTop: 2 }}>
+                              {i === 0 && bug._confidence ? (() => {
+                                const map = {
+                                  high:     { label: 'HIGH',    color: '#4ade80' },
+                                  medium:   { label: 'MEDIUM',  color: '#fbbf24' },
+                                  low:      { label: 'LOW',     color: '#fb923c' },
+                                  very_low: { label: 'UNCERTAIN', color: '#f87171' },
+                                };
+                                const c = map[bug._confidence];
+                                return c ? (
+                                  <span title={`Top match probability: ${bug.pct}%; gap to runner-up: ${bug._gap || 0}pp`}
+                                        style={{ color: c.color, fontWeight: 700, letterSpacing: 0.5 }}>
+                                    {c.label} CONFIDENCE
+                                  </span>
+                                ) : 'probability';
+                              })() : 'probability'}
+                            </div>
                           </div>
                         </div>
                         <div style={{ background: 'rgba(0,0,0,0.3)', borderRadius: 8, height: 6, overflow: 'hidden' }}>

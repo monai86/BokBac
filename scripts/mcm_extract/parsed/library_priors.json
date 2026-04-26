@@ -1,0 +1,961 @@
+{
+  "s_aureus": {
+    "name": "Staphylococcus aureus",
+    "group": "gpc_cluster",
+    "importance": "critical",
+    "prevalence_score": 4,
+    "prevalence_symbol": "++++"
+  },
+  "s_epidermidis": {
+    "name": "Staphylococcus epidermidis",
+    "group": "gpc_cluster",
+    "importance": "moderate",
+    "prevalence_score": 2,
+    "prevalence_symbol": "++"
+  },
+  "s_saprophyticus": {
+    "name": "Staphylococcus saprophyticus",
+    "group": "gpc_cluster",
+    "importance": "moderate",
+    "prevalence_score": 2,
+    "prevalence_symbol": "++"
+  },
+  "s_lugdunensis": {
+    "name": "Staphylococcus lugdunensis",
+    "group": "gpc_cluster",
+    "importance": "moderate",
+    "prevalence_score": 2,
+    "prevalence_symbol": "++"
+  },
+  "s_haemolyticus": {
+    "name": "Staphylococcus haemolyticus",
+    "group": "gpc_cluster",
+    "importance": "moderate",
+    "prevalence_score": 2,
+    "prevalence_symbol": "++"
+  },
+  "micrococcus": {
+    "name": "Micrococcus spp.",
+    "group": "gpc_cluster",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "s_pyogenes": {
+    "name": "Streptococcus pyogenes",
+    "group": "gpc_chain",
+    "importance": "critical",
+    "prevalence_score": 4,
+    "prevalence_symbol": "++++"
+  },
+  "s_agalactiae": {
+    "name": "Streptococcus agalactiae",
+    "group": "gpc_chain",
+    "importance": "high",
+    "prevalence_score": 3,
+    "prevalence_symbol": "+++"
+  },
+  "s_pneumoniae": {
+    "name": "Streptococcus pneumoniae",
+    "group": "gpc_chain",
+    "importance": "critical",
+    "prevalence_score": 4,
+    "prevalence_symbol": "++++"
+  },
+  "enterococcus_faecalis": {
+    "name": "Enterococcus faecalis",
+    "group": "gpc_chain",
+    "importance": "high",
+    "prevalence_score": 3,
+    "prevalence_symbol": "+++"
+  },
+  "e_coli": {
+    "name": "Escherichia coli",
+    "group": "enterobacterales",
+    "importance": "critical",
+    "prevalence_score": 4,
+    "prevalence_symbol": "++++"
+  },
+  "klebsiella_pneumoniae": {
+    "name": "Klebsiella pneumoniae",
+    "group": "enterobacterales",
+    "importance": "critical",
+    "prevalence_score": 4,
+    "prevalence_symbol": "++++"
+  },
+  "salmonella": {
+    "name": "Salmonella spp.",
+    "group": "enterobacterales",
+    "importance": "critical",
+    "prevalence_score": 4,
+    "prevalence_symbol": "++++"
+  },
+  "shigella": {
+    "name": "Shigella spp.",
+    "group": "enterobacterales",
+    "importance": "high",
+    "prevalence_score": 3,
+    "prevalence_symbol": "+++"
+  },
+  "pseudomonas_aeruginosa": {
+    "name": "Pseudomonas aeruginosa",
+    "group": "nfb",
+    "importance": "critical",
+    "prevalence_score": 4,
+    "prevalence_symbol": "++++"
+  },
+  "acinetobacter_baumannii": {
+    "name": "Acinetobacter baumannii",
+    "group": "nfb",
+    "importance": "critical",
+    "prevalence_score": 4,
+    "prevalence_symbol": "++++"
+  },
+  "vibrio_cholerae": {
+    "name": "Vibrio cholerae",
+    "group": "vibrio",
+    "importance": "critical",
+    "prevalence_score": 4,
+    "prevalence_symbol": "++++"
+  },
+  "vibrio_parahaemolyticus": {
+    "name": "Vibrio parahaemolyticus",
+    "group": "vibrio",
+    "importance": "high",
+    "prevalence_score": 3,
+    "prevalence_symbol": "+++"
+  },
+  "aeromonas": {
+    "name": "Aeromonas hydrophila",
+    "group": "vibrio",
+    "importance": "moderate",
+    "prevalence_score": 2,
+    "prevalence_symbol": "++"
+  },
+  "listeria_monocytogenes": {
+    "name": "Listeria monocytogenes",
+    "group": "gpb",
+    "importance": "critical",
+    "prevalence_score": 4,
+    "prevalence_symbol": "++++"
+  },
+  "bacillus_anthracis": {
+    "name": "Bacillus anthracis",
+    "group": "gpb",
+    "importance": "critical",
+    "prevalence_score": 4,
+    "prevalence_symbol": "++++"
+  },
+  "n_meningitidis": {
+    "name": "Neisseria meningitidis",
+    "group": "gn_coccobacilli",
+    "importance": "critical",
+    "prevalence_score": 4,
+    "prevalence_symbol": "++++"
+  },
+  "n_gonorrhoeae": {
+    "name": "Neisseria gonorrhoeae",
+    "group": "gn_coccobacilli",
+    "importance": "critical",
+    "prevalence_score": 4,
+    "prevalence_symbol": "++++"
+  },
+  "b_cereus": {
+    "name": "Bacillus cereus",
+    "group": "gpb",
+    "importance": "moderate",
+    "prevalence_score": 2,
+    "prevalence_symbol": "++"
+  },
+  "c_diphtheriae": {
+    "name": "Corynebacterium diphtheriae",
+    "group": "gpb",
+    "importance": "critical",
+    "prevalence_score": 4,
+    "prevalence_symbol": "++++"
+  },
+  "proteus_mirabilis": {
+    "name": "Proteus mirabilis",
+    "group": "enterobacterales",
+    "importance": "moderate",
+    "prevalence_score": 2,
+    "prevalence_symbol": "++"
+  },
+  "b_pseudomallei": {
+    "name": "Burkholderia pseudomallei",
+    "group": "nfb",
+    "importance": "critical",
+    "prevalence_score": 4,
+    "prevalence_symbol": "++++"
+  },
+  "h_influenzae": {
+    "name": "Haemophilus influenzae",
+    "group": "gn_coccobacilli",
+    "importance": "critical",
+    "prevalence_score": 4,
+    "prevalence_symbol": "++++"
+  },
+  "shigella_sonnei": {
+    "name": "Shigella sonnei",
+    "group": "enterobacterales",
+    "importance": "high",
+    "prevalence_score": 3,
+    "prevalence_symbol": "+++"
+  },
+  "serratia_marcescens": {
+    "name": "Serratia marcescens",
+    "group": "enterobacterales",
+    "importance": "moderate",
+    "prevalence_score": 2,
+    "prevalence_symbol": "++"
+  },
+  "enterococcus_faecium": {
+    "name": "Enterococcus faecium",
+    "group": "gpc_chain",
+    "importance": "high",
+    "prevalence_score": 3,
+    "prevalence_symbol": "+++"
+  },
+  "e_avium": {
+    "name": "Enterococcus avium",
+    "group": "gpc_chain",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "e_casseliflavus": {
+    "name": "Enterococcus casseliflavus",
+    "group": "gpc_chain",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "e_dispar": {
+    "name": "Enterococcus dispar",
+    "group": "gpc_chain",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "e_durans": {
+    "name": "Enterococcus durans",
+    "group": "gpc_chain",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "e_gallinorum": {
+    "name": "Enterococcus gallinarum",
+    "group": "gpc_chain",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "e_hirae": {
+    "name": "Enterococcus hirae",
+    "group": "gpc_chain",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "e_mundtii": {
+    "name": "Enterococcus mundtii",
+    "group": "gpc_chain",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "e_raffinosus": {
+    "name": "Enterococcus raffinosus",
+    "group": "gpc_chain",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "strep_group_d": {
+    "name": "Streptococcus bovis group (Group D Streptococcus)",
+    "group": "gpc_chain",
+    "importance": "moderate",
+    "prevalence_score": 2,
+    "prevalence_symbol": "++"
+  },
+  "viridans_strep": {
+    "name": "Viridans streptococcus group",
+    "group": "gpc_chain",
+    "importance": "moderate",
+    "prevalence_score": 2,
+    "prevalence_symbol": "++"
+  },
+  "erysipelothrix_rhusiopathiae": {
+    "name": "Erysipelothrix rhusiopathiae",
+    "group": "gpb",
+    "importance": "moderate",
+    "prevalence_score": 2,
+    "prevalence_symbol": "++"
+  },
+  "gardnerella_vaginalis": {
+    "name": "Gardnerella vaginalis",
+    "group": "gpb",
+    "importance": "moderate",
+    "prevalence_score": 2,
+    "prevalence_symbol": "++"
+  },
+  "arcanobacterium_haemolyticum": {
+    "name": "Arcanobacterium haemolyticum",
+    "group": "gpb",
+    "importance": "moderate",
+    "prevalence_score": 2,
+    "prevalence_symbol": "++"
+  },
+  "stenotrophomonas_maltophilia": {
+    "name": "Stenotrophomonas maltophilia",
+    "group": "nfb",
+    "importance": "high",
+    "prevalence_score": 3,
+    "prevalence_symbol": "+++"
+  },
+  "pseudomonas_fluorescens": {
+    "name": "Pseudomonas fluorescens",
+    "group": "nfb",
+    "importance": "moderate",
+    "prevalence_score": 2,
+    "prevalence_symbol": "++"
+  },
+  "pseudomonas_putida": {
+    "name": "Pseudomonas putida",
+    "group": "nfb",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "pseudomonas_stutzeri": {
+    "name": "Pseudomonas stutzeri",
+    "group": "nfb",
+    "importance": "moderate",
+    "prevalence_score": 2,
+    "prevalence_symbol": "++"
+  },
+  "burkholderia_cepacia": {
+    "name": "Burkholderia cepacia complex",
+    "group": "nfb",
+    "importance": "high",
+    "prevalence_score": 3,
+    "prevalence_symbol": "+++"
+  },
+  "burkholderia_thailandensis": {
+    "name": "Burkholderia thailandensis",
+    "group": "nfb",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "shewanella_putrefaciens": {
+    "name": "Shewanella putrefaciens",
+    "group": "nfb",
+    "importance": "moderate",
+    "prevalence_score": 2,
+    "prevalence_symbol": "++"
+  },
+  "shewanella_algae": {
+    "name": "Shewanella algae",
+    "group": "nfb",
+    "importance": "moderate",
+    "prevalence_score": 2,
+    "prevalence_symbol": "++"
+  },
+  "elizabethkingia_meningoseptica": {
+    "name": "Elizabethkingia meningoseptica",
+    "group": "nfb",
+    "importance": "high",
+    "prevalence_score": 3,
+    "prevalence_symbol": "+++"
+  },
+  "acinetobacter_lwoffii": {
+    "name": "Acinetobacter lwoffii",
+    "group": "nfb",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "citrobacter_freundii": {
+    "name": "Citrobacter freundii",
+    "group": "enterobacterales",
+    "importance": "moderate",
+    "prevalence_score": 2,
+    "prevalence_symbol": "++"
+  },
+  "citrobacter_koseri": {
+    "name": "Citrobacter koseri (diversus)",
+    "group": "enterobacterales",
+    "importance": "moderate",
+    "prevalence_score": 2,
+    "prevalence_symbol": "++"
+  },
+  "citrobacter_amalonaticus": {
+    "name": "Citrobacter amalonaticus",
+    "group": "enterobacterales",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "enterobacter_cloacae": {
+    "name": "Enterobacter cloacae",
+    "group": "enterobacterales",
+    "importance": "high",
+    "prevalence_score": 3,
+    "prevalence_symbol": "+++"
+  },
+  "enterobacter_agglomerans": {
+    "name": "Pantoea (Enterobacter) agglomerans",
+    "group": "enterobacterales",
+    "importance": "moderate",
+    "prevalence_score": 2,
+    "prevalence_symbol": "++"
+  },
+  "klebsiella_aerogenes": {
+    "name": "Klebsiella (Enterobacter) aerogenes",
+    "group": "enterobacterales",
+    "importance": "high",
+    "prevalence_score": 3,
+    "prevalence_symbol": "+++"
+  },
+  "klebsiella_oxytoca": {
+    "name": "Klebsiella oxytoca",
+    "group": "enterobacterales",
+    "importance": "high",
+    "prevalence_score": 3,
+    "prevalence_symbol": "+++"
+  },
+  "klebsiella_ozaenae": {
+    "name": "Klebsiella ozaenae",
+    "group": "enterobacterales",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "cronobacter_sakazakii": {
+    "name": "Cronobacter sakazakii",
+    "group": "enterobacterales",
+    "importance": "high",
+    "prevalence_score": 3,
+    "prevalence_symbol": "+++"
+  },
+  "serratia_rubidaea": {
+    "name": "Serratia rubidaea",
+    "group": "enterobacterales",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "morganella_morganii": {
+    "name": "Morganella morganii",
+    "group": "enterobacterales",
+    "importance": "moderate",
+    "prevalence_score": 2,
+    "prevalence_symbol": "++"
+  },
+  "providencia_rettgeri": {
+    "name": "Providencia rettgeri",
+    "group": "enterobacterales",
+    "importance": "moderate",
+    "prevalence_score": 2,
+    "prevalence_symbol": "++"
+  },
+  "providencia_stuartii": {
+    "name": "Providencia stuartii",
+    "group": "enterobacterales",
+    "importance": "moderate",
+    "prevalence_score": 2,
+    "prevalence_symbol": "++"
+  },
+  "proteus_vulgaris": {
+    "name": "Proteus vulgaris",
+    "group": "enterobacterales",
+    "importance": "moderate",
+    "prevalence_score": 2,
+    "prevalence_symbol": "++"
+  },
+  "proteus_penneri": {
+    "name": "Proteus penneri",
+    "group": "enterobacterales",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "edwardsiella_tarda": {
+    "name": "Edwardsiella tarda",
+    "group": "enterobacterales",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "plesiomonas_shigelloides": {
+    "name": "Plesiomonas shigelloides",
+    "group": "enterobacterales",
+    "importance": "moderate",
+    "prevalence_score": 2,
+    "prevalence_symbol": "++"
+  },
+  "yersinia_enterocolitica": {
+    "name": "Yersinia enterocolitica",
+    "group": "enterobacterales",
+    "importance": "high",
+    "prevalence_score": 3,
+    "prevalence_symbol": "+++"
+  },
+  "salmonella_paratyphi_a": {
+    "name": "Salmonella Paratyphi A",
+    "group": "enterobacterales",
+    "importance": "high",
+    "prevalence_score": 3,
+    "prevalence_symbol": "+++"
+  },
+  "salmonella_arizonae": {
+    "name": "Salmonella arizonae",
+    "group": "enterobacterales",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "shigella_dysenteriae": {
+    "name": "Shigella dysenteriae",
+    "group": "enterobacterales",
+    "importance": "high",
+    "prevalence_score": 3,
+    "prevalence_symbol": "+++"
+  },
+  "shigella_flexneri": {
+    "name": "Shigella flexneri",
+    "group": "enterobacterales",
+    "importance": "high",
+    "prevalence_score": 3,
+    "prevalence_symbol": "+++"
+  },
+  "vibrio_vulnificus": {
+    "name": "Vibrio vulnificus",
+    "group": "vibrio",
+    "importance": "critical",
+    "prevalence_score": 4,
+    "prevalence_symbol": "++++"
+  },
+  "vibrio_fluvialis": {
+    "name": "Vibrio fluvialis",
+    "group": "vibrio",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "vibrio_alginolyticus": {
+    "name": "Vibrio alginolyticus",
+    "group": "vibrio",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "vibrio_mimicus": {
+    "name": "Vibrio mimicus",
+    "group": "vibrio",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "aeromonas_caviae": {
+    "name": "Aeromonas caviae",
+    "group": "vibrio",
+    "importance": "moderate",
+    "prevalence_score": 2,
+    "prevalence_symbol": "++"
+  },
+  "aeromonas_sobria": {
+    "name": "Aeromonas sobria",
+    "group": "vibrio",
+    "importance": "moderate",
+    "prevalence_score": 2,
+    "prevalence_symbol": "++"
+  },
+  "aeromonas_salmonicida": {
+    "name": "Aeromonas salmonicida",
+    "group": "vibrio",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "alcaligenes_faecalis": {
+    "name": "Alcaligenes faecalis",
+    "group": "nfb",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "moraxella_catarrhalis": {
+    "name": "Moraxella catarrhalis",
+    "group": "gn_coccobacilli",
+    "importance": "high",
+    "prevalence_score": 3,
+    "prevalence_symbol": "+++"
+  },
+  "neisseria_lactamica": {
+    "name": "Neisseria lactamica",
+    "group": "gn_coccobacilli",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "neisseria_sicca": {
+    "name": "Neisseria sicca",
+    "group": "gn_coccobacilli",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "neisseria_mucosa": {
+    "name": "Neisseria mucosa",
+    "group": "gn_coccobacilli",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "enterobacter_gergoviae": {
+    "name": "Enterobacter gergoviae",
+    "group": "enterobacterales",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "serratia_liquefaciens": {
+    "name": "Serratia liquefaciens",
+    "group": "enterobacterales",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "providencia_alcalifaciens": {
+    "name": "Providencia alcalifaciens",
+    "group": "enterobacterales",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "yersinia_pseudotuberculosis": {
+    "name": "Yersinia pseudotuberculosis",
+    "group": "enterobacterales",
+    "importance": "moderate",
+    "prevalence_score": 2,
+    "prevalence_symbol": "++"
+  },
+  "hafnia_alvei": {
+    "name": "Hafnia alvei",
+    "group": "enterobacterales",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "vibrio_furnissii": {
+    "name": "Vibrio furnissii",
+    "group": "vibrio",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "pasteurella_multocida": {
+    "name": "Pasteurella multocida",
+    "group": "gn_coccobacilli",
+    "importance": "high",
+    "prevalence_score": 3,
+    "prevalence_symbol": "+++"
+  },
+  "pasteurella_bettyae": {
+    "name": "Pasteurella bettyae",
+    "group": "gn_coccobacilli",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "pasteurella_canis": {
+    "name": "Pasteurella canis",
+    "group": "gn_coccobacilli",
+    "importance": "moderate",
+    "prevalence_score": 2,
+    "prevalence_symbol": "++"
+  },
+  "pasteurella_dagmatis": {
+    "name": "Pasteurella dagmatis",
+    "group": "gn_coccobacilli",
+    "importance": "moderate",
+    "prevalence_score": 2,
+    "prevalence_symbol": "++"
+  },
+  "pasteurella_pneumotropica": {
+    "name": "Pasteurella pneumotropica",
+    "group": "gn_coccobacilli",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "pasteurella_stomatis": {
+    "name": "Pasteurella stomatis",
+    "group": "gn_coccobacilli",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "pasteurella_zoohelcum": {
+    "name": "Pasteurella zoohelcum",
+    "group": "gn_coccobacilli",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "h_aphrophilus": {
+    "name": "Haemophilus aphrophilus",
+    "group": "gn_coccobacilli",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "h_ducreyi": {
+    "name": "Haemophilus ducreyi",
+    "group": "gn_coccobacilli",
+    "importance": "high",
+    "prevalence_score": 3,
+    "prevalence_symbol": "+++"
+  },
+  "h_haemolyticus": {
+    "name": "Haemophilus haemolyticus",
+    "group": "gn_coccobacilli",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "h_parahaemolyticus": {
+    "name": "Haemophilus parahaemolyticus",
+    "group": "gn_coccobacilli",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "h_parainfluenzae": {
+    "name": "Haemophilus parainfluenzae",
+    "group": "gn_coccobacilli",
+    "importance": "moderate",
+    "prevalence_score": 2,
+    "prevalence_symbol": "++"
+  },
+  "h_paraphrophilus": {
+    "name": "Haemophilus paraphrophilus",
+    "group": "gn_coccobacilli",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "h_segnis": {
+    "name": "Haemophilus segnis",
+    "group": "gn_coccobacilli",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "neisseria_cinerea": {
+    "name": "Neisseria cinerea",
+    "group": "gn_coccobacilli",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "neisseria_polysaccharea": {
+    "name": "Neisseria polysaccharea",
+    "group": "gn_coccobacilli",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "neisseria_subflava": {
+    "name": "Neisseria subflava",
+    "group": "gn_coccobacilli",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "neisseria_flavescens": {
+    "name": "Neisseria flavescens",
+    "group": "gn_coccobacilli",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "neisseria_elongata": {
+    "name": "Neisseria elongata",
+    "group": "gn_coccobacilli",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "neisseria_weaveri": {
+    "name": "Neisseria weaveri",
+    "group": "gn_coccobacilli",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "neisseria_bacilliformis": {
+    "name": "Neisseria bacilliformis",
+    "group": "gn_coccobacilli",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "neisseria_animaloris": {
+    "name": "Neisseria animaloris",
+    "group": "gn_coccobacilli",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "neisseria_zooedgmatis": {
+    "name": "Neisseria zoodegmatis",
+    "group": "gn_coccobacilli",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "arcanobacterium_pyogenes": {
+    "name": "Arcanobacterium pyogenes",
+    "group": "gpb",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "arcanobacterium_bernardiae": {
+    "name": "Arcanobacterium bernardiae",
+    "group": "gpb",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "c_amycolatum": {
+    "name": "Corynebacterium amycolatum",
+    "group": "gpb",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "c_glucuronolyticum": {
+    "name": "Corynebacterium glucuronolyticum",
+    "group": "gpb",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "c_minutissimum": {
+    "name": "Corynebacterium minutissimum",
+    "group": "gpb",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "c_pseudodiphtheriticum": {
+    "name": "Corynebacterium pseudodiphtheriticum",
+    "group": "gpb",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "c_pseudotuberculosis": {
+    "name": "Corynebacterium pseudotuberculosis",
+    "group": "gpb",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "c_striatum": {
+    "name": "Corynebacterium striatum",
+    "group": "gpb",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "c_ulcerans": {
+    "name": "Corynebacterium ulcerans",
+    "group": "gpb",
+    "importance": "moderate",
+    "prevalence_score": 2,
+    "prevalence_symbol": "++"
+  },
+  "c_urealyticum": {
+    "name": "Corynebacterium urealyticum",
+    "group": "gpb",
+    "importance": "moderate",
+    "prevalence_score": 2,
+    "prevalence_symbol": "++"
+  },
+  "c_xerosis": {
+    "name": "Corynebacterium xerosis",
+    "group": "gpb",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "listeria_grayi": {
+    "name": "Listeria grayi",
+    "group": "gpb",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "listeria_innocua": {
+    "name": "Listeria innocua",
+    "group": "gpb",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "listeria_ivanovii": {
+    "name": "Listeria ivanovii",
+    "group": "gpb",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "listeria_seeligeri": {
+    "name": "Listeria seeligeri",
+    "group": "gpb",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "listeria_welshimeri": {
+    "name": "Listeria welshimeri",
+    "group": "gpb",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "b_mycoides": {
+    "name": "Bacillus mycoides",
+    "group": "gpb",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "b_megaterium": {
+    "name": "Bacillus megaterium",
+    "group": "gpb",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "b_thuringiensis": {
+    "name": "Bacillus thuringiensis",
+    "group": "gpb",
+    "importance": "low",
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "rhodococcus_equi": {
+    "name": "Rhodococcus equi",
+    "group": "gpb",
+    "importance": "moderate",
+    "prevalence_score": 2,
+    "prevalence_symbol": "++"
+  }
+}

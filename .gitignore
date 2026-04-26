@@ -31,3 +31,17 @@ node_modules/
 # Test outputs
 test-results/
 coverage/
+
+# Reference materials (copyright; keep local only)
+# The MCM 11th edition PDF and reference CSVs are protected works.
+# Bayesian engine consumes only the parsed JSON / generated mcm_data.js.
+*.pdf
+*.csv
+
+# Intermediate MCM extraction artifacts (regenerable from PDF via scripts)
+scripts/mcm_extract/layout/
+scripts/mcm_extract/raw_tables/
+scripts/mcm_extract/tables/
+scripts/mcm_extract/*.txt
+# Keep the parsed JSON committed for reproducibility:
+!scripts/mcm_extract/parsed/*.json
