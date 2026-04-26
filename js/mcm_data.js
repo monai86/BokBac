@@ -1,5 +1,5 @@
 // js/mcm_data.js — Auto-generated from MCM 11th edition extraction
-// Generated: 2026-04-26T21:53:09.264038
+// Generated: 2026-04-26T23:10:39.013004
 // Source: Manual of Clinical Microbiology, 11th Edition (2015)
 // DO NOT EDIT MANUALLY — re-run scripts/generate_mcm_js.py instead
 
@@ -1180,6 +1180,689 @@ const MCM_DATA = {
     "prevalence_score": 1,
     "prevalence_symbol": "+"
   },
+  "yersinia_pestis": {
+    "species": "Yersinia pestis",
+    "source": "MCM 11th ch.39 Table 1",
+    "tests": {
+      "motility": 5,
+      "urea": 5,
+      "voges_proskauer": 5,
+      "citrate_simon": 5,
+      "indole_production": 5,
+      "rhamnose": 5,
+      "sucrose": 5,
+      "cellobiose": 5,
+      "sorbose": 5,
+      "sorbitol": 5,
+      "ornithine_decarboxylase": 5,
+      "melibiose": 5,
+      "salicin": 5,
+      "arabinose": 95,
+      "trehalose": 95
+    },
+    "prevalence_score": 2,
+    "prevalence_symbol": "++"
+  },
+  "yersinia_pseudotuberculosis": {
+    "species": "Yersinia pseudotuberculosis",
+    "source": "MCM 11th ch.39 Table 1",
+    "tests": {
+      "motility": 95,
+      "urea": 5,
+      "voges_proskauer": 95,
+      "citrate_simon": 5,
+      "indole_production": 5,
+      "rhamnose": 5,
+      "sucrose": 80,
+      "cellobiose": 5,
+      "sorbose": 5,
+      "sorbitol": 5,
+      "ornithine_decarboxylase": 5,
+      "melibiose": 95,
+      "salicin": 5,
+      "arabinose": 95,
+      "trehalose": 5
+    },
+    "prevalence_score": 2,
+    "prevalence_symbol": "++"
+  },
+  "yersinia_enterocolitica": {
+    "species": "Yersinia enterocolitica",
+    "source": "MCM 11th ch.39 Table 1",
+    "tests": {
+      "motility": 95,
+      "urea": 95,
+      "voges_proskauer": 95,
+      "citrate_simon": 50,
+      "indole_production": 5,
+      "rhamnose": 50,
+      "sucrose": 5,
+      "cellobiose": 95,
+      "sorbose": 95,
+      "sorbitol": 95,
+      "ornithine_decarboxylase": 95,
+      "melibiose": 5,
+      "salicin": 5,
+      "arabinose": 5,
+      "trehalose": 95
+    },
+    "prevalence_score": 3,
+    "prevalence_symbol": "+++"
+  },
+  "yersinia_frederiksenii": {
+    "species": "Yersinia frederiksenii",
+    "source": "MCM 11th ch.39 Table 1",
+    "tests": {
+      "motility": 95,
+      "urea": 95,
+      "voges_proskauer": 95,
+      "citrate_simon": 95,
+      "indole_production": 95,
+      "rhamnose": 95,
+      "sucrose": 95,
+      "cellobiose": 95,
+      "sorbose": 95,
+      "sorbitol": 95,
+      "ornithine_decarboxylase": 95,
+      "melibiose": 5,
+      "salicin": 5,
+      "arabinose": 95,
+      "trehalose": 95
+    },
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "yersinia_kristensenii": {
+    "species": "Yersinia kristensenii",
+    "source": "MCM 11th ch.39 Table 1",
+    "tests": {
+      "motility": 95,
+      "urea": 95,
+      "voges_proskauer": 95,
+      "citrate_simon": 5,
+      "indole_production": 5,
+      "rhamnose": 95,
+      "sucrose": 5,
+      "cellobiose": 5,
+      "sorbose": 95,
+      "sorbitol": 95,
+      "ornithine_decarboxylase": 95,
+      "melibiose": 5,
+      "salicin": 5,
+      "arabinose": 95,
+      "trehalose": 95
+    },
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "yersinia_ruckeri": {
+    "species": "Yersinia ruckeri",
+    "source": "MCM 11th ch.39 Table 1",
+    "tests": {
+      "motility": 50,
+      "urea": 95,
+      "voges_proskauer": 5,
+      "citrate_simon": 5,
+      "indole_production": 5,
+      "rhamnose": 5,
+      "sucrose": 5,
+      "cellobiose": 5,
+      "sorbose": 5,
+      "sorbitol": 5,
+      "ornithine_decarboxylase": 5,
+      "melibiose": 5,
+      "salicin": 5,
+      "arabinose": 5,
+      "trehalose": 5
+    },
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "yersinia_mollaretii": {
+    "species": "Yersinia mollaretii",
+    "source": "MCM 11th ch.39 Table 1",
+    "tests": {
+      "motility": 95,
+      "urea": 95,
+      "voges_proskauer": 95,
+      "citrate_simon": 5,
+      "indole_production": 95,
+      "rhamnose": 5,
+      "sucrose": 5,
+      "cellobiose": 95,
+      "sorbose": 95,
+      "sorbitol": 95,
+      "ornithine_decarboxylase": 95,
+      "melibiose": 5,
+      "salicin": 5,
+      "arabinose": 80,
+      "trehalose": 95
+    },
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "yersinia_bercovieri": {
+    "species": "Yersinia bercovieri",
+    "source": "MCM 11th ch.39 Table 1",
+    "tests": {
+      "motility": 95,
+      "urea": 95,
+      "voges_proskauer": 95,
+      "citrate_simon": 5,
+      "indole_production": 5,
+      "rhamnose": 5,
+      "sucrose": 5,
+      "cellobiose": 95,
+      "sorbose": 95,
+      "sorbitol": 5,
+      "ornithine_decarboxylase": 95,
+      "melibiose": 5,
+      "salicin": 5,
+      "arabinose": 5,
+      "trehalose": 95
+    },
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "yersinia_rohdei": {
+    "species": "Yersinia rohdei",
+    "source": "MCM 11th ch.39 Table 1",
+    "tests": {
+      "motility": 95,
+      "urea": 95,
+      "voges_proskauer": 95,
+      "citrate_simon": 5,
+      "indole_production": 95,
+      "rhamnose": 5,
+      "sucrose": 5,
+      "cellobiose": 95,
+      "sorbose": 95,
+      "sorbitol": 5,
+      "ornithine_decarboxylase": 95,
+      "melibiose": 95,
+      "salicin": 95,
+      "arabinose": 5,
+      "trehalose": 95
+    },
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "yersinia_aldovae": {
+    "species": "Yersinia aldovae",
+    "source": "MCM 11th ch.39 Table 1",
+    "tests": {
+      "motility": 95,
+      "urea": 95,
+      "voges_proskauer": 95,
+      "citrate_simon": 95,
+      "indole_production": 95,
+      "rhamnose": 5,
+      "sucrose": 95,
+      "cellobiose": 5,
+      "sorbose": 5,
+      "sorbitol": 5,
+      "ornithine_decarboxylase": 95,
+      "melibiose": 5,
+      "salicin": 5,
+      "arabinose": 5,
+      "trehalose": 95
+    },
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "yersinia_intermedia": {
+    "species": "Yersinia intermedia",
+    "source": "MCM 11th ch.39 Table 1",
+    "tests": {
+      "motility": 95,
+      "urea": 95,
+      "voges_proskauer": 95,
+      "citrate_simon": 95,
+      "indole_production": 95,
+      "rhamnose": 95,
+      "sucrose": 95,
+      "cellobiose": 95,
+      "sorbose": 95,
+      "sorbitol": 95,
+      "ornithine_decarboxylase": 95,
+      "melibiose": 95,
+      "salicin": 95,
+      "arabinose": 95,
+      "trehalose": 95
+    },
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "aeromonas_hydrophila": {
+    "species": "Aeromonas hydrophila",
+    "source": "MCM 11th ch.40 Table 3",
+    "tests": {
+      "citrate_simon": 92,
+      "gas_glucose": 92,
+      "indole_production": 96,
+      "voges_proskauer": 92,
+      "lipase": 100,
+      "cellobiose": 4,
+      "lactose": 64,
+      "rhamnose": 24,
+      "sorbitol": 0,
+      "mannose_d": 100,
+      "glycerol": 96,
+      "mannitol_d": 96,
+      "sucrose": 100
+    },
+    "prevalence_score": 3,
+    "prevalence_symbol": "+++"
+  },
+  "aeromonas_caviae": {
+    "species": "Aeromonas caviae",
+    "source": "MCM 11th ch.40 Table 3",
+    "tests": {
+      "citrate_simon": 88,
+      "gas_glucose": 0,
+      "indole_production": 84,
+      "voges_proskauer": 0,
+      "lipase": 76,
+      "cellobiose": 100,
+      "lactose": 60,
+      "rhamnose": 0,
+      "sorbitol": 4,
+      "mannose_d": 32,
+      "glycerol": 68,
+      "mannitol_d": 100,
+      "sucrose": 100
+    },
+    "prevalence_score": 3,
+    "prevalence_symbol": "+++"
+  },
+  "aeromonas_veronii": {
+    "species": "Aeromonas veronii",
+    "source": "MCM 11th ch.40 Table 3",
+    "tests": {
+      "citrate_simon": 52,
+      "gas_glucose": 92,
+      "indole_production": 100,
+      "voges_proskauer": 92,
+      "lipase": 92,
+      "cellobiose": 20,
+      "lactose": 12,
+      "rhamnose": 0,
+      "sorbitol": 0,
+      "glycerol": 100,
+      "mannitol_d": 100,
+      "sucrose": 100
+    },
+    "prevalence_score": 2,
+    "prevalence_symbol": "++"
+  },
+  "aeromonas_jandaei": {
+    "species": "Aeromonas jandaei",
+    "source": "MCM 11th ch.40 Table 3",
+    "tests": {
+      "citrate_simon": 87,
+      "gas_glucose": 100,
+      "indole_production": 100,
+      "voges_proskauer": 87,
+      "lipase": 100,
+      "cellobiose": 20,
+      "lactose": 0,
+      "rhamnose": 0,
+      "sorbitol": 0,
+      "mannose_d": 100,
+      "glycerol": 100,
+      "mannitol_d": 100,
+      "sucrose": 0
+    },
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "serratia_marcescens": {
+    "species": "Serratia marcescens",
+    "source": "MCM 11th ch.38 Table 4",
+    "tests": {
+      "ornithine_decarboxylase": 95,
+      "lysine_decarboxylase": 95,
+      "gelatin_hydrolysis": 95,
+      "voges_proskauer": 95,
+      "d_sorbitol": 95,
+      "sucrose": 95,
+      "dulcitol": 5,
+      "indole_production": 5,
+      "motility": 95
+    },
+    "prevalence_score": 3,
+    "prevalence_symbol": "+++"
+  },
+  "serratia_liquefaciens": {
+    "species": "Serratia liquefaciens",
+    "source": "MCM 11th ch.38 Table 4",
+    "tests": {
+      "ornithine_decarboxylase": 95,
+      "lysine_decarboxylase": 95,
+      "gelatin_hydrolysis": 95,
+      "voges_proskauer": 95,
+      "d_sorbitol": 50,
+      "sucrose": 95,
+      "dulcitol": 5,
+      "indole_production": 5,
+      "motility": 95
+    },
+    "prevalence_score": 2,
+    "prevalence_symbol": "++"
+  },
+  "serratia_odorifera": {
+    "species": "Serratia odorifera",
+    "source": "MCM 11th ch.38 Table 4",
+    "tests": {
+      "ornithine_decarboxylase": 95,
+      "lysine_decarboxylase": 5,
+      "gelatin_hydrolysis": 95,
+      "voges_proskauer": 95,
+      "d_sorbitol": 95,
+      "sucrose": 95,
+      "dulcitol": 5,
+      "indole_production": 50,
+      "motility": 95
+    },
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "serratia_rubidaea": {
+    "species": "Serratia rubidaea",
+    "source": "MCM 11th ch.38 Table 4",
+    "tests": {
+      "ornithine_decarboxylase": 5,
+      "lysine_decarboxylase": 5,
+      "gelatin_hydrolysis": 95,
+      "voges_proskauer": 95,
+      "d_sorbitol": 95,
+      "sucrose": 95,
+      "dulcitol": 5,
+      "indole_production": 5,
+      "motility": 95
+    },
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "enterobacter_cloacae": {
+    "species": "Enterobacter cloacae",
+    "source": "MCM 11th ch.38 Table 5",
+    "tests": {
+      "ornithine_decarboxylase": 95,
+      "lysine_decarboxylase": 5,
+      "indole_production": 5,
+      "voges_proskauer": 95,
+      "motility": 95,
+      "sorbitol_d": 95,
+      "adonitol": 5,
+      "malonate": 50,
+      "yellow_pigment": 5
+    },
+    "prevalence_score": 3,
+    "prevalence_symbol": "+++"
+  },
+  "enterobacter_aerogenes": {
+    "species": "Enterobacter aerogenes",
+    "source": "MCM 11th ch.38 Table 5",
+    "tests": {
+      "ornithine_decarboxylase": 95,
+      "lysine_decarboxylase": 95,
+      "indole_production": 5,
+      "voges_proskauer": 95,
+      "motility": 95,
+      "sorbitol_d": 95,
+      "adonitol": 95,
+      "malonate": 95,
+      "yellow_pigment": 5
+    },
+    "prevalence_score": 3,
+    "prevalence_symbol": "+++"
+  },
+  "enterobacter_agglomerans": {
+    "species": "Enterobacter agglomerans",
+    "source": "MCM 11th ch.38 Table 5",
+    "tests": {
+      "ornithine_decarboxylase": 5,
+      "lysine_decarboxylase": 5,
+      "indole_production": 50,
+      "voges_proskauer": 95,
+      "motility": 95,
+      "sorbitol_d": 50,
+      "adonitol": 5,
+      "malonate": 5,
+      "yellow_pigment": 95
+    },
+    "prevalence_score": 2,
+    "prevalence_symbol": "++"
+  },
+  "enterobacter_asburiae": {
+    "species": "Enterobacter asburiae",
+    "source": "MCM 11th ch.38 Table 5",
+    "tests": {
+      "ornithine_decarboxylase": 95,
+      "lysine_decarboxylase": 5,
+      "indole_production": 5,
+      "voges_proskauer": 95,
+      "motility": 95,
+      "sorbitol_d": 95,
+      "adonitol": 5,
+      "malonate": 5,
+      "yellow_pigment": 5
+    },
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "enterobacter_gergoviae": {
+    "species": "Enterobacter gergoviae",
+    "source": "MCM 11th ch.38 Table 5",
+    "tests": {
+      "ornithine_decarboxylase": 95,
+      "lysine_decarboxylase": 95,
+      "indole_production": 95,
+      "voges_proskauer": 95,
+      "motility": 95,
+      "sorbitol_d": 5,
+      "adonitol": 5,
+      "malonate": 95,
+      "yellow_pigment": 5
+    },
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "listeria_monocytogenes": {
+    "species": "Listeria monocytogenes",
+    "source": "MCM 11th ch.27 Table 2",
+    "tests": {
+      "hemolysis": 95,
+      "motility": 95,
+      "catalase": 95,
+      "camp": 95,
+      "rhamnose": 95,
+      "xylose": 5,
+      "mannitol_d": 5
+    },
+    "prevalence_score": 3,
+    "prevalence_symbol": "+++"
+  },
+  "listeria_innocua": {
+    "species": "Listeria innocua",
+    "source": "MCM 11th ch.27 Table 2",
+    "tests": {
+      "hemolysis": 5,
+      "motility": 95,
+      "catalase": 95,
+      "camp": 5,
+      "rhamnose": 95,
+      "xylose": 5,
+      "mannitol_d": 5
+    },
+    "prevalence_score": 2,
+    "prevalence_symbol": "++"
+  },
+  "listeria_ivanovii": {
+    "species": "Listeria ivanovii",
+    "source": "MCM 11th ch.27 Table 2",
+    "tests": {
+      "hemolysis": 95,
+      "motility": 95,
+      "catalase": 95,
+      "camp": 5,
+      "rhamnose": 5,
+      "xylose": 95,
+      "mannitol_d": 95
+    },
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "bacillus_anthracis": {
+    "species": "Bacillus anthracis",
+    "source": "MCM 11th ch.26 Table 1",
+    "tests": {
+      "motility": 5,
+      "hemolysis": 5,
+      "catalase": 95,
+      "voges_proskauer": 95,
+      "glucose_acid": 95,
+      "mannitol_d": 5,
+      "gelatin_hydrolysis": 95,
+      "urea": 50
+    },
+    "prevalence_score": 2,
+    "prevalence_symbol": "++"
+  },
+  "b_cereus": {
+    "species": "Bacillus cereus",
+    "source": "MCM 11th ch.26 Table 1",
+    "tests": {
+      "motility": 95,
+      "hemolysis": 95,
+      "catalase": 95,
+      "voges_proskauer": 95,
+      "glucose_acid": 95,
+      "mannitol_d": 5,
+      "gelatin_hydrolysis": 95,
+      "urea": 50
+    },
+    "prevalence_score": 2,
+    "prevalence_symbol": "++"
+  },
+  "bacillus_subtilis": {
+    "species": "Bacillus subtilis",
+    "source": "MCM 11th ch.26 Table 1",
+    "tests": {
+      "motility": 95,
+      "hemolysis": 50,
+      "catalase": 95,
+      "voges_proskauer": 95,
+      "glucose_acid": 95,
+      "mannitol_d": 95,
+      "gelatin_hydrolysis": 95,
+      "urea": 95
+    },
+    "prevalence_score": 2,
+    "prevalence_symbol": "++"
+  },
+  "bacillus_thuringiensis": {
+    "species": "Bacillus thuringiensis",
+    "source": "MCM 11th ch.26 Table 1",
+    "tests": {
+      "motility": 95,
+      "hemolysis": 95,
+      "catalase": 95,
+      "voges_proskauer": 95,
+      "glucose_acid": 95,
+      "mannitol_d": 5,
+      "gelatin_hydrolysis": 95,
+      "urea": 50
+    },
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "acinetobacter_baumannii": {
+    "species": "Acinetobacter baumannii",
+    "source": "MCM 11th ch.43 Table 1",
+    "tests": {
+      "oxidase": 5,
+      "motility": 5,
+      "hemolysis": 50,
+      "glucose_acid": 95,
+      "mannitol_d": 50,
+      "sucrose": 5,
+      "lactose": 5,
+      "nitrate_reduction": 5,
+      "gelatin_hydrolysis": 5
+    },
+    "prevalence_score": 4,
+    "prevalence_symbol": "++++"
+  },
+  "acinetobacter_haemolyticus": {
+    "species": "Acinetobacter haemolyticus",
+    "source": "MCM 11th ch.43 Table 1",
+    "tests": {
+      "oxidase": 5,
+      "motility": 5,
+      "hemolysis": 95,
+      "glucose_acid": 95,
+      "mannitol_d": 95,
+      "sucrose": 95,
+      "lactose": 95,
+      "nitrate_reduction": 5,
+      "gelatin_hydrolysis": 95
+    },
+    "prevalence_score": 2,
+    "prevalence_symbol": "++"
+  },
+  "acinetobacter_lwoffii": {
+    "species": "Acinetobacter lwoffii",
+    "source": "MCM 11th ch.43 Table 1",
+    "tests": {
+      "oxidase": 5,
+      "motility": 5,
+      "hemolysis": 5,
+      "glucose_acid": 5,
+      "mannitol_d": 5,
+      "sucrose": 5,
+      "lactose": 5,
+      "nitrate_reduction": 5,
+      "gelatin_hydrolysis": 5
+    },
+    "prevalence_score": 2,
+    "prevalence_symbol": "++"
+  },
+  "acinetobacter_johnsonii": {
+    "species": "Acinetobacter johnsonii",
+    "source": "MCM 11th ch.43 Table 1",
+    "tests": {
+      "oxidase": 5,
+      "motility": 5,
+      "hemolysis": 5,
+      "glucose_acid": 5,
+      "mannitol_d": 5,
+      "sucrose": 5,
+      "lactose": 5,
+      "nitrate_reduction": 95,
+      "gelatin_hydrolysis": 5
+    },
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
+  "acinetobacter_junii": {
+    "species": "Acinetobacter junii",
+    "source": "MCM 11th ch.43 Table 1",
+    "tests": {
+      "oxidase": 5,
+      "motility": 5,
+      "hemolysis": 50,
+      "glucose_acid": 50,
+      "mannitol_d": 50,
+      "sucrose": 5,
+      "lactose": 5,
+      "nitrate_reduction": 5,
+      "gelatin_hydrolysis": 5
+    },
+    "prevalence_score": 1,
+    "prevalence_symbol": "+"
+  },
   "micrococcus": {
     "species": "Micrococcus spp.",
     "source": "LIBRARY importance proxy",
@@ -1204,40 +1887,8 @@ const MCM_DATA = {
     "prevalence_source": "LIBRARY importance",
     "tests": {}
   },
-  "acinetobacter_baumannii": {
-    "species": "Acinetobacter baumannii",
-    "source": "LIBRARY importance proxy",
-    "prevalence_score": 4,
-    "prevalence_symbol": "++++",
-    "prevalence_source": "LIBRARY importance",
-    "tests": {}
-  },
   "aeromonas": {
     "species": "Aeromonas hydrophila",
-    "source": "LIBRARY importance proxy",
-    "prevalence_score": 2,
-    "prevalence_symbol": "++",
-    "prevalence_source": "LIBRARY importance",
-    "tests": {}
-  },
-  "listeria_monocytogenes": {
-    "species": "Listeria monocytogenes",
-    "source": "LIBRARY importance proxy",
-    "prevalence_score": 4,
-    "prevalence_symbol": "++++",
-    "prevalence_source": "LIBRARY importance",
-    "tests": {}
-  },
-  "bacillus_anthracis": {
-    "species": "Bacillus anthracis",
-    "source": "LIBRARY importance proxy",
-    "prevalence_score": 4,
-    "prevalence_symbol": "++++",
-    "prevalence_source": "LIBRARY importance",
-    "tests": {}
-  },
-  "b_cereus": {
-    "species": "Bacillus cereus",
     "source": "LIBRARY importance proxy",
     "prevalence_score": 2,
     "prevalence_symbol": "++",
@@ -1257,14 +1908,6 @@ const MCM_DATA = {
     "source": "LIBRARY importance proxy",
     "prevalence_score": 4,
     "prevalence_symbol": "++++",
-    "prevalence_source": "LIBRARY importance",
-    "tests": {}
-  },
-  "serratia_marcescens": {
-    "species": "Serratia marcescens",
-    "source": "LIBRARY importance proxy",
-    "prevalence_score": 2,
-    "prevalence_symbol": "++",
     "prevalence_source": "LIBRARY importance",
     "tests": {}
   },
@@ -1412,30 +2055,6 @@ const MCM_DATA = {
     "prevalence_source": "LIBRARY importance",
     "tests": {}
   },
-  "acinetobacter_lwoffii": {
-    "species": "Acinetobacter lwoffii",
-    "source": "LIBRARY importance proxy",
-    "prevalence_score": 1,
-    "prevalence_symbol": "+",
-    "prevalence_source": "LIBRARY importance",
-    "tests": {}
-  },
-  "enterobacter_cloacae": {
-    "species": "Enterobacter cloacae",
-    "source": "LIBRARY importance proxy",
-    "prevalence_score": 3,
-    "prevalence_symbol": "+++",
-    "prevalence_source": "LIBRARY importance",
-    "tests": {}
-  },
-  "enterobacter_agglomerans": {
-    "species": "Pantoea (Enterobacter) agglomerans",
-    "source": "LIBRARY importance proxy",
-    "prevalence_score": 2,
-    "prevalence_symbol": "++",
-    "prevalence_source": "LIBRARY importance",
-    "tests": {}
-  },
   "klebsiella_aerogenes": {
     "species": "Klebsiella (Enterobacter) aerogenes",
     "source": "LIBRARY importance proxy",
@@ -1452,14 +2071,6 @@ const MCM_DATA = {
     "prevalence_source": "LIBRARY importance",
     "tests": {}
   },
-  "serratia_rubidaea": {
-    "species": "Serratia rubidaea",
-    "source": "LIBRARY importance proxy",
-    "prevalence_score": 1,
-    "prevalence_symbol": "+",
-    "prevalence_source": "LIBRARY importance",
-    "tests": {}
-  },
   "edwardsiella_tarda": {
     "species": "Edwardsiella tarda",
     "source": "LIBRARY importance proxy",
@@ -1468,27 +2079,11 @@ const MCM_DATA = {
     "prevalence_source": "LIBRARY importance",
     "tests": {}
   },
-  "yersinia_enterocolitica": {
-    "species": "Yersinia enterocolitica",
-    "source": "LIBRARY importance proxy",
-    "prevalence_score": 3,
-    "prevalence_symbol": "+++",
-    "prevalence_source": "LIBRARY importance",
-    "tests": {}
-  },
   "salmonella_arizonae": {
     "species": "Salmonella arizonae",
     "source": "LIBRARY importance proxy",
     "prevalence_score": 1,
     "prevalence_symbol": "+",
-    "prevalence_source": "LIBRARY importance",
-    "tests": {}
-  },
-  "aeromonas_caviae": {
-    "species": "Aeromonas caviae",
-    "source": "LIBRARY importance proxy",
-    "prevalence_score": 2,
-    "prevalence_symbol": "++",
     "prevalence_source": "LIBRARY importance",
     "tests": {}
   },
@@ -1521,30 +2116,6 @@ const MCM_DATA = {
     "source": "LIBRARY importance proxy",
     "prevalence_score": 3,
     "prevalence_symbol": "+++",
-    "prevalence_source": "LIBRARY importance",
-    "tests": {}
-  },
-  "enterobacter_gergoviae": {
-    "species": "Enterobacter gergoviae",
-    "source": "LIBRARY importance proxy",
-    "prevalence_score": 1,
-    "prevalence_symbol": "+",
-    "prevalence_source": "LIBRARY importance",
-    "tests": {}
-  },
-  "serratia_liquefaciens": {
-    "species": "Serratia liquefaciens",
-    "source": "LIBRARY importance proxy",
-    "prevalence_score": 1,
-    "prevalence_symbol": "+",
-    "prevalence_source": "LIBRARY importance",
-    "tests": {}
-  },
-  "yersinia_pseudotuberculosis": {
-    "species": "Yersinia pseudotuberculosis",
-    "source": "LIBRARY importance proxy",
-    "prevalence_score": 2,
-    "prevalence_symbol": "++",
     "prevalence_source": "LIBRARY importance",
     "tests": {}
   },
@@ -1750,22 +2321,6 @@ const MCM_DATA = {
   },
   "listeria_grayi": {
     "species": "Listeria grayi",
-    "source": "LIBRARY importance proxy",
-    "prevalence_score": 1,
-    "prevalence_symbol": "+",
-    "prevalence_source": "LIBRARY importance",
-    "tests": {}
-  },
-  "listeria_innocua": {
-    "species": "Listeria innocua",
-    "source": "LIBRARY importance proxy",
-    "prevalence_score": 1,
-    "prevalence_symbol": "+",
-    "prevalence_source": "LIBRARY importance",
-    "tests": {}
-  },
-  "listeria_ivanovii": {
-    "species": "Listeria ivanovii",
     "source": "LIBRARY importance proxy",
     "prevalence_score": 1,
     "prevalence_symbol": "+",

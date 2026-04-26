@@ -213,6 +213,44 @@ const LIBRARY = [
       { t: "Glucose", r: "+" }, { t: "Maltose", r: "+" }, { t: "Lactose", r: "+" }, { t: "Sucrose", r: "−" },
     ],
   },
+  // ── Yersinia (enterobacterales) ──
+  {
+    id: "yersinia_enterocolitica", group: "enterobacterales", name: "Yersinia enterocolitica",
+    biochem: [
+      { t: "Motility", r: "+" }, { t: "Urease", r: "+" }, { t: "VP", r: "+" },
+      { t: "Indole", r: "−" }, { t: "Sucrose", r: "−" },
+    ],
+  },
+  {
+    id: "yersinia_pestis", group: "enterobacterales", name: "Yersinia pestis",
+    biochem: [
+      { t: "Motility", r: "−" }, { t: "Urease", r: "−" }, { t: "Indole", r: "−" },
+    ],
+  },
+  // ── Aeromonas (vibrio-like) ──
+  {
+    id: "aeromonas_hydrophila", group: "vibrio", name: "Aeromonas hydrophila",
+    biochem: [
+      { t: "Oxidase", r: "+" }, { t: "Indole", r: "+" }, { t: "VP", r: "+" },
+      { t: "Glucose", r: "+" }, { t: "Mannitol", r: "+" },
+    ],
+  },
+  // ── Listeria (gpc_cluster) ──
+  {
+    id: "listeria_monocytogenes", group: "gpc_cluster", name: "Listeria monocytogenes",
+    biochem: [
+      { t: "Catalase", r: "+" }, { t: "Hemolysis", r: "+" },
+      { t: "Motility", r: "+" }, { t: "CAMP", r: "+" },
+    ],
+  },
+  // ── Serratia (enterobacterales) ──
+  {
+    id: "serratia_marcescens", group: "enterobacterales", name: "Serratia marcescens",
+    biochem: [
+      { t: "Indole", r: "−" }, { t: "VP", r: "+" }, { t: "Gelatin", r: "+" },
+      { t: "Motility", r: "+" }, { t: "Sorbitol", r: "+" },
+    ],
+  },
   // ── Burkholderia (NFB) ──
   {
     id: "b_pseudomallei", group: "nfb", name: "Burkholderia pseudomallei",
@@ -543,6 +581,33 @@ const SCENARIOS = [
     group: "nfb",
     answers: { Oxidase: "+", Glucose: "+", Mannitol: "+", Arabinose: "−", Motility: "+" },
     expected: { topId: "b_pseudomallei", minPct: 50 },
+  },
+  // ── Extended Enterobacterales ──
+  {
+    name: "Y. enterocolitica (Motile+, Urease+, VP+, Indole−, Sucrose−, Citrate−)",
+    group: "enterobacterales",
+    answers: { Motility: "+", Urease: "+", VP: "+", Indole: "−", Sucrose: "−", Citrate: "−", ODC: "+" },
+    expected: { topId: "yersinia_enterocolitica", minPct: 40 },
+  },
+  {
+    name: "Serratia marcescens (VP+, Gelatin+, Sorbitol+, Indole−)",
+    group: "enterobacterales",
+    answers: { Indole: "−", VP: "+", Gelatin: "+", Motility: "+", Sorbitol: "+" },
+    expected: { topId: "serratia_marcescens", minPct: 30 },
+  },
+  // ── Aeromonas (O/129 resistant = '+' excludes Vibrio) ──
+  {
+    name: "A. hydrophila (Oxidase+, VP+, Indole+, O129 resistant, Sucrose+)",
+    group: "vibrio",
+    answers: { Oxidase: "+", VP: "+", Indole: "+", O129: "+", Sucrose: "+", Arginine: "+" },
+    expected: { topId: "aeromonas_hydrophila", minPct: 30 },
+  },
+  // ── Listeria ──
+  {
+    name: "L. monocytogenes (Catalase+, Hemolysis+, Motility+, CAMP+)",
+    group: "gpc_cluster",
+    answers: { Catalase: "+", Hemolysis: "+", Motility: "+", CAMP: "+" },
+    expected: { topId: "listeria_monocytogenes", minPct: 40 },
   },
 ];
 

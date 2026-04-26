@@ -140,6 +140,67 @@ SPECIES_TO_LIBRARY_ID = {
     "Burkholderia pseudomallei": "b_pseudomallei",
     "Burkholderia thailandensis": "burkholderia_thailandensis",
     "Burkholderia mallei": None,  # not in LIBRARY
+
+    # Yersinia (Ch.39 Table 1)
+    "Yersinia enterocolitica": "yersinia_enterocolitica",
+    "Yersinia pestis": "yersinia_pestis",
+    "Yersinia pseudotuberculosis": "yersinia_pseudotuberculosis",
+    "Yersinia frederiksenii": "yersinia_frederiksenii",
+    "Yersinia kristensenii": "yersinia_kristensenii",
+    "Yersinia intermedia": "yersinia_intermedia",
+    "Yersinia mollaretii": "yersinia_mollaretii",
+    "Yersinia bercovieri": "yersinia_bercovieri",
+    "Yersinia rohdei": "yersinia_rohdei",
+    "Yersinia aldovae": "yersinia_aldovae",
+    "Yersinia ruckeri": "yersinia_ruckeri",
+    "Yersinia aleksiciae": None,  # not in LIBRARY
+
+    # Aeromonas (Ch.40 Table 3)
+    "Aeromonas hydrophila": "aeromonas_hydrophila",
+    "Aeromonas caviae": "aeromonas_caviae",
+    "Aeromonas veronii": "aeromonas_veronii",
+    "Aeromonas jandaei": "aeromonas_jandaei",
+    "Aeromonas bestiarum": None,
+    "Aeromonas salmonicida": None,
+    "Aeromonas media": None,
+    "Aeromonas eucrenophila": None,
+    "Aeromonas schubertii": None,
+    "Aeromonas trota": None,
+
+    # Serratia (Ch.38 Table 4)
+    "Serratia marcescens": "serratia_marcescens",
+    "Serratia liquefaciens": "serratia_liquefaciens",
+    "Serratia odorifera": "serratia_odorifera",
+    "Serratia rubidaea": "serratia_rubidaea",
+    "Serratia ficaria": None,
+
+    # Enterobacter extra (Ch.38 Table 5)
+    "Enterobacter cloacae": "enterobacter_cloacae",
+    "Enterobacter aerogenes": "enterobacter_aerogenes",
+    "Enterobacter agglomerans": "enterobacter_agglomerans",
+    "Enterobacter asburiae": "enterobacter_asburiae",
+    "Enterobacter gergoviae": "enterobacter_gergoviae",
+
+    # Listeria (Ch.27)
+    "Listeria monocytogenes": "listeria_monocytogenes",
+    "Listeria innocua": "listeria_innocua",
+    "Listeria ivanovii": "listeria_ivanovii",
+    "Listeria seeligeri": None,
+    "Listeria welshimeri": None,
+
+    # Bacillus (Ch.26)
+    "Bacillus anthracis": "bacillus_anthracis",
+    "Bacillus cereus": "b_cereus",
+    "Bacillus subtilis": "bacillus_subtilis",
+    "Bacillus thuringiensis": "bacillus_thuringiensis",
+    "Bacillus mycoides": None,
+
+    # Acinetobacter (Ch.43 Table 1)
+    "Acinetobacter baumannii": "acinetobacter_baumannii",
+    "Acinetobacter haemolyticus": "acinetobacter_haemolyticus",
+    "Acinetobacter lwoffii": "acinetobacter_lwoffii",
+    "Acinetobacter johnsonii": "acinetobacter_johnsonii",
+    "Acinetobacter junii": "acinetobacter_junii",
 }
 
 
