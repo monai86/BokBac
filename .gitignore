@@ -61,7 +61,7 @@ tests/testsprite-runner.js
 tests/testsprite.config.js
 
 # Outdated deployment copies (root files are canonical)
-public/
+/public/
 
 # Root CSV exports (regenerable)
 *.csv
