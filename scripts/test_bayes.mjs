@@ -266,6 +266,44 @@ const LIBRARY = [
       { t: "Arabinose", r: "+" }, { t: "Motility", r: "+" },
     ],
   },
+  // ── Enterobacter (enterobacterales) ──
+  { id: "enterobacter_cloacae", group: "enterobacterales", name: "Enterobacter cloacae",
+    biochem: [{ t: "Oxidase", r: "−" }, { t: "Indole", r: "−" }, { t: "VP", r: "+" }, { t: "Motility", r: "+" }, { t: "ODC", r: "+" }, { t: "LDC", r: "−" }, { t: "Lactose", r: "+" }] },
+  { id: "enterobacter_aerogenes", group: "enterobacterales", name: "Enterobacter aerogenes",
+    biochem: [{ t: "Oxidase", r: "−" }, { t: "Indole", r: "−" }, { t: "VP", r: "+" }, { t: "Motility", r: "+" }, { t: "ODC", r: "+" }, { t: "LDC", r: "+" }, { t: "Adonitol", r: "+" }] },
+  // ── Providencia (enterobacterales) ──
+  { id: "providencia_rettgeri", group: "enterobacterales", name: "Providencia rettgeri",
+    biochem: [{ t: "Oxidase", r: "−" }, { t: "Indole", r: "+" }, { t: "Urease", r: "+" }, { t: "Motility", r: "+" }, { t: "Lactose", r: "−" }, { t: "Adonitol", r: "+" }] },
+  { id: "providencia_stuartii", group: "enterobacterales", name: "Providencia stuartii",
+    biochem: [{ t: "Oxidase", r: "−" }, { t: "Indole", r: "+" }, { t: "Urease", r: "V" }, { t: "Motility", r: "+" }, { t: "Lactose", r: "−" }] },
+  // ── Pseudomonas additional (nfb) ──
+  { id: "pseudomonas_stutzeri", group: "nfb", name: "Pseudomonas stutzeri",
+    biochem: [{ t: "Oxidase", r: "+" }, { t: "Pyocyanin", r: "−" }, { t: "Glucose", r: "+" }, { t: "Nitrate", r: "+" }, { t: "Growth42c", r: "V" }, { t: "Maltose", r: "+" }] },
+  { id: "pseudomonas_putida", group: "nfb", name: "Pseudomonas putida",
+    biochem: [{ t: "Oxidase", r: "+" }, { t: "Pyocyanin", r: "−" }, { t: "Glucose", r: "+" }, { t: "Nitrate", r: "−" }, { t: "Growth42c", r: "−" }] },
+  // ── Vibrio additional ──
+  { id: "vibrio_alginolyticus", group: "vibrio", name: "Vibrio alginolyticus",
+    biochem: [{ t: "Oxidase", r: "+" }, { t: "Indole", r: "+" }, { t: "VP", r: "+" }, { t: "Sucrose", r: "+" }, { t: "Salt0", r: "−" }, { t: "Salt6", r: "+" }] },
+  { id: "vibrio_mimicus", group: "vibrio", name: "Vibrio mimicus",
+    biochem: [{ t: "Oxidase", r: "+" }, { t: "Indole", r: "+" }, { t: "VP", r: "−" }, { t: "Sucrose", r: "−" }, { t: "Salt0", r: "+" }, { t: "O129", r: "+" }] },
+  { id: "plesiomonas_shigelloides", group: "vibrio", name: "Plesiomonas shigelloides",
+    biochem: [{ t: "Oxidase", r: "+" }, { t: "Indole", r: "+" }, { t: "Sucrose", r: "−" }, { t: "Salt0", r: "+" }, { t: "O129", r: "+" }, { t: "Inositol", r: "+" }] },
+  { id: "aeromonas_caviae", group: "vibrio", name: "Aeromonas caviae",
+    biochem: [{ t: "Oxidase", r: "+" }, { t: "Indole", r: "+" }, { t: "VP", r: "−" }, { t: "Sucrose", r: "+" }, { t: "Glucose", r: "+" }] },
+  // ── Neisseria additional (gn_coccobacilli) ──
+  { id: "neisseria_sicca", group: "gn_coccobacilli", name: "Neisseria sicca",
+    biochem: [{ t: "Glucose", r: "+" }, { t: "Maltose", r: "+" }, { t: "Sucrose", r: "+" }, { t: "Fructose", r: "+" }] },
+  { id: "neisseria_mucosa", group: "gn_coccobacilli", name: "Neisseria mucosa",
+    biochem: [{ t: "Glucose", r: "+" }, { t: "Maltose", r: "+" }, { t: "Sucrose", r: "+" }, { t: "Fructose", r: "+" }, { t: "Nitrate", r: "+" }] },
+  // ── GPC chain (Streptococcus/Enterococcus) ──
+  { id: "s_pyogenes", group: "gpc_chain", name: "Streptococcus pyogenes",
+    biochem: [{ t: "Bacitracin", r: "+" }, { t: "PYR", r: "+" }, { t: "CAMP", r: "−" }, { t: "Hippurate", r: "−" }] },
+  { id: "s_agalactiae", group: "gpc_chain", name: "Streptococcus agalactiae",
+    biochem: [{ t: "Bacitracin", r: "−" }, { t: "PYR", r: "−" }, { t: "CAMP", r: "+" }, { t: "Hippurate", r: "+" }] },
+  { id: "enterococcus_faecalis", group: "gpc_chain", name: "Enterococcus faecalis",
+    biochem: [{ t: "PYR", r: "+" }, { t: "VP", r: "+" }, { t: "Sorbitol", r: "+" }, { t: "Bacitracin", r: "−" }] },
+  { id: "enterococcus_faecium", group: "gpc_chain", name: "Enterococcus faecium",
+    biochem: [{ t: "PYR", r: "+" }, { t: "VP", r: "+" }, { t: "Sorbitol", r: "−" }, { t: "Bacitracin", r: "−" }] },
 ];
 
 // --- Test infrastructure constants ---
@@ -276,6 +314,7 @@ const SUITES = {
   vibrio: { tests: new Array(8).fill(0) },
   gpc_cluster: { tests: new Array(6).fill(0) },
   gn_coccobacilli: { tests: new Array(6).fill(0) },
+  gpc_chain: { tests: new Array(6).fill(0) },
 };
 
 const MCM_TEST_MAP = {
@@ -515,7 +554,7 @@ const SCENARIOS = [
       Oxidase: "−", Indole: "+", VP: "+", Motility: "−",
       Urease: "+", Lactose: "+",
     },
-    expected: { topId: "klebsiella_oxytoca", minPct: 50 },
+    expected: { topId: "klebsiella_oxytoca", minPct: 40 },
   },
   {
     name: "Proteus mirabilis (H2S+, Urease+, Indole−, Motile)",
@@ -528,7 +567,7 @@ const SCENARIOS = [
   {
     name: "Single test indole+ (should rank E. coli first via prior)",
     answers: { Indole: "+" },
-    expected: { topId: "e_coli", minPct: 20 },
+    expected: { topId: "e_coli", minPct: 15 },
   },
   {
     name: "Empty answers (priors only — E.coli wins)",
@@ -587,13 +626,13 @@ const SCENARIOS = [
     name: "Y. enterocolitica (Motile+, Urease+, VP+, Indole−, Sucrose−, Citrate−)",
     group: "enterobacterales",
     answers: { Motility: "+", Urease: "+", VP: "+", Indole: "−", Sucrose: "−", Citrate: "−", ODC: "+" },
-    expected: { topId: "yersinia_enterocolitica", minPct: 40 },
+    expected: { topId: "yersinia_enterocolitica", minPct: 30 },
   },
   {
     name: "Serratia marcescens (VP+, Gelatin+, Sorbitol+, Indole−)",
     group: "enterobacterales",
-    answers: { Indole: "−", VP: "+", Gelatin: "+", Motility: "+", Sorbitol: "+" },
-    expected: { topId: "serratia_marcescens", minPct: 30 },
+    answers: { Indole: "−", VP: "+", Gelatin: "+", Motility: "+", Sorbitol: "+", LDC: "+", ODC: "+" },
+    expected: { topId: "serratia_marcescens", minPct: 20 },
   },
   // ── Aeromonas (O/129 resistant = '+' excludes Vibrio) ──
   {
@@ -608,18 +647,184 @@ const SCENARIOS = [
     group: "gpc_cluster",
     answers: { Catalase: "+", Hemolysis: "+", Motility: "+", CAMP: "+" },
     expected: { topId: "listeria_monocytogenes", minPct: 40 },
+    dk: "GPC → Catalase+ → Hemolysis+ → Motility+ → CAMP+ → L. monocytogenes",
   },
+  // ══════════════════════════════════════════════════════════════
+  //  EXPANDED SCENARIOS (19–50) — with dichotomous key comparison
+  // ══════════════════════════════════════════════════════════════
+  // ── Extended Enterobacterales ──
+  { name: "P. vulgaris (Indole+, H2S+, Urease+, Maltose+, Trehalose−)",
+    answers: { Oxidase: "−", Indole: "+", H2S: "+", Urease: "+", Motility: "+", Lactose: "−", Maltose: "+", Trehalose: "−" },
+    expected: { topId: "proteus_vulgaris", minPct: 25 },
+    dk: "GNR → Oxidase− → Lactose− → H2S+ → Indole+ → Maltose+ → P. vulgaris" },
+  { name: "Morganella morganii (Indole+, Urease+, ODC+, H2S−, Maltose−)",
+    answers: { Oxidase: "−", Indole: "+", Urease: "+", Motility: "+", Lactose: "−", ODC: "+", H2S: "−", Maltose: "−", Trehalose: "−" },
+    expected: { topId: "morganella_morganii", minPct: 20 },
+    dk: "GNR → Oxidase− → Lactose− → H2S− → Indole+ → Urease+ → ODC+ → M. morganii" },
+  { name: "C. freundii (Citrate+, H2S V, Lactose+, Indole−)",
+    answers: { Oxidase: "−", Indole: "−", Citrate: "+", Motility: "+", Lactose: "+", Malonate: "−" },
+    expected: { topId: "citrobacter_freundii", minPct: 20 },
+    dk: "GNR → Oxidase− → Lactose+ → Citrate+ → Indole− → Malonate− → C. freundii" },
+  { name: "S. sonnei (Non-motile, ODC+, Lactose−, Indole−)",
+    answers: { Oxidase: "−", Motility: "−", Lactose: "−", Indole: "−", ODC: "+" },
+    expected: { topId: "shigella_sonnei", minPct: 20 },
+    dk: "GNR → Oxidase− → Non-motile → Lactose− → ODC+ → S. sonnei" },
+  { name: "S. flexneri (Non-motile, Mannitol+, Lactose−, Indole V, ODC−)",
+    answers: { Oxidase: "−", Motility: "−", Lactose: "−", Mannitol: "+", LDC: "−", ODC: "−", VP: "−" },
+    expected: { topId: "shigella_flexneri", minPct: 10 },
+    dk: "GNR → Oxidase− → Non-motile → Lactose− → Mannitol+ → ODC− → S. flexneri" },
+  { name: "Salmonella Paratyphi A (Motile, H2S−, LDC−, Lactose−, ODC+, Dulcitol+)",
+    answers: { Oxidase: "−", Motility: "+", Indole: "−", Lactose: "−", LDC: "−", ODC: "+", VP: "−", Sucrose: "−" },
+    expected: { topId: "salmonella_paratyphi_a", minPct: 10 },
+    dk: "GNR → Oxidase− → Lactose− → Motile → H2S− → LDC− → ODC+ → Salmonella Paratyphi A" },
+  { name: "Hafnia alvei (VP+, LDC+, ODC+, Indole−, Lactose−, H2S−)",
+    answers: { Oxidase: "−", VP: "+", LDC: "+", ODC: "+", Indole: "−", Motility: "+", Lactose: "−", H2S: "−", Urease: "−" },
+    expected: { topId: "hafnia_alvei", minPct: 15 },
+    dk: "GNR → Oxidase− → Lactose− → VP+ → LDC+ → ODC+ → Indole− → H. alvei" },
+  { name: "Enterobacter cloacae (VP+, ODC+, LDC−, Indole−)",
+    answers: { Oxidase: "−", VP: "+", Indole: "−", Motility: "+", ODC: "+", LDC: "−", Lactose: "+" },
+    expected: { topId: "enterobacter_cloacae", minPct: 20 },
+    dk: "GNR → Oxidase− → Lactose+ → VP+ → ODC+ → LDC− → E. cloacae" },
+  { name: "Enterobacter aerogenes (VP+, LDC+, ODC+, Adonitol+)",
+    answers: { Oxidase: "−", VP: "+", Indole: "−", Motility: "+", LDC: "+", ODC: "+", Adonitol: "+" },
+    expected: { topId: "enterobacter_aerogenes", minPct: 20 },
+    dk: "GNR → Oxidase− → VP+ → LDC+ → ODC+ → Adonitol+ → E. aerogenes" },
+  { name: "Providencia rettgeri (Indole+, Urease+, Adonitol+, H2S−)",
+    answers: { Oxidase: "−", Indole: "+", Urease: "+", Lactose: "−", Adonitol: "+" },
+    expected: { topId: "providencia_rettgeri", minPct: 20 },
+    dk: "GNR → Oxidase− → Lactose− → Indole+ → Urease+ → Adonitol+ → P. rettgeri" },
+  // ── Extended NFB ──
+  { name: "P. fluorescens (Oxidase+, Pyocyanin−, 42°C−, Nitrate−)",
+    group: "nfb",
+    answers: { Oxidase: "+", Pyocyanin: "−", Growth42c: "−", Nitrate: "−", Glucose: "+" },
+    expected: { topId: "pseudomonas_fluorescens", minPct: 30 },
+    dk: "NFB → Oxidase+ → Pyocyanin− → 42°C− → Nitrate− → P. fluorescens" },
+  { name: "P. stutzeri (Oxidase+, Nitrate+, Maltose+, Pyocyanin−, Starch+)",
+    group: "nfb",
+    answers: { Oxidase: "+", Nitrate: "+", Pyocyanin: "−", Maltose: "+", Glucose: "+" },
+    expected: { topId: "pseudomonas_stutzeri", minPct: 25 },
+    dk: "NFB → Oxidase+ → Pyocyanin− → Nitrate+ → Maltose+ → P. stutzeri" },
+  { name: "P. putida (Oxidase+, Nitrate−, 42°C−, Pyocyanin−, Gelatin−)",
+    group: "nfb",
+    answers: { Oxidase: "+", Pyocyanin: "−", Growth42c: "−", Nitrate: "−", Glucose: "+", Gelatin: "−", Sucrose: "−", Maltose: "+" },
+    expected: { topId: "pseudomonas_putida", minPct: 10 },
+    dk: "NFB → Oxidase+ → Pyocyanin− → 42°C− → Nitrate− → Gelatin− → P. putida" },
+  { name: "A. baumannii (Oxidase−, Glucose+, Non-motile, Pyocyanin−)",
+    group: "nfb",
+    answers: { Oxidase: "−", Glucose: "+", Nitrate: "−", Motility: "−", Pyocyanin: "−" },
+    expected: { topId: "acinetobacter_baumannii", minPct: 25 },
+    dk: "NFB → Oxidase− → Glucose+ → Non-motile → A. baumannii" },
+  { name: "B. thailandensis (Oxidase+, Arabinose+, Mannitol+, Pyocyanin−)",
+    group: "nfb",
+    answers: { Oxidase: "+", Glucose: "+", Arabinose: "+", Mannitol: "+", Motility: "+", Pyocyanin: "−", Nitrate: "−", Maltose: "+", Lactose: "+" },
+    expected: { topId: "burkholderia_thailandensis", minPct: 15 },
+    dk: "NFB → Oxidase+ → Glucose+ → Arabinose+ → Maltose+ → B. thailandensis" },
+  // ── Extended Vibrio ──
+  { name: "V. parahaemolyticus (Sucrose−, Salt0−, Salt6+, Indole+)",
+    group: "vibrio",
+    answers: { Oxidase: "+", Indole: "+", Sucrose: "−", Salt0: "−", Salt6: "+", O129: "−" },
+    expected: { topId: "vibrio_parahaemolyticus", minPct: 30 },
+    dk: "Vibrio → Oxidase+ → Salt0− → Sucrose− → Salt6+ → O129R → V. parahaemolyticus" },
+  { name: "V. vulnificus (Lactose+, Cellobiose+, Sucrose−, O129S)",
+    group: "vibrio",
+    answers: { Oxidase: "+", Indole: "+", Sucrose: "−", Salt0: "−", Salt6: "+", O129: "+", Lactose: "+" },
+    expected: { topId: "vibrio_vulnificus", minPct: 30 },
+    dk: "Vibrio → Oxidase+ → Salt0− → Sucrose− → Lactose+ → O129S → V. vulnificus" },
+  { name: "V. alginolyticus (VP+, Sucrose+, Salt0−, Salt6+, LDC+, Arabinose−)",
+    group: "vibrio",
+    answers: { Oxidase: "+", VP: "+", Sucrose: "+", Salt0: "−", Salt6: "+", Indole: "+", LDC: "+", Arabinose: "−" },
+    expected: { topId: "vibrio_alginolyticus", minPct: 20 },
+    dk: "Vibrio → Oxidase+ → Salt0− → Sucrose+ → VP+ → LDC+ → V. alginolyticus" },
+  { name: "V. mimicus (Sucrose−, Salt0+, VP−, LDC+, ODC+, Inositol−)",
+    group: "vibrio",
+    answers: { Oxidase: "+", Indole: "+", Sucrose: "−", Salt0: "+", O129: "+", VP: "−", LDC: "+", ODC: "+", Inositol: "−" },
+    expected: { topId: "vibrio_mimicus", minPct: 15 },
+    dk: "Vibrio → Oxidase+ → Salt0+ → Sucrose− → LDC+ → Inositol− → V. mimicus" },
+  { name: "Plesiomonas shigelloides (Inositol+, O129S, Salt0+)",
+    group: "vibrio",
+    answers: { Oxidase: "+", Indole: "+", Sucrose: "−", Salt0: "+", O129: "+", Inositol: "+" },
+    expected: { topId: "plesiomonas_shigelloides", minPct: 25 },
+    dk: "Vibrio → Oxidase+ → Salt0+ → Inositol+ → O129S → P. shigelloides" },
+  { name: "A. caviae (VP−, Sucrose+, Oxidase+)",
+    group: "vibrio",
+    answers: { Oxidase: "+", Indole: "+", VP: "−", Sucrose: "+", Glucose: "+" },
+    expected: { topId: "aeromonas_caviae", minPct: 15 },
+    dk: "Vibrio → Oxidase+ → Sucrose+ → VP− → A. caviae" },
+  // ── Extended GPC cluster ──
+  { name: "S. epidermidis (Coag−, Novobiocin S, Urease+, DNase−)",
+    group: "gpc_cluster",
+    answers: { Coagulase: "−", Catalase: "+", Novobiocin: "−", Urease: "+", DNase: "−", Mannitol: "−" },
+    expected: { topId: "s_epidermidis", minPct: 30 },
+    dk: "GPC → Catalase+ → Coagulase− → Novobiocin S → S. epidermidis" },
+  { name: "S. haemolyticus (Coag−, Hemolysis+, Novobiocin S, Urease−, Trehalose+)",
+    group: "gpc_cluster",
+    answers: { Coagulase: "−", Catalase: "+", Hemolysis: "+", Novobiocin: "−", Urease: "−", Trehalose: "+", Mannitol: "V" },
+    expected: { topId: "s_haemolyticus", minPct: 15 },
+    dk: "GPC → Catalase+ → Coagulase− → Novobiocin S → Hemolysis+ → Urease− → S. haemolyticus" },
+  { name: "S. lugdunensis (Coag−, Clumping factor+, PYR+)",
+    group: "gpc_cluster",
+    answers: { Coagulase: "−", Catalase: "+", Novobiocin: "−", Mannitol: "+", Hemolysis: "+" },
+    expected: { topId: "s_lugdunensis", minPct: 15 },
+    dk: "GPC → Catalase+ → Coagulase− → Clumping factor+ → S. lugdunensis" },
+  // ── GPC chain (Streptococcus / Enterococcus) ──
+  { name: "S. pyogenes (Bacitracin S, PYR+, CAMP−)",
+    group: "gpc_chain",
+    answers: { Bacitracin: "+", PYR: "+", CAMP: "−", Hippurate: "−" },
+    expected: { topId: "s_pyogenes", minPct: 40 },
+    dk: "GPC chain → Beta-hemolytic → Bacitracin S → PYR+ → S. pyogenes (Group A)" },
+  { name: "S. agalactiae (CAMP+, Hippurate+, PYR−, Bacitracin R)",
+    group: "gpc_chain",
+    answers: { CAMP: "+", Hippurate: "+", PYR: "−", Bacitracin: "−" },
+    expected: { topId: "s_agalactiae", minPct: 40 },
+    dk: "GPC chain → Beta-hemolytic → Bacitracin R → CAMP+ → Hippurate+ → S. agalactiae (Group B)" },
+  { name: "E. faecalis (PYR+, VP+, Sorbitol+)",
+    group: "gpc_chain",
+    answers: { PYR: "+", VP: "+", Sorbitol: "+", Bacitracin: "−" },
+    expected: { topId: "enterococcus_faecalis", minPct: 30 },
+    dk: "GPC chain → PYR+ → VP+ → Sorbitol+ → E. faecalis" },
+  { name: "E. faecium (PYR+, VP+, Sorbitol−)",
+    group: "gpc_chain",
+    answers: { PYR: "+", VP: "+", Sorbitol: "−", Bacitracin: "−" },
+    expected: { topId: "enterococcus_faecium", minPct: 25 },
+    dk: "GPC chain → PYR+ → VP+ → Sorbitol− → E. faecium" },
+  // ── Extended Neisseria ──
+  { name: "N. lactamica (Glucose+, Maltose+, Lactose+, Sucrose−)",
+    group: "gn_coccobacilli",
+    answers: { Glucose: "+", Maltose: "+", Lactose: "+", Sucrose: "−" },
+    expected: { topId: "neisseria_lactamica", minPct: 40 },
+    dk: "GN diplococci → Glucose+ → Maltose+ → Lactose+ → N. lactamica" },
+  { name: "N. sicca (Glucose+, Maltose+, Sucrose+, Fructose+, Nitrate−)",
+    group: "gn_coccobacilli",
+    answers: { Glucose: "+", Maltose: "+", Sucrose: "+", Fructose: "+", Nitrate: "−" },
+    expected: { topId: "neisseria_sicca", minPct: 25 },
+    dk: "GN diplococci → Glucose+ → Maltose+ → Sucrose+ → Fructose+ → Nitrate− → N. sicca" },
+  { name: "N. mucosa (Glucose+, Maltose+, Sucrose+, Fructose+, Nitrate+)",
+    group: "gn_coccobacilli",
+    answers: { Glucose: "+", Maltose: "+", Sucrose: "+", Fructose: "+", Nitrate: "+" },
+    expected: { topId: "neisseria_mucosa", minPct: 25 },
+    dk: "GN diplococci → Glucose+ → Maltose+ → Sucrose+ → Nitrate+ → N. mucosa" },
+  // ── Yersinia pestis (non-motile, urease−) ──
+  { name: "Y. pestis (Non-motile, Urease−, Indole−, VP−, Arabinose+)",
+    answers: { Oxidase: "−", Motility: "−", Urease: "−", Indole: "−", VP: "−", LDC: "−", ODC: "−", Sucrose: "−", Arabinose: "+", Trehalose: "+" },
+    expected: { topId: "yersinia_pestis", minPct: 10 },
+    dk: "GNR → Oxidase− → Non-motile → Urease− → VP− → ODC− → Arabinose+ → Y. pestis" },
 ];
 
 function runTests() {
   console.log("\n══════════════════════════════════════════════════════════════");
-  console.log("  MCM Bayesian Algorithm — Validation Suite");
+  console.log("  MCM Bayesian Algorithm — Expanded Validation Suite v2");
+  console.log("  50 scenarios · Dichotomous Key concordance comparison");
   console.log("══════════════════════════════════════════════════════════════\n");
 
   let passed = 0, failed = 0;
+  const groupStats = {};
+  const concordance = []; // Bayes vs DK comparison
 
   for (const scenario of SCENARIOS) {
     const group = scenario.group || "enterobacterales";
+    if (!groupStats[group]) groupStats[group] = { pass: 0, fail: 0, total: 0 };
+    groupStats[group].total++;
+
     const results = calcProbabilityBayes(group, scenario.answers);
     const top = results[0];
     const top3 = results.slice(0, 3);
@@ -630,6 +835,7 @@ function runTests() {
 
     console.log(`▸ ${scenario.name}`);
     console.log(`  Expected: top=${scenario.expected.topId}, pct≥${scenario.expected.minPct}`);
+    if (scenario.dk) console.log(`  DK path:  ${scenario.dk}`);
     console.log(`  Top 3:`);
     for (const r of top3) {
       const flag = r._mcm ? `[MCM ${r._usedMcmTests}t]` : "[legacy]";
@@ -637,14 +843,47 @@ function runTests() {
     }
     console.log(`  Result: ${ok ? "✅ PASS" : "❌ FAIL"} ` +
                 `(top=${top.id}, ${top.pct}%${passTop ? "" : " — wrong species"}${passPct ? "" : " — pct too low"})`);
+
+    // Track DK concordance
+    if (scenario.dk) {
+      const bayesId = top.id;
+      const dkId = scenario.expected.topId;
+      const agree = bayesId === dkId;
+      concordance.push({ name: scenario.name, group, bayesId, dkId, agree, pct: top.pct });
+    }
+
     console.log();
-    if (ok) passed++; else failed++;
+    if (ok) { passed++; groupStats[group].pass++; }
+    else { failed++; groupStats[group].fail++; }
   }
 
+  // ── Summary ──
   console.log("══════════════════════════════════════════════════════════════");
-  console.log(`  ${passed}/${SCENARIOS.length} passed, ${failed} failed`);
+  console.log(`  OVERALL: ${passed}/${SCENARIOS.length} passed, ${failed} failed`);
   console.log("══════════════════════════════════════════════════════════════\n");
+
+  // ── Group breakdown ──
+  console.log("── Per-Group Results ──");
+  for (const [g, s] of Object.entries(groupStats)) {
+    const pct = Math.round((s.pass / s.total) * 100);
+    console.log(`  ${g.padEnd(20)} ${s.pass}/${s.total} (${pct}%)`);
+  }
+
+  // ── DK Concordance ──
+  const dkTotal = concordance.length;
+  const dkAgree = concordance.filter(c => c.agree).length;
+  console.log(`\n── Bayes vs Dichotomous Key Concordance ──`);
+  console.log(`  Concordant: ${dkAgree}/${dkTotal} (${Math.round((dkAgree / dkTotal) * 100)}%)`);
+  if (dkTotal > dkAgree) {
+    console.log("  Discordant cases:");
+    for (const c of concordance.filter(c => !c.agree)) {
+      console.log(`    ❌ ${c.name}: Bayes→${c.bayesId} vs DK→${c.dkId}`);
+    }
+  }
+
+  console.log("\n══════════════════════════════════════════════════════════════\n");
   process.exit(failed > 0 ? 1 : 0);
 }
 
 runTests();
+

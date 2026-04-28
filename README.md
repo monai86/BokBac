@@ -8,11 +8,13 @@
 
 | Version | Date | Description |
 |---------|------|-------------|
+| **3.1.1** | 2026-04-27 | Expanded Validation Suite (50 scenarios, 8 groups, DK concordance) |
+| **3.1.0** | 2026-04-26 | MCM coverage expanded to 157 species (93 with full data) |
 | **3.0.0** | 2026-04-26 | MCM 11th Bayesian Probability Engine — Naive Bayes + clinical priors |
 | **2.0.0** | 2026-04-26 | Liquid Glass Design System + Project Modularization |
 | **1.0.0** | 2026-04-XX | Initial Release - Single File React App |
 
-**Current Version**: `3.0.0` — See [`CHANGELOG.md`](CHANGELOG.md) for detailed changes
+**Current Version**: `3.1.1` — See [`CHANGELOG.md`](CHANGELOG.md) for detailed changes
 
 ### Semantic Versioning (SemVer)
 
@@ -41,7 +43,7 @@
 ├── scripts/                # MCM extraction & validation pipeline
 │   ├── parse_mcm_*.py      # Parsers by genus group
 │   ├── generate_mcm_js.py  # JSON → js/mcm_data.js generator
-│   ├── test_bayes.mjs      # Node.js validation suite (11 scenarios)
+│   ├── test_bayes.mjs      # Node.js validation suite (50 scenarios, DK concordance)
 │   └── mcm_extract/
 │       └── parsed/         # Intermediate JSON (committed for reproducibility)
 ├── firebase-config.js      # Firebase configuration (API keys, auth settings)

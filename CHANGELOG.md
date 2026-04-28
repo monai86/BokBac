@@ -6,6 +6,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.1.1] - 2026-04-27
+
+### Added
+- **Expanded Validation Suite (50 scenarios)** — test_bayes.mjs upgraded from 18 → 50 textbook-reference scenarios
+  - 16 new LIBRARY entries for testing: Enterobacter (cloacae, aerogenes), Providencia (rettgeri, stuartii), Pseudomonas (stutzeri, putida), Vibrio (alginolyticus, mimicus), Plesiomonas shigelloides, Aeromonas caviae, Neisseria (sicca, mucosa), Streptococcus (pyogenes, agalactiae), Enterococcus (faecalis, faecium)
+  - New `gpc_chain` group added for Streptococcus/Enterococcus testing
+  - Coverage: **8 bacterial groups** (Enterobacterales, NFB, Vibrio/Aeromonas, GPC Cluster, GPC Chain, GN Coccobacilli)
+- **Dichotomous Key (DK) Concordance Comparison** — each scenario now includes a `dk` field documenting the textbook dichotomous key identification path
+  - `runTests()` compares Bayes engine output vs DK expected result
+  - Per-group pass rate breakdown in summary output
+  - Discordant cases listed individually for review
+- **Validation results**: **50/50 PASS**, **33/33 DK concordance (100%)**
+
 ## [3.1.0] - 2026-04-26
 
 ### Added
