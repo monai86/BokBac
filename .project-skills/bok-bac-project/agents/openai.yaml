@@ -1,0 +1,4 @@
+interface:
+  display_name: "BOK BAC Project"
+  short_description: "Project workflow for BOK BAC web app"
+  default_prompt: "Use $bok-bac-project to update the BOK BAC app while following its version, validation, and deploy workflow."

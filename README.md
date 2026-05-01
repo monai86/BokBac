@@ -30,10 +30,23 @@
 
 ---
 
+## Project Skill
+
+โปรเจกต์นี้มี project-local skill สำหรับใช้ใน IDE หรือ AI coding assistant:
+
+- `.project-skills/bok-bac-project/SKILL.md`
+- `AGENTS.md`
+
+ใช้เป็น entry point สำหรับแยก workflow ระหว่าง legacy v3, modern v4, MCM data pipeline, validation, release และ deploy tasks.
+
+---
+
 ## โครงสร้างไฟล์ (Refactored)
 
 ```
 /Users/porschecaa/Desktop/NewML/
+├── AGENTS.md               # Project instructions for IDE / AI coding assistants
+├── .project-skills/        # Project-local workflow skill
 ├── index.html              # HTML structure + React components + Bayesian engine
 ├── css/
 │   └── styles.css          # All CSS styles (dark theme, Liquid Glass, responsive)
@@ -46,6 +59,13 @@
 │   ├── test_bayes.mjs      # Node.js validation suite (50 scenarios, DK concordance)
 │   └── mcm_extract/
 │       └── parsed/         # Intermediate JSON (committed for reproducibility)
+├── v2/                     # Modern Vite + React + TypeScript app (v4)
+├── docs/
+│   ├── deployment/         # Deployment guides
+│   ├── development/        # Development workflow, release checklist, progress
+│   └── presentations/      # Presentation exports
+├── config/                 # Firebase / hosting provider config templates
+├── assets/                 # Images and reference materials
 ├── firebase-config.js      # Firebase configuration (API keys, auth settings)
 ├── VERSION                 # Current version number (SemVer)
 ├── CHANGELOG.md            # Detailed version history
@@ -237,6 +257,8 @@ netlify.toml        ← Netlify config (optional)
 **ไม่ต้อง deploy:**
 - `index.backup.html` - ไฟล์สำรอง ไม่ต้องใช้
 - `scripts/` - pipeline scripts (server-side only)
+- `archive/` - deprecated local-only files
+- `assets/references/local/` - protected reference PDF/CSV files
 - `*.pdf`, `*.csv` - reference materials (gitignored)
 
 ---

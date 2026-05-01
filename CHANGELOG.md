@@ -6,6 +6,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- **Project-local workflow skill** — added `.project-skills/bok-bac-project` and `AGENTS.md` to centralize repository workflow guidance for legacy v3, modern v4, MCM data pipeline, validation, release, and deploy tasks.
+- **Version Update Checklist** — added `docs/development/version-update-checklist.md` to standardize the process of updating changelogs, versions, and documentation for workflow and tooling changes.
+- **Repository organization** — moved secondary workflow/deployment docs under `docs/`, local reference materials under `assets/references/local/`, and deprecated local-only files under `archive/`.
+
 ## [3.1.1] - 2026-04-27
 
 ### Added

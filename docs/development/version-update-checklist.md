@@ -170,4 +170,4 @@ git push origin v2.1.0
 | `CHANGELOG.md` | บันทึกประวัติการเปลี่ยนแปลง | ทุกครั้งที่มีการเปลี่ยนแปลงระบบ |
 | `VERSION` | เลข version ปัจจุบัน | ทุกครั้งที่ bump version |
 | `README.md` | เอกสารหลัก | ทุกครั้งที่มี feature ใหม่ |
-| `DEVELOPMENT.md` | แนวทางการพัฒนา | เมื่อเปลี่ยน workflow |
+| `docs/development/development-workflow.md` | แนวทางการพัฒนา | เมื่อเปลี่ยน workflow |

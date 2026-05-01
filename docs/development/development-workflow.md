@@ -5,6 +5,16 @@
 
 ---
 
+## Project Skill
+
+โปรเจกต์นี้มี project-local skill สำหรับใช้ใน IDE หรือ AI coding assistant ที่:
+
+- `.project-skills/bok-bac-project/SKILL.md`
+
+ให้ใช้ skill นี้เป็น entry point ก่อนเริ่มงานใน repository เพื่อแยกให้ชัดว่าเป็นงาน legacy v3, modern v4, MCM data pipeline, validation, release หรือ deploy workflow.
+
+---
+
 ## 📋 Checklist ก่อน commit ทุกครั้ง
 
 ### 1. อัปเดต README.md (ทุกครั้งที่มีการเปลี่ยนแปลงใน project)
