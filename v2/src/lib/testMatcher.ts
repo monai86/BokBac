@@ -47,8 +47,8 @@ export function testMatch(dbResult: string, userAnswer: string): boolean | null 
     normR === 'α/γ'
   if (isV) return null
 
-  const rSign = normR.replace(/[^+\-]/g, '').charAt(0)
-  const aSign = normAns.replace(/[^+\-]/g, '').charAt(0)
+  const rSign = normR.replace(/[^+-]/g, '').charAt(0)
+  const aSign = normAns.replace(/[^+-]/g, '').charAt(0)
   if (rSign && aSign && rSign !== '/' && aSign !== '/') {
     return rSign === aSign
   }

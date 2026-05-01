@@ -53,8 +53,6 @@ B. Reasoning panel inside result card
    - Optional: visualize as small bar chart per test
 
 C. DX / cleanup
-   - Fix duplicate "nacl_6" key warning in v2/src/data/bacteriaLibrary.ts
-     (originates from legacy js/data.js around line 1756)
    - Replace @ts-nocheck in bacteriaLibrary.ts + mcmData.ts with
      proper Species/McmEntry types
    - Add ESLint + Prettier config + lint job in CI

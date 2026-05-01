@@ -13,6 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Version Update Checklist** — added `docs/development/version-update-checklist.md` to standardize the process of updating changelogs, versions, and documentation for workflow and tooling changes.
 - **Repository organization** — moved secondary workflow/deployment docs under `docs/`, local reference materials under `assets/references/local/`, and deprecated local-only files under `archive/`.
 
+### Fixed
+- **NaCl test alias collision** — split `6.5% NaCl` (`nacl_6_5`) from `6% NaCl` (`nacl_6`) across legacy and v4 data to remove duplicate-key overrides during Vite build.
+
 ## [3.1.1] - 2026-04-27
 
 ### Added
