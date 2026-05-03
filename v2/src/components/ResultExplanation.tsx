@@ -5,6 +5,10 @@ function pluralize(count: number, singular: string, plural = `${singular}s`) {
   return count === 1 ? singular : plural
 }
 
+function evidenceByTest(species: RankedSpecies | undefined) {
+  return new Map((species?._evidence || []).map((item) => [item.test, item]))
+}
+
 export function ResultExplanation({
   results,
   answeredCount,
@@ -30,6 +34,16 @@ export function ResultExplanation({
     .sort((a, b) => Math.abs(a.impact) - Math.abs(b.impact))
     .reverse()
     .slice(0, 4)
+  const runnerEvidence = evidenceByTest(runnerUp)
+  const differentiators = top._evidence
+    .map((item) => ({ top: item, runner: runnerEvidence.get(item.test) }))
+    .filter(({ runner }) => runner && runner.direction !== 'neutral')
+    .sort((a, b) => {
+      const aDelta = Math.abs(a.top.impact - (a.runner?.impact || 0))
+      const bDelta = Math.abs(b.top.impact - (b.runner?.impact || 0))
+      return bDelta - aDelta
+    })
+    .slice(0, 3)
 
   return (
     <aside className="lg-surface mb-4 p-4">
@@ -115,6 +129,31 @@ export function ResultExplanation({
                     : ''}
                   {item.isKey ? ' · key test' : ''}
                 </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {runnerUp && differentiators.length > 0 && (
+        <div className="mt-4 border-t border-white/10 pt-3">
+          <h4 className="text-[10px] font-semibold uppercase tracking-wider text-zinc-500">
+            Lead over runner-up
+          </h4>
+          <div className="mt-2 grid gap-2">
+            {differentiators.map(({ top: topItem, runner }) => (
+              <div
+                key={`${topItem.test}-${runnerUp.id}`}
+                className="rounded-lg border border-white/5 bg-white/[0.03] p-3"
+              >
+                <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+                  <span className="text-sm font-medium text-zinc-100">
+                    {topItem.test} {topItem.answer}
+                  </span>
+                  <span className="text-xs text-zinc-500">
+                    {top.name}: {(topItem.likelihood * 100).toFixed(0)}% · {runnerUp.name}: {((runner?.likelihood || 0) * 100).toFixed(0)}%
+                  </span>
+                </div>
               </div>
             ))}
           </div>

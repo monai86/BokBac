@@ -56,6 +56,17 @@ describe('IdentifyPage reset flow', () => {
 
     expect(screen.getByRole('button', { name: /load saved case/i })).toBeTruthy()
 
+    const titleInput = screen.getByLabelText('Case title')
+    await user.clear(titleInput)
+    await user.type(titleInput, 'Teaching oxidase case')
+
+    const tagsInput = screen.getByPlaceholderText(/tags:/i)
+    await user.type(tagsInput, 'teaching, qc')
+
+    await user.type(screen.getByPlaceholderText(/search cases/i), 'teaching')
+    expect(screen.getByDisplayValue('Teaching oxidase case')).toBeTruthy()
+    expect(screen.getByRole('link', { name: /export json/i })).toBeTruthy()
+
     await user.click(screen.getByRole('button', { name: /reset/i }))
     expect(useIdentifyStore.getState().answers).toEqual({})
 

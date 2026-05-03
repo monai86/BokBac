@@ -28,6 +28,7 @@ npm run dev          # http://localhost:5173
 # Testing (50 textbook scenarios)
 npm run test         # one-shot
 npm run test:watch   # watch mode
+npm run test:e2e     # browser flow tests (Playwright)
 
 # Production
 npm run build        # outputs to dist/
@@ -87,8 +88,19 @@ Same Naive Bayes engine as legacy v3.1.1, ported to TypeScript:
 ## Workflow Features
 
 - **Result explanation panel** shows confidence, runner-up gap, MCM evidence coverage, key-test alignment, hard exclusions, and per-test evidence for the leading species.
-- **Local saved cases** lets users save, reload, and delete recent identification sessions in browser localStorage.
+- **Runner-up comparison** highlights which answered tests separate the leading species from the nearest alternative.
+- **Local saved cases** lets users save, rename, tag, search, export, reload, and delete recent identification sessions in browser localStorage.
 - **Accessible controls** expose pressed state and descriptive labels for group selection, biochemical answers, reset, save, load, and delete actions.
+- **Browser-level QA** covers the main identify, explain, save, reset, and reload workflow in desktop and mobile Chromium.
+
+## Backend/Auth Readiness
+
+The v4 app remains local-first and deploys as a static Cloudflare Pages app. If multi-user sync is needed later, keep saved case contracts compatible with `SavedCase` in `src/lib/types.ts` and add server-side validation around:
+
+- case ownership and sharing permissions
+- immutable audit timestamps for created/updated cases
+- protected export/import flows
+- PHI/PII guidance before storing real clinical data
 
 ## 🚀 Deployment (Cloudflare Pages)
 

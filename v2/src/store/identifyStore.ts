@@ -15,7 +15,12 @@ function loadSavedCases(): SavedCase[] {
   try {
     const raw = window.localStorage.getItem(SAVED_CASES_KEY)
     const parsed = raw ? JSON.parse(raw) : []
-    return Array.isArray(parsed) ? parsed : []
+    if (!Array.isArray(parsed)) return []
+    return parsed.map((item): SavedCase => ({
+      ...item,
+      title: typeof item.title === 'string' && item.title.trim() ? item.title : item.topSpecies || 'Untitled case',
+      tags: Array.isArray(item.tags) ? item.tags : [],
+    }))
   } catch {
     return []
   }
@@ -35,6 +40,7 @@ interface IdentifyState {
   setAnswer: (testKey: string, value: string | null) => void
   resetAnswers: () => void
   saveCurrentCase: () => void
+  updateCase: (id: string, updates: Partial<Pick<SavedCase, 'title' | 'tags' | 'note'>>) => void
   loadCase: (id: string) => void
   deleteCase: (id: string) => void
   recompute: () => void
@@ -73,6 +79,8 @@ export const useIdentifyStore = create<IdentifyState>()((set, get) => ({
     const savedCase: SavedCase = {
       id: `case-${Date.now()}`,
       createdAt: new Date().toISOString(),
+      title: top?.name ? `${top.name} workup` : 'Untitled case',
+      tags: [],
       group,
       answers: { ...answers },
       topSpecies: top?.name,
@@ -83,10 +91,26 @@ export const useIdentifyStore = create<IdentifyState>()((set, get) => ({
     set({ savedCases: next })
   },
 
+  updateCase: (id, updates) => {
+    const next = get().savedCases.map((item) =>
+      item.id === id
+        ? {
+            ...item,
+            ...updates,
+            title: updates.title ?? item.title,
+            tags: updates.tags?.map((tag) => tag.trim()).filter(Boolean) ?? item.tags,
+            updatedAt: new Date().toISOString(),
+          }
+        : item
+    )
+    persistSavedCases(next)
+    set({ savedCases: next })
+  },
+
   loadCase: (id) => {
     const match = get().savedCases.find((item) => item.id === id)
     if (!match) return
-    set({ group: match.group, answers: match.answers, results: [] })
+    set({ group: match.group, answers: { ...match.answers }, results: [] })
     get().recompute()
   },
 

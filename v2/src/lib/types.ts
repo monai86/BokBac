@@ -90,6 +90,10 @@ export interface RankedSpecies extends Species {
 export interface SavedCase {
   id: string
   createdAt: string
+  updatedAt?: string
+  title: string
+  tags: string[]
+  note?: string
   group: string
   answers: AnswersMap
   topSpecies?: string
