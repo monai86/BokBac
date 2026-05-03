@@ -14,7 +14,7 @@ export function Layout() {
             <span className="text-xl">🦠</span>
             <span className="hidden sm:inline">Microbial World</span>
             <span className="rounded-md border border-violet-500/40 bg-violet-500/15 px-1.5 py-0.5 text-[10px] font-semibold text-violet-300">
-              v4-alpha
+              v4.0.0
             </span>
           </Link>
           <nav className="flex gap-1">

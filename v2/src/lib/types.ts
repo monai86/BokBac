@@ -53,11 +53,29 @@ export type AnswersMap = Record<string, UserAnswer>
 
 export type ConfidenceLevel = 'high' | 'medium' | 'low' | 'very_low'
 
+export type EvidenceDirection = 'supportive' | 'conflicting' | 'neutral'
+
+export type EvidenceSource = 'mcm' | 'library' | 'uninformative'
+
+export interface TestEvidence {
+  test: string
+  answer: string
+  source: EvidenceSource
+  likelihood: number
+  expectedPct?: number
+  weight: number
+  impact: number
+  direction: EvidenceDirection
+  isKey: boolean
+}
+
 export interface RankedSpecies extends Species {
   /** Probability % (0–99). 0 means hard-excluded. */
   pct: number
   /** Number of MCM tests that contributed log-likelihood. */
   _usedMcmTests: number
+  /** Per-answer evidence used to explain why this species ranked where it did. */
+  _evidence: TestEvidence[]
   _keyMatch: number
   _keyMismatch: number
   _excluded: boolean
@@ -67,4 +85,13 @@ export interface RankedSpecies extends Species {
   _confidence?: ConfidenceLevel
   /** Only set on the top result — pp gap to runner-up. */
   _gap?: number
+}
+
+export interface SavedCase {
+  id: string
+  createdAt: string
+  group: string
+  answers: AnswersMap
+  topSpecies?: string
+  topPct?: number
 }

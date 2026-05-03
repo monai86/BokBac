@@ -39,7 +39,7 @@ export function AboutPage() {
         </ul>
 
         <p className="pt-2 text-xs text-zinc-500 border-t border-white/10">
-          v4.0.0-alpha · Open source · Educational project
+          v4.0.0 · Open source · Educational project
         </p>
       </div>
     </div>

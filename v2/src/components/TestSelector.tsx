@@ -64,7 +64,10 @@ export function TestSelector() {
               <div className="flex items-center gap-1">
                 {opts.map((o) => (
                   <button
+                    type="button"
                     key={o.value}
+                    aria-label={`Set ${t.label} to ${o.label}`}
+                    aria-pressed={current === o.value}
                     onClick={() =>
                       setAnswer(t.label, current === o.value ? null : o.value)
                     }

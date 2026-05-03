@@ -8,6 +8,8 @@ import type {
   RankedSpecies,
   Species,
   SuitesMap,
+  EvidenceDirection,
+  TestEvidence,
 } from './types'
 import {
   HARD_EXCLUSION_TESTS,
@@ -36,6 +38,7 @@ interface IntermediateResult {
   keyMismatch: number
   usedMcmTests: number
   mcmAvailable: boolean
+  evidence: TestEvidence[]
 }
 
 function determineConfidence(topPct: number, gap: number, nAnswered: number): ConfidenceLevel {
@@ -43,6 +46,12 @@ function determineConfidence(topPct: number, gap: number, nAnswered: number): Co
   if (topPct >= 50 || gap >= 10) return 'medium'
   if (topPct < 25) return 'very_low'
   return 'low'
+}
+
+function evidenceDirection(likelihood: number): EvidenceDirection {
+  if (likelihood > 0.55) return 'supportive'
+  if (likelihood < 0.35) return 'conflicting'
+  return 'neutral'
 }
 
 /**
@@ -74,6 +83,7 @@ export function calcProbabilityBayes(
     let hardExcluded = false
     let keyMatch = 0
     let keyMismatch = 0
+    const evidence: TestEvidence[] = []
 
     // Step 1: Hard exclusion check
     for (const [ansKey, ans] of answerEntries) {
@@ -100,6 +110,10 @@ export function calcProbabilityBayes(
     for (const [ansKey, ans] of answerEntries) {
       const cleanKey = ansKey.toLowerCase().replace(/[^a-z0-9]/g, '')
       const mcmTestId = lookupMcmTest(ansKey)
+      const isKey = keyTestsForBug.some((kt) => {
+        const kk = kt.t.toLowerCase().replace(/[^a-z0-9]/g, '')
+        return kk === cleanKey || cleanKey.includes(kk) || kk.includes(cleanKey)
+      })
 
       // MCM-based likelihood
       if (mcm && mcmTestId && mcm.tests && mcm.tests[mcmTestId] != null) {
@@ -107,11 +121,19 @@ export function calcProbabilityBayes(
         const lik = mcmLikelihood(pct, ans)
         if (lik != null) {
           const smoothed = Math.max(EPS, Math.min(1 - EPS, lik))
-          logLik += Math.log(smoothed)
+          const impact = Math.log(smoothed)
+          logLik += impact
           usedMcmTests++
-          const isKey = keyTestsForBug.some((kt) => {
-            const kk = kt.t.toLowerCase().replace(/[^a-z0-9]/g, '')
-            return kk === cleanKey || cleanKey.includes(kk) || kk.includes(cleanKey)
+          evidence.push({
+            test: ansKey,
+            answer: ans,
+            source: 'mcm',
+            likelihood: smoothed,
+            expectedPct: pct,
+            weight: 1,
+            impact,
+            direction: evidenceDirection(smoothed),
+            isKey,
           })
           if (isKey) {
             if (smoothed > 0.5) keyMatch++
@@ -137,14 +159,37 @@ export function calcProbabilityBayes(
           const lik = mcmLikelihood(estPct, ans)
           if (lik != null) {
             const smoothed = Math.max(EPS, Math.min(1 - EPS, lik))
-            logLik += Math.log(smoothed) * 0.7
+            const impact = Math.log(smoothed) * 0.7
+            logLik += impact
+            evidence.push({
+              test: ansKey,
+              answer: ans,
+              source: 'library',
+              likelihood: smoothed,
+              expectedPct: estPct,
+              weight: 0.7,
+              impact,
+              direction: evidenceDirection(smoothed),
+              isKey,
+            })
             usedFallback = true
           }
         }
       }
       if (!usedFallback) {
         // Uninformative likelihood — log(0.5) ≈ -0.693 ensures rich-data species win.
-        logLik += Math.log(0.5)
+        const impact = Math.log(0.5)
+        logLik += impact
+        evidence.push({
+          test: ansKey,
+          answer: ans,
+          source: 'uninformative',
+          likelihood: 0.5,
+          weight: 1,
+          impact,
+          direction: 'neutral',
+          isKey,
+        })
       }
     }
 
@@ -161,6 +206,7 @@ export function calcProbabilityBayes(
       keyMismatch,
       usedMcmTests,
       mcmAvailable: !!mcm,
+      evidence,
     }
   })
 
@@ -195,6 +241,7 @@ export function calcProbabilityBayes(
         _excluded: r.hardExcluded,
         _mcm: r.mcmAvailable,
         _usedMcmTests: r.usedMcmTests,
+        _evidence: r.evidence,
       } as RankedSpecies
     })
     .sort((a, b) => {

@@ -342,3 +342,18 @@ describe('MCM Bayesian engine — textbook validation', () => {
     })
   }
 })
+
+describe('MCM Bayesian engine — explainability metadata', () => {
+  it('attaches per-test evidence to ranked species', () => {
+    const ranked = calcProbabilityBayes(
+      'enterobacterales',
+      { Indole: '+', Citrate: '−', Urease: '−' },
+      opts
+    )
+    const top = ranked[0]
+
+    expect(top._evidence.length).toBe(3)
+    expect(top._evidence.some((item) => item.source === 'mcm')).toBe(true)
+    expect(top._evidence.every((item) => typeof item.likelihood === 'number')).toBe(true)
+  })
+})

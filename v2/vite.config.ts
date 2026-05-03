@@ -10,6 +10,23 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules/react') || id.includes('node_modules/react-dom')) {
+            return 'react-vendor'
+          }
+          if (id.includes('/src/data/')) {
+            return 'app-data'
+          }
+          if (id.includes('/src/lib/bayesianEngine') || id.includes('/src/lib/mcmAdapter')) {
+            return 'bayes-engine'
+          }
+        },
+      },
+    },
+  },
   test: {
     globals: true,
     environment: 'jsdom',

@@ -2,10 +2,13 @@ import { useEffect } from 'react'
 import { GroupSelector } from '@/components/GroupSelector'
 import { TestSelector } from '@/components/TestSelector'
 import { SpeciesCard } from '@/components/SpeciesCard'
+import { ResultExplanation } from '@/components/ResultExplanation'
+import { SavedCasesPanel } from '@/components/SavedCasesPanel'
 import { useIdentifyStore } from '@/store/identifyStore'
 
 export function IdentifyPage() {
   const results = useIdentifyStore((s) => s.results)
+  const answeredCount = useIdentifyStore((s) => Object.keys(s.answers).length)
   const recompute = useIdentifyStore((s) => s.recompute)
   const resetAnswers = useIdentifyStore((s) => s.resetAnswers)
 
@@ -39,7 +42,9 @@ export function IdentifyPage() {
             2. ตอบผล Biochemical Tests
           </h2>
           <button
+            type="button"
             onClick={resetAnswers}
+            aria-label="Reset all biochemical test answers"
             className="text-xs text-zinc-500 hover:text-zinc-200"
           >
             ↺ Reset
@@ -47,6 +52,8 @@ export function IdentifyPage() {
         </div>
         <TestSelector />
       </section>
+
+      <SavedCasesPanel />
 
       <section>
         <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-zinc-500">
@@ -57,11 +64,14 @@ export function IdentifyPage() {
             กำลังคำนวณ…
           </div>
         ) : (
-          <div className="grid gap-3 md:grid-cols-2">
-            {top10.map((s, i) => (
-              <SpeciesCard key={s.id} species={s} rank={i} />
-            ))}
-          </div>
+          <>
+            <ResultExplanation results={results} answeredCount={answeredCount} />
+            <div className="grid gap-3 md:grid-cols-2">
+              {top10.map((s, i) => (
+                <SpeciesCard key={s.id} species={s} rank={i} />
+              ))}
+            </div>
+          </>
         )}
       </section>
     </div>

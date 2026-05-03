@@ -3,7 +3,7 @@ import { ALL_SUITES } from '@/lib/dataLoader'
 
 const GROUP_LABELS: Record<string, string> = {
   enterobacterales: 'Enterobacterales (GNR oxidase−)',
-  nfb: 'Non-Fermenters (NFB, oxidase+)',
+  nfb: 'Non-Fermenters (NFB)',
   vibrio: 'Vibrio / Aeromonas',
   gpc_cluster: 'GPC clusters (Staphylococcus)',
   gpc_chain: 'GPC chains (Strep / Enterococcus)',
@@ -20,7 +20,9 @@ export function GroupSelector() {
     <div className="flex flex-wrap gap-2">
       {groups.map((g) => (
         <button
+          type="button"
           key={g}
+          aria-pressed={group === g}
           onClick={() => setGroup(g)}
           className={`rounded-full border px-3 py-1.5 text-xs font-medium transition ${
             group === g

@@ -2,6 +2,10 @@
 
 Modern rewrite of the bacterial identification web app using Vite + React 19 + TypeScript.
 
+## Version
+
+Current modern app version: `v4.0.0`
+
 ## 🛠 Tech Stack
 
 | Layer | Tool | Why |
@@ -80,6 +84,12 @@ Same Naive Bayes engine as legacy v3.1.1, ported to TypeScript:
 - **8 bacterial groups**: Enterobacterales, NFB, Vibrio, GPC cluster/chain, GPB, GN coccobacilli
 - **50/50 textbook scenarios** PASS
 
+## Workflow Features
+
+- **Result explanation panel** shows confidence, runner-up gap, MCM evidence coverage, key-test alignment, hard exclusions, and per-test evidence for the leading species.
+- **Local saved cases** lets users save, reload, and delete recent identification sessions in browser localStorage.
+- **Accessible controls** expose pressed state and descriptive labels for group selection, biochemical answers, reset, save, load, and delete actions.
+
 ## 🚀 Deployment (Cloudflare Pages)
 
 Connect this repo to Cloudflare Pages with:
@@ -92,3 +102,5 @@ Connect this repo to Cloudflare Pages with:
 | Node version | `22` |
 
 The `public/_headers` and `public/_redirects` files are picked up automatically.
+
+Security headers include a self-only CSP, frame protection, MIME sniffing protection, referrer policy, and disabled camera/microphone/geolocation permissions.
