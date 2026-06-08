@@ -48,6 +48,8 @@ src/
 │   └── McmBadge.tsx
 ├── pages/
 │   ├── IdentifyPage.tsx    # Main identification UI
+│   ├── LibraryPage.tsx     # Searchable species catalog
+│   ├── SpeciesDetailPage.tsx
 │   └── AboutPage.tsx
 ├── store/
 │   └── identifyStore.ts    # Zustand state
@@ -90,6 +92,8 @@ Same Naive Bayes engine as legacy v3.1.1, ported to TypeScript:
 - **Result explanation panel** shows confidence, runner-up gap, MCM evidence coverage, key-test alignment, hard exclusions, and per-test evidence for the leading species.
 - **Runner-up comparison** highlights which answered tests separate the leading species from the nearest alternative.
 - **Local saved cases** lets users save, rename, tag, search, export, reload, and delete recent identification sessions in browser localStorage.
+- **Library browser** adds searchable, group-filtered access to the full 157-species catalog.
+- **Species detail pages** surface colony morphology, gram stain, biochemical rows, media, and clinical teaching notes per organism.
 - **Accessible controls** expose pressed state and descriptive labels for group selection, biochemical answers, reset, save, load, and delete actions.
 - **Browser-level QA** covers the main identify, explain, save, reset, and reload workflow in desktop and mobile Chromium.
 

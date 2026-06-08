@@ -15,55 +15,64 @@ export const SPECIMEN_GUIDE = [
   { id: 'blood', label: 'เลือด (Blood)', emoji: '🩸',
     plates: ['Blood agar (BAP)', 'MacConkey (MCA)', 'Chocolate agar (CA)'],
     condition: '37°C, 5% CO₂ สำหรับ CA; ขวด blood culture anaerobic',
-    notes: 'Blood culture bottle → subculture เมื่อได้สัญญาณ alarm'
+    notes: 'Blood culture bottle → subculture เมื่อได้สัญญาณ alarm',
+    organisms: 'Staphylococcus aureus, Escherichia coli, Klebsiella pneumoniae, Pseudomonas aeruginosa, Streptococcus pneumoniae, Salmonella spp., Acinetobacter baumannii'
   },
   {
     id: 'csf', label: 'น้ำไขสันหลัง (CSF)', emoji: '🧠', 
     plates: ['Blood agar (BAP)', 'Chocolate agar (CA)', 'MacConkey (MCA)'],
     condition: '37°C, 5% CO₂, ประมวลผล ทันที',
-    notes: 'Gram stain ก่อน: GN diplococci = N. meningitidis, GP diplococci = S. pneumoniae'
+    notes: 'Gram stain ก่อน: GN diplococci = N. meningitidis, GP diplococci = S. pneumoniae',
+    organisms: 'Neisseria meningitidis, Streptococcus pneumoniae, Streptococcus agalactiae, Haemophilus influenzae'
   },
   {
     id: 'sputum', label: 'เสมหะ (Sputum)', emoji: '🫁',
     plates: ['Blood agar (BAP)', 'MacConkey (MCA)', 'Chocolate agar (CA)'],
     condition: '37°C, 5% CO₂ สำหรับ CA, 18–48h',
-    notes: 'Gram stain: >25 PMN/LPF + <10 epithelial/LPF = acceptable'
+    notes: 'Gram stain: >25 PMN/LPF + <10 epithelial/LPF = acceptable',
+    organisms: 'Streptococcus pneumoniae, Haemophilus influenzae, Klebsiella pneumoniae, Pseudomonas aeruginosa, Staphylococcus aureus'
   },
   {
     id: 'stool', label: 'อุจจาระ (Stool)', emoji: '💩',
     plates: ['MacConkey (MCA)', 'SS agar', 'XLD agar', 'TCBS agar (ถ้าสงสัย Vibrio)'],
     condition: '37°C, 18–24h',
-    notes: 'NLF + H₂S บน SS = Salmonella; NLF ไม่มี H₂S = Shigella; TCBS ถ้ามีประวัติกินอาหารทะเล'
+    notes: 'NLF + H₂S บน SS = Salmonella; NLF ไม่มี H₂S = Shigella; TCBS ถ้ามีประวัติกินอาหารทะเล',
+    organisms: 'Salmonella spp., Shigella spp., Vibrio cholerae, Vibrio parahaemolyticus, Escherichia coli'
   },
   {
     id: 'urine', label: 'ปัสสาวะ (Urine)', emoji: '💧',
     plates: ['Blood agar (BAP)', 'MacConkey (MCA)', 'CLED agar'],
     condition: '37°C, 18–24h',
-    notes: '>10⁵ CFU/mL = significant; semi-quantitative streak method'
+    notes: '>10⁵ CFU/mL = significant; semi-quantitative streak method',
+    organisms: 'Escherichia coli, Klebsiella pneumoniae, Proteus mirabilis, Enterococcus faecalis, Staphylococcus saprophyticus'
   },
   {
     id: 'wound', label: 'บาดแผล (Wound)', emoji: '🧪',
     plates: ['Blood agar (BAP)', 'MacConkey (MCA)', 'MSA (สงสัย Staph)'],
     condition: '37°C aerobic ± anaerobic (ขึ้นกับความลึก)',
-    notes: 'Gram stain ชี้แนะการทดสอบต่อไป'
+    notes: 'Gram stain ชี้แนะการทดสอบต่อไป',
+    organisms: 'Staphylococcus aureus, Pseudomonas aeruginosa, Streptococcus pyogenes, Acinetobacter baumannii'
   },
   {
     id: 'genital', label: 'สิ่งส่งตรวจจากอวัยวะเพศ', emoji: '🔬',
     plates: ['Thayer-Martin (TMA)', 'Blood agar (BAP)', 'Chocolate agar (CA)'],
     condition: '37°C, 5% CO₂ จำเป็น, 24–48h',
-    notes: 'GN diplococci intracellular → oxidase test → N. gonorrhoeae'
+    notes: 'GN diplococci intracellular → oxidase test → N. gonorrhoeae',
+    organisms: 'Neisseria gonorrhoeae, Streptococcus agalactiae'
   },
   {
     id: 'throat', label: 'Throat Swab', emoji: '👅',
     plates: ['Blood agar (BAP)', 'Blood agar + Bacitracin disc'],
     condition: '37°C, 5% CO₂, 18–24h',
-    notes: 'β-hemolysis + Bacitracin S → GAS (S. pyogenes)'
+    notes: 'β-hemolysis + Bacitracin S → GAS (S. pyogenes)',
+    organisms: 'Streptococcus pyogenes'
   },
   {
     id: 'ear', label: 'Ear Swab', emoji: '👂',
     plates: ['Blood agar (BAP)', 'MacConkey (MCA)', 'Chocolate agar (CA)'],
     condition: '37°C, 18–24h',
-    notes: 'P. aeruginosa (otitis externa), S. pneumoniae (otitis media)'
+    notes: 'P. aeruginosa (otitis externa), S. pneumoniae (otitis media)',
+    organisms: 'Pseudomonas aeruginosa, Streptococcus pneumoniae, Staphylococcus aureus'
   },
 ];
 

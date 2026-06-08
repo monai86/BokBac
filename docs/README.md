@@ -4,6 +4,7 @@
 
 ## Development
 
+- `project-structure-th.md` — สรุปโครงสร้างไฟล์/โฟลเดอร์ของโปรเจกต์และกติกาการวางไฟล์ใหม่
 - `development/development-workflow.md` — workflow การพัฒนา, commit, branch, tag, deploy checklist
 - `development/version-update-checklist.md` — checklist สำหรับ version / changelog / README
 - `development/progress.md` — progress, backlog, notes สำหรับงานต่อเนื่อง

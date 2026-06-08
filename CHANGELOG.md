@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **v4 library browsing** — added searchable `LibraryPage` and linked `SpeciesDetailPage` in `v2/` so users can browse the species catalog, filter by bacterial group, and open organism-specific teaching details.
 - **Project-local workflow skill** — added `.project-skills/bok-bac-project` and `AGENTS.md` to centralize repository workflow guidance for legacy v3, modern v4, MCM data pipeline, validation, release, and deploy tasks.
 - **Version Update Checklist** — added `docs/development/version-update-checklist.md` to standardize the process of updating changelogs, versions, and documentation for workflow and tooling changes.
 - **Repository organization** — moved secondary workflow/deployment docs under `docs/`, local reference materials under `assets/references/local/`, and deprecated local-only files under `archive/`.

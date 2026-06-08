@@ -62,7 +62,7 @@ export function ResultExplanation({
         {top._confidence && <ConfidenceBadge level={top._confidence} />}
       </div>
 
-      <dl className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+      <dl className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-5">
         <div className="rounded-lg border border-white/5 bg-white/[0.03] p-3">
           <dt className="text-[10px] font-semibold uppercase tracking-wider text-zinc-500">
             Evidence
@@ -93,6 +93,16 @@ export function ResultExplanation({
             {excludedCount} hard-excluded
           </dd>
         </div>
+        {top.typicalityIndex !== undefined && (
+          <div className="rounded-lg border border-white/5 bg-white/[0.03] p-3">
+            <dt className="text-[10px] font-semibold uppercase tracking-wider text-zinc-500">
+              Typicality
+            </dt>
+            <dd className="mt-1 text-sm font-medium text-zinc-100">
+              {Math.round(top.typicalityIndex * 100)}%
+            </dd>
+          </div>
+        )}
       </dl>
 
       {visibleEvidence.length > 0 && (

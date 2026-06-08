@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { useIdentifyStore } from '@/store/identifyStore'
 import { IdentifyPage } from './IdentifyPage'
+import { MemoryRouter } from 'react-router-dom'
 
 describe('IdentifyPage reset flow', () => {
   beforeEach(() => {
@@ -21,7 +22,11 @@ describe('IdentifyPage reset flow', () => {
 
   it('keeps ranked results visible after users reset their answers', async () => {
     const user = userEvent.setup()
-    render(<IdentifyPage />)
+    render(
+      <MemoryRouter>
+        <IdentifyPage />
+      </MemoryRouter>
+    )
 
     await waitFor(() => {
       expect(screen.queryByText('กำลังคำนวณ…')).toBeNull()
@@ -45,7 +50,11 @@ describe('IdentifyPage reset flow', () => {
 
   it('saves, reloads, and deletes a local case from the workflow', async () => {
     const user = userEvent.setup()
-    render(<IdentifyPage />)
+    render(
+      <MemoryRouter>
+        <IdentifyPage />
+      </MemoryRouter>
+    )
 
     await waitFor(() => {
       expect(screen.queryByText('กำลังคำนวณ…')).toBeNull()

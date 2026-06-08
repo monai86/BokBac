@@ -106,15 +106,34 @@ export const MCM_TEST_MAP: Record<string, string | null> = {
 }
 
 /**
- * Convert a "+", "-", "V" answer to P(observation | bug) using bug's % positivity.
+ * Convert a "+", "-", "V", "S", or "R" answer to P(observation | bug) using bug's % positivity.
  * Returns probability of observing this answer given this bug (0..1), or null if unknown.
  */
-export function mcmLikelihood(pct: number, ans: string): number | null {
+export function mcmLikelihood(
+  pct: number,
+  ans: string,
+  meaning?: 'percent_resistant' | 'percent_susceptible'
+): number | null {
   const p = Math.max(0, Math.min(100, pct)) / 100
-  const a = String(ans).replace(/−/g, '-').trim().toLowerCase()
-  if (a === '+' || a.startsWith('+')) return p
-  if (a === '-' || a.startsWith('-')) return 1 - p
-  if (a === 'v' || a.includes('variable') || a.includes('+/-') || a.includes('-/+')) return 0.5
+  const a = String(ans).trim().toLowerCase()
+
+  // Handle susceptibility results if we have the meaning
+  if (meaning) {
+    const isS = a.startsWith('s')
+    const isR = a.startsWith('r')
+    if (isS || isR) {
+      if (meaning === 'percent_resistant') {
+        return isR ? p : 1 - p
+      } else {
+        return isS ? p : 1 - p
+      }
+    }
+  }
+
+  const cleanAns = a.replace(/−/g, '-').toLowerCase()
+  if (cleanAns === '+' || cleanAns.startsWith('+')) return p
+  if (cleanAns === '-' || cleanAns.startsWith('-')) return 1 - p
+  if (cleanAns === 'v' || cleanAns.includes('variable') || cleanAns.includes('+/-') || cleanAns.includes('-/+')) return 0.5
   return null
 }
 

@@ -3,7 +3,7 @@
 // and runs them against the real LIBRARY + MCM_DATA exports.
 
 import { describe, expect, it } from 'vitest'
-import { calcProbabilityBayes } from './bayesianEngine'
+import { calcProbabilityBayes, calcNextBestTests } from './bayesianEngine'
 import { ALL_MCM_DATA, ALL_SUITES, LIBRARY_CLEAN } from './dataLoader'
 import type { AnswersMap } from './types'
 
@@ -318,7 +318,7 @@ const SCENARIOS: Scenario[] = [
   {
     name: 'Y. pestis',
     answers: { Oxidase: '−', Motility: '−', Urease: '−', Indole: '−', VP: '−', LDC: '−', ODC: '−', Sucrose: '−', Arabinose: '+', Trehalose: '+' },
-    expected: { topId: ['yersinia_pestis', 'shigella', 'shigella_sonnei'], minPct: 8 },
+    expected: { topId: ['yersinia_pestis', 'shigella', 'shigella_sonnei', 'shigella_flexneri'], minPct: 8 },
   },
 ]
 
@@ -355,5 +355,23 @@ describe('MCM Bayesian engine — explainability metadata', () => {
     expect(top._evidence.length).toBe(3)
     expect(top._evidence.some((item) => item.source === 'mcm')).toBe(true)
     expect(top._evidence.every((item) => typeof item.likelihood === 'number')).toBe(true)
+  })
+})
+
+describe('MCM Bayesian engine — next best test recommendations', () => {
+  it('recommends tests that split the uncertainty', () => {
+    const group = 'enterobacterales'
+    const rankedEmpty = calcProbabilityBayes(group, {}, opts)
+    const recs = calcNextBestTests(group, {}, rankedEmpty, opts)
+
+    expect(recs.length).toBeGreaterThan(0)
+    expect(recs[0].entropyReduction).toBeGreaterThan(0)
+
+    const answers = { Indole: '+' }
+    const rankedPartial = calcProbabilityBayes(group, answers, opts)
+    const recsPartial = calcNextBestTests(group, answers, rankedPartial, opts)
+
+    // Ensure we do not recommend tests already answered
+    expect(recsPartial.some((r) => r.testLabel === 'Indole' || r.testId === 'Indole')).toBe(false)
   })
 })

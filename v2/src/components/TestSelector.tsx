@@ -30,6 +30,7 @@ export function TestSelector() {
   const group = useIdentifyStore((s) => s.group)
   const answers = useIdentifyStore((s) => s.answers)
   const setAnswer = useIdentifyStore((s) => s.setAnswer)
+  const recommendedTests = useIdentifyStore((s) => s.recommendedTests)
 
   const suite = ALL_SUITES[group]
   if (!suite) {
@@ -39,6 +40,8 @@ export function TestSelector() {
       </div>
     )
   }
+
+  const topRecs = recommendedTests.slice(0, 3)
 
   return (
     <div className="lg-surface p-5">
@@ -55,12 +58,25 @@ export function TestSelector() {
         {suite.tests.map((t) => {
           const current = answers[t.label] || answers[t.id] || ''
           const opts = valuesForTest(t.id, t.label)
+          const isRecommended = topRecs.some((r) => r.testId === t.id || r.testLabel === t.label)
+
           return (
             <div
               key={t.id}
-              className="flex items-center justify-between gap-2 rounded-lg border border-white/5 bg-white/[0.03] px-3 py-2"
+              className={`flex items-center justify-between gap-2 rounded-lg border px-3 py-2 transition-all ${
+                isRecommended
+                  ? 'border-violet-500/20 bg-violet-950/10 shadow-[0_0_12px_rgba(139,92,246,0.05)]'
+                  : 'border-white/5 bg-white/[0.03]'
+              }`}
             >
-              <span className="text-sm text-zinc-200 truncate">{t.label}</span>
+              <div className="flex items-center gap-1.5 min-w-0">
+                <span className="text-sm text-zinc-200 truncate">{t.label}</span>
+                {isRecommended && (
+                  <span className="shrink-0 text-[9px] font-bold text-violet-300 bg-violet-500/25 px-1 py-0.5 rounded border border-violet-500/20 animate-pulse">
+                    แนะนำ
+                  </span>
+                )}
+              </div>
               <div className="flex items-center gap-1">
                 {opts.map((o) => (
                   <button
