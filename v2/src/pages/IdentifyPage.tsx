@@ -147,10 +147,13 @@ export function IdentifyPage() {
         <div className="space-y-4 animate-fade-in">
           <section className="space-y-2">
             <div className="flex items-center justify-between">
-              <h2 className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
-                ขั้นตอนที่ 1: ตรวจสไลด์และผลย้อมแกรม
+              <h2 className="font-serif-header text-[20px] font-extrabold text-white mb-1.5 tracking-[-0.5px]">
+                🔬 Step 1 — Gram Stain
               </h2>
             </div>
+            <p className="text-[#64748b] text-[13px] mb-6 leading-relaxed">
+              เลือกผลที่ได้จากการย้อม Gram stain
+            </p>
             <InitialObservationWizard />
           </section>
 
@@ -206,8 +209,8 @@ export function IdentifyPage() {
         <div className="space-y-6 animate-fade-in">
           <section className="space-y-2">
             <div className="flex items-center justify-between">
-              <h2 className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
-                ขั้นตอนที่ 2: บันทึกผลทดสอบทางชีวเคมี
+              <h2 className="font-serif-header text-[20px] font-extrabold text-white mb-1.5 tracking-[-0.5px]">
+                ⚗️ Step 2 — {activeSuite?.name || 'Biochemical Tests'}
               </h2>
               {!isStepMode && (
                 <button
@@ -220,6 +223,9 @@ export function IdentifyPage() {
                 </button>
               )}
             </div>
+            <p className="text-[#64748b] text-[13px] mb-5 leading-relaxed">
+              กรอกผลการทดสอบให้มากที่สุดเท่าที่มี (ข้ามได้ถ้ายังไม่ได้ทำ)
+            </p>
             <TestSelector />
           </section>
 
@@ -257,11 +263,11 @@ export function IdentifyPage() {
         <div className="space-y-6 animate-fade-in">
           <section className="space-y-3">
             <div className="space-y-1">
-              <h2 className="text-sm font-bold tracking-wide text-zinc-200">
-                ขั้นตอนที่ 3: ผลการวินิจฉัย
+              <h2 className="font-serif-header text-[20px] font-extrabold text-white mb-1.5 tracking-[-0.5px]">
+                📊 Step 3 — ผลการวินิจฉัย
               </h2>
-              <p className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
-                Suggested probabilistic matches (Top 10)
+              <p className="text-[#64748b] text-[13px] mb-6 leading-relaxed">
+                คะแนนความน่าจะเป็นในการจำแนกชนิดเชื้อ จากผล biochemical ที่กรอก
               </p>
             </div>
             {top10.length === 0 ? (

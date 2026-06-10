@@ -9,7 +9,7 @@ export function CasesPage() {
     <div className="workspace-page max-w-7xl">
       <header className="case-page-header">
         <div>
-          <h1>Case ที่บันทึกไว้</h1>
+          <h1 className="font-sans-header">Case ที่บันทึกไว้</h1>
           <p>{user ? 'Cloud Sync Active' : 'Guest Mode, Local Save Active'}</p>
         </div>
         <strong>ทั้งหมด {savedCases.length} เคส</strong>

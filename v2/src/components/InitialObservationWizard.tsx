@@ -20,10 +20,10 @@ const SPECIMENS: Array<{ value: SpecimenType; label: string; emoji: string }> = 
 ]
 
 const GRAM_REACTIONS: Array<{ value: GramReaction; label: string; color: string }> = [
-  { value: 'positive', label: 'Gram Positive (+)', color: 'border-violet-400 bg-violet-500/10 text-violet-200' },
-  { value: 'negative', label: 'Gram Negative (−)', color: 'border-rose-400 bg-rose-500/10 text-rose-200' },
-  { value: 'variable', label: 'Gram Variable', color: 'border-amber-400 bg-amber-500/10 text-amber-200' },
-  { value: 'unknown', label: 'Unknown / ไม่ระบุ', color: 'border-zinc-500 bg-zinc-500/10 text-zinc-300' },
+  { value: 'positive', label: '🟣 Gram Positive (+)', color: 'border-violet-500 bg-violet-600/15 text-violet-100 shadow-[0_0_20px_rgba(167,139,250,0.25)] ring-1 ring-violet-500/40' },
+  { value: 'negative', label: '🔴 Gram Negative (−)', color: 'border-rose-500 bg-rose-600/15 text-rose-100 shadow-[0_0_20px_rgba(251,113,133,0.25)] ring-1 ring-rose-500/40' },
+  { value: 'variable', label: '🟡 Gram Variable', color: 'border-amber-500 bg-amber-600/15 text-amber-100 shadow-[0_0_20px_rgba(251,191,36,0.25)] ring-1 ring-amber-500/40' },
+  { value: 'unknown', label: '⚪ Unknown / ไม่ระบุ', color: 'border-zinc-650 bg-zinc-600/15 text-zinc-200 shadow-[0_0_15px_rgba(161,161,170,0.15)] ring-1 ring-zinc-500/40' },
 ]
 
 const MORPHOLOGY_OPTIONS: Array<{ value: Morphology; label: string; emoji: string }> = [
@@ -70,7 +70,7 @@ export function InitialObservationWizard() {
       <div className="lg-content">
         <div className="mb-4 flex items-center justify-between">
           <div>
-            <h2 className="text-base font-bold text-zinc-100 flex items-center gap-2">
+            <h2 className="text-xl font-bold text-zinc-100 flex items-center gap-2">
               <span>🔬</span> ตัวช่วยวิเคราะห์ผลย้อมสไลด์ (Gram Stain & Morphology Wizard)
             </h2>
             <p className="text-xs text-zinc-400">
@@ -98,10 +98,10 @@ export function InitialObservationWizard() {
                   type="button"
                   key={spec.value}
                   onClick={() => updateObs({ specimen: spec.value })}
-                  className={`flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-left text-xs transition ${
+                  className={`flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-left text-xs transition-all duration-200 ${
                     initialObservation.specimen === spec.value
-                      ? 'border-violet-400 bg-violet-500/15 text-violet-100'
-                      : 'border-white/5 bg-white/[0.02] text-zinc-400 hover:border-white/10 hover:text-zinc-200'
+                      ? 'border-violet-500/60 bg-violet-500/10 text-violet-200 shadow-[0_0_10px_rgba(167,139,250,0.15)] ring-1 ring-violet-500/30'
+                      : 'border-white/5 bg-white/[0.02] text-zinc-400 hover:border-white/12 hover:bg-white/[0.04] hover:text-zinc-200'
                   }`}
                 >
                   <span>{spec.emoji}</span>
@@ -122,10 +122,10 @@ export function InitialObservationWizard() {
                   type="button"
                   key={g.value}
                   onClick={() => updateObs({ gramReaction: g.value })}
-                  className={`w-full rounded-lg border px-3 py-2 text-left text-xs font-medium transition ${
+                  className={`w-full rounded-lg border px-3 py-2.5 text-left text-xs font-semibold transition-all duration-300 ${
                     initialObservation.gramReaction === g.value
-                      ? `${g.color} ring-2 ring-violet-500/35 border-transparent`
-                      : 'border-white/5 bg-white/[0.02] text-zinc-400 hover:border-white/10 hover:text-zinc-200'
+                      ? g.color
+                      : 'border-white/5 bg-white/[0.02] text-zinc-400 hover:border-white/12 hover:bg-white/[0.04] hover:text-zinc-200'
                   }`}
                 >
                   {g.label}
@@ -145,10 +145,10 @@ export function InitialObservationWizard() {
                   type="button"
                   key={morph.value}
                   onClick={() => updateObs({ morphology: morph.value })}
-                  className={`flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-left text-xs transition ${
+                  className={`flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-left text-xs transition-all duration-200 ${
                     initialObservation.morphology === morph.value
-                      ? 'border-violet-400 bg-violet-500/15 text-violet-100'
-                      : 'border-white/5 bg-white/[0.02] text-zinc-400 hover:border-white/10 hover:text-zinc-200'
+                      ? 'border-violet-500/60 bg-violet-500/10 text-violet-200 shadow-[0_0_10px_rgba(167,139,250,0.15)] ring-1 ring-violet-500/30'
+                      : 'border-white/5 bg-white/[0.02] text-zinc-400 hover:border-white/12 hover:bg-white/[0.04] hover:text-zinc-200'
                   }`}
                 >
                   <span>{morph.emoji}</span>
@@ -163,10 +163,10 @@ export function InitialObservationWizard() {
               <select
                 value={initialObservation.arrangement || 'unknown'}
                 onChange={(e) => updateObs({ arrangement: e.target.value as Arrangement })}
-                className="input-field py-2 text-xs"
+                className="w-full bg-white/[0.03] border border-white/10 rounded-lg px-2.5 py-2 text-xs text-zinc-200 focus:outline-none focus:ring-1 focus:ring-violet-500 focus:border-violet-500"
               >
                 {ARRANGEMENT_OPTIONS.map((arr) => (
-                  <option key={arr.value} value={arr.value}>
+                  <option key={arr.value} value={arr.value} className="bg-zinc-950 text-zinc-200">
                     {arr.label}
                   </option>
                 ))}

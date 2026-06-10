@@ -124,51 +124,45 @@ export function Layout() {
   return (
     <div className="min-h-screen flex flex-col app-shell">
       <header className="nav-bar">
-        <div className="flex items-center justify-between gap-4 w-full px-4 sm:px-6">
-          <Link to="/" className="brand">
-            <span className="emoji">🦠</span>
-            <div>
-              <div style={{ fontSize: '15px', fontWeight: 800 }}>BOK BAC</div>
-              <div style={{ fontSize: '8px', color: '#a78bfa', letterSpacing: '2px', textTransform: 'uppercase', fontWeight: 600, marginTop: '-2px', WebkitTextFillColor: 'initial' }}>DIAGNOSTIC ENGINE</div>
-            </div>
-          </Link>
-          <div className="flex items-center gap-4">
-            <nav className="flex gap-1 items-center app-nav-scroll">
-              {NAV.map((n) => (
-                <NavLink
-                  key={n.to}
-                  to={n.to}
-                  end={n.to === '/'}
-                  className={({ isActive }) =>
-                    `nav-tab ${isActive ? 'active-tab' : ''}`
-                  }
-                >
-                  <span className="nav-label-full">
-                    <span className="mr-1">{n.emoji}</span>
-                    {n.label}
-                  </span>
-                  <span className="nav-label-short">{n.short}</span>
-                </NavLink>
-              ))}
-            </nav>
-            <div className="flex items-center gap-2 text-xs border-l border-white/10 pl-4">
-              {user ? (
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center font-bold text-white shadow-md border border-white/10 select-none">
-                    {user.displayName ? user.displayName.charAt(0).toUpperCase() : '?'}
-                  </div>
-                  <span className="hidden md:inline text-zinc-300 font-medium max-w-[80px] truncate">{user.displayName || 'Doctor'}</span>
-                  <button onClick={logout} className="px-2.5 py-1.5 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 font-semibold hover:bg-red-500/20 transition">
-                    ออก
-                  </button>
-                </div>
-              ) : (
-                <Link to="/login" className="px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-bold hover:scale-[1.02] active:scale-[0.98] transition">
-                  เข้าสู่ระบบ
-                </Link>
-              )}
-            </div>
+        <Link to="/" className="brand">
+          <span className="emoji">🦠</span>
+          <div>
+            <div style={{ fontSize: '15px', fontWeight: 800 }}>BOK BAC</div>
+            <div style={{ fontSize: '8px', color: '#a78bfa', letterSpacing: '2px', textTransform: 'uppercase', fontWeight: 600, marginTop: '-2px', WebkitTextFillColor: 'initial' }}>DIAGNOSTIC ENGINE</div>
           </div>
+        </Link>
+        <nav className="app-nav-scroll">
+          {NAV.map((n) => (
+            <NavLink
+              key={n.to}
+              to={n.to}
+              end={n.to === '/'}
+              className={({ isActive }) =>
+                `nav-tab ${isActive ? 'active-tab' : ''}`
+              }
+            >
+              <span className="nav-label-full">
+                <span className="mr-1">{n.emoji}</span>
+                {n.label}
+              </span>
+              <span className="nav-label-short">{n.short}</span>
+            </NavLink>
+          ))}
+        </nav>
+        <div className="nav-user">
+          {user ? (
+            <>
+              <div className="nav-avatar">{user.displayName ? user.displayName.charAt(0).toUpperCase() : '?'}</div>
+              <span className="nav-username hidden md:inline max-w-[80px] truncate">{user.displayName || 'Doctor'}</span>
+              <button onClick={logout} className="nav-signout">
+                ออกจากระบบ
+              </button>
+            </>
+          ) : (
+            <Link to="/login" className="btn btn-primary" style={{ padding: '8px 20px', fontSize: '13px' }}>
+              เข้าสู่ระบบ
+            </Link>
+          )}
         </div>
       </header>
 

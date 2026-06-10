@@ -106,7 +106,7 @@ export function TestsReferencePage() {
             ⚗️
           </div>
           <div>
-            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-zinc-50">
+            <h1 className="font-sans-header text-xl sm:text-2xl font-bold tracking-tight text-zinc-50">
               Biochemical Tests Reference
             </h1>
             <p className="text-xs text-zinc-400 mt-0.5">

@@ -3,17 +3,17 @@
 @tailwind utilities;
 
 :root {
-  --text: oklch(0.965 0.006 286);
-  --text2: oklch(0.69 0.035 273);
-  --text3: oklch(0.52 0.032 273);
-  --bg: oklch(0.105 0.025 270);
-  --bg2: oklch(0.145 0.038 282);
-  --panel: oklch(0.18 0.023 278);
-  --border: oklch(0.32 0.028 276);
-  --accent: oklch(0.72 0.17 302);
-  --accent-hover: oklch(0.8 0.12 306);
+  --text: #f9fafb;
+  --text2: #9ca3af;
+  --text3: #6b7280;
+  --bg: #030712;
+  --bg2: #0f0a1e;
+  --panel: rgba(255,255,255,0.04);
+  --border: rgba(255,255,255,0.10);
+  --accent: #a78bfa;
+  --accent-hover: #c4b5fd;
   --accent-glow: rgba(167, 139, 250, 0.35);
-  --gold: oklch(0.74 0.118 91);
+  --gold: #C9A84C;
   --gold-glow: rgba(201, 168, 76, 0.3);
   --glass-bg: rgba(255, 255, 255, 0.06);
   --glass-border: rgba(255, 255, 255, 0.14);
@@ -290,11 +290,11 @@ body::after {
    Typography Overrides
    ═══════════════════════════════════════ */
 h1, .font-serif-header {
-  font-family: 'Cormorant Garamond', 'Inter', serif;
+  font-family: 'Cormorant Garamond', 'Prompt', 'IBM Plex Sans Thai', Georgia, serif !important;
   letter-spacing: -0.3px;
 }
-h2, h3, h4, .font-sans-header {
-  font-family: 'Inter', 'Prompt', sans-serif;
+h2, h3, h4, h5, h6, .font-sans-header {
+  font-family: 'Inter', 'Prompt', 'IBM Plex Sans Thai', sans-serif !important;
   letter-spacing: -0.3px;
 }
 
@@ -304,6 +304,7 @@ h2, h3, h4, .font-sans-header {
 .nav-bar {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   background: rgba(3, 7, 18, 0.85);
   backdrop-filter: blur(20px) saturate(1.8);
   -webkit-backdrop-filter: blur(20px) saturate(1.8);
@@ -311,8 +312,8 @@ h2, h3, h4, .font-sans-header {
   border-image: linear-gradient(90deg, #7c3aed, #C9A84C, #06b6d4) 1;
   border-bottom: 1px solid rgba(201,168,76,0.15);
   box-shadow: 0 1px 0 rgba(201,168,76,0.08), 0 4px 24px rgba(0,0,0,0.4);
-  padding: 0;
-  height: 64px;
+  padding: 0 16px;
+  height: 54px;
   position: sticky;
   top: 0;
   z-index: 1000;
@@ -321,24 +322,32 @@ h2, h3, h4, .font-sans-header {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-right: 22px;
+  margin-right: 16px;
   font-weight: 800;
-  font-size: 17px;
+  font-size: 16px;
   letter-spacing: -0.5px;
-  color: #c4b5fd;
+  background: linear-gradient(135deg, #c4b5fd, #C9A84C);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   text-shadow: 0 0 24px rgba(167,139,250,0.35);
+  flex-shrink: 0;
 }
-.nav-bar .brand .emoji { font-size: 22px; }
+.nav-bar .brand .emoji { font-size: 22px; -webkit-text-fill-color: initial; }
+
 .app-nav-scroll {
-  max-width: calc(100vw - 360px);
+  display: flex;
+  gap: 6px;
+  align-items: center;
   overflow-x: auto;
   scrollbar-width: none;
 }
 .app-nav-scroll::-webkit-scrollbar { display: none; }
+
 .nav-tab {
   position: relative;
-  padding: 7px 15px;
-  font-size: 14px;
+  padding: 5px 12px;
+  font-size: 12px;
   font-weight: 500;
   color: #94a3b8;
   background: none;
@@ -347,7 +356,7 @@ h2, h3, h4, .font-sans-header {
   transition: all 0.2s;
   white-space: nowrap;
   border-radius: 100px;
-  margin: 2px 4px;
+  margin: 2px;
 }
 .nav-tab:hover { color: #e2e8f0; background: rgba(255,255,255,0.05); }
 .nav-tab.active-tab {
@@ -357,10 +366,50 @@ h2, h3, h4, .font-sans-header {
   border: 1px solid rgba(167,139,250,0.35);
   border-radius: 100px;
   animation: glowPulse 3s ease-in-out infinite;
-  padding: 7px 15px;
+  padding: 4px 12px;
 }
 
 .nav-label-short { display: none; }
+.nav-user {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+.nav-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7c3aed, #C9A84C);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+.nav-username {
+  font-size: 13px;
+  font-weight: 500;
+  color: #e2e8f0;
+}
+.nav-signout {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  color: #f87171;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.nav-signout:hover {
+  background: rgba(239, 68, 68, 0.2);
+}
 
 /* Glass Header */
 .glass-header {
@@ -471,10 +520,13 @@ h2, h3, h4, .font-sans-header {
 
 .login-card {
   max-width: 560px;
-  min-height: 760px;
+  min-height: auto;
   border-radius: 22px;
   background: rgba(19, 22, 36, 0.78);
   border: 1px solid rgba(171, 149, 255, 0.16);
+}
+.login-card .lg-content {
+  height: auto !important;
 }
 
 .login-logo-mark {
@@ -515,14 +567,16 @@ h2, h3, h4, .font-sans-header {
 
 .input-field {
   width: 100%;
-  min-height: 54px;
+  height: 54px;
   border-radius: 14px;
   border: 1px solid rgba(255, 255, 255, 0.12);
   background: rgba(255, 255, 255, 0.035);
   color: var(--text);
-  padding: 0 16px;
+  padding: 14px 16px;
   font-size: 15px;
   outline: none;
+  appearance: none;
+  -webkit-appearance: none;
   transition: border-color 180ms ease, background 180ms ease, box-shadow 180ms ease;
 }
 
@@ -682,23 +736,58 @@ h2, h3, h4, .font-sans-header {
 }
 
 @media (max-width: 1100px) {
-  .nav-label-full { display: none; }
-  .nav-label-short { display: inline; }
-  .app-nav-scroll { max-width: calc(100vw - 280px); }
-  .specimen-shell { grid-template-columns: 280px minmax(0, 1fr); }
+  .nav-label-full { display: none !important; }
+  .nav-label-short { display: inline !important; }
 }
 
 @media (max-width: 820px) {
-  .nav-bar { height: auto; min-height: 64px; }
-  .nav-bar > div {
-    flex-wrap: wrap;
-    padding-top: 10px;
-    padding-bottom: 10px;
+  .nav-bar {
+    flex-wrap: wrap !important;
+    height: auto !important;
+    padding: 10px 14px 0 !important;
+    justify-content: space-between !important;
+    gap: 8px !important;
+  }
+  .nav-bar .brand {
+    margin-right: 0 !important;
+    background: linear-gradient(135deg, #c4b5fd, #C9A84C);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .nav-bar .brand > div > div:nth-child(2) {
+    display: none !important;
+  }
+  .nav-user {
+    margin-left: 0 !important;
+    gap: 8px !important;
+  }
+  .nav-username {
+    display: none !important;
   }
   .app-nav-scroll {
-    order: 3;
-    width: 100%;
-    max-width: 100%;
+    width: calc(100% + 28px) !important;
+    margin: 6px -14px 0 !important;
+    padding: 8px 14px !important;
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent) !important;
+    border-top: 1px solid rgba(255,255,255,0.06) !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    justify-content: flex-start !important;
+    gap: 6px !important;
+    -webkit-overflow-scrolling: touch !important;
+    scroll-snap-type: x proximity !important;
+    order: 3 !important;
+    max-width: none !important;
+  }
+  .nav-tab {
+    flex: 0 0 auto !important;
+    text-align: center !important;
+    padding: 8px 14px !important;
+    font-size: 12px !important;
+    white-space: nowrap !important;
+    scroll-snap-align: start !important;
+    border-radius: 999px !important;
   }
   .specimen-shell {
     display: block;

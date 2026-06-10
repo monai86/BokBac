@@ -4,7 +4,21 @@ import type { Auth } from 'firebase/auth'
 import { getFirestore } from 'firebase/firestore'
 import type { Firestore } from 'firebase/firestore'
 
-const firebaseConfig = {
+declare global {
+  interface Window {
+    MICROBACT_FIREBASE_CONFIG?: {
+      apiKey?: string
+      authDomain?: string
+      projectId?: string
+      storageBucket?: string
+      messagingSenderId?: string
+      appId?: string
+      measurementId?: string
+    }
+  }
+}
+
+const fallbackFirebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
   projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
@@ -14,12 +28,16 @@ const firebaseConfig = {
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 }
 
+const firebaseConfig = (typeof window !== 'undefined' && window.MICROBACT_FIREBASE_CONFIG && window.MICROBACT_FIREBASE_CONFIG.apiKey && window.MICROBACT_FIREBASE_CONFIG.apiKey !== "YOUR_API_KEY")
+  ? window.MICROBACT_FIREBASE_CONFIG
+  : fallbackFirebaseConfig
+
 let app: any = null
 let auth: Auth | null = null
 let db: Firestore | null = null
 let isFirebaseActive = false
 
-if (firebaseConfig.apiKey) {
+if (firebaseConfig && firebaseConfig.apiKey && firebaseConfig.apiKey !== "YOUR_API_KEY") {
   try {
     app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp()
     auth = getAuth(app)

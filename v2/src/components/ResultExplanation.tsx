@@ -26,21 +26,44 @@ function formatImpact(impact: number) {
 }
 
 function EvidenceItem({ item }: { item: RankedSpecies['_evidence'][number] }) {
+  const isPositive = item.direction === 'supportive'
+  const bg = isPositive ? 'rgba(16, 185, 129, 0.05)' : 'rgba(239, 68, 68, 0.05)'
+  const border = isPositive ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)'
+  const badgeBg = isPositive ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)'
+  const badgeText = isPositive ? '#34d399' : '#f87171'
+  
   return (
-    <li className="rounded-lg border border-white/5 bg-white/[0.03] p-3">
-      <div className="flex items-center justify-between gap-2">
-        <span className="truncate text-sm font-medium text-zinc-100">
-          {item.test} = {item.answer}
+    <li style={{
+      background: bg,
+      border: `1px solid ${border}`,
+      borderRadius: '12px',
+      padding: '12px 14px',
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '4px',
+      transition: 'all 0.2s',
+    }} className="hover:brightness-110">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px' }}>
+        <span style={{ fontSize: '13px', fontWeight: 700, color: '#fff' }}>
+          🧪 {item.test} = <strong style={{ color: isPositive ? '#34d399' : '#f59e0b' }}>{item.answer}</strong>
         </span>
-        <span className="shrink-0 rounded-full border border-white/10 bg-zinc-900 px-2 py-0.5 text-[10px] font-semibold text-zinc-300">
-          impact {formatImpact(item.impact)}
+        <span style={{
+          background: badgeBg,
+          color: badgeText,
+          border: `1px solid ${border}`,
+          borderRadius: '20px',
+          padding: '2px 8px',
+          fontSize: '10px',
+          fontWeight: 700,
+          letterSpacing: '0.5px'
+        }}>
+          {isPositive ? '📈 สนับสนุน' : '📉 ขัดแย้ง'} ({formatImpact(item.impact)})
         </span>
       </div>
-      <p className="mt-1 text-xs leading-relaxed text-zinc-500">
+      <p style={{ fontSize: '11px', color: 'var(--text3)', margin: 0, lineHeight: '1.4' }}>
         {getSourceLabel(item.source, item.note)}
-        {typeof item.expectedPct === 'number' ? ` · reference positivity ${item.expectedPct}%` : ''}
-        {item.isKey ? ' · key discriminator' : ''}
-        {item.source === 'missing' ? ' · not used as ranking evidence' : ''}
+        {typeof item.expectedPct === 'number' ? ` · ความสอดคล้องในฐานข้อมูล ${item.expectedPct}%` : ''}
+        {item.isKey ? ' · คีย์จำแนกสำคัญ' : ''}
       </p>
     </li>
   )
@@ -101,129 +124,250 @@ export function ResultExplanation({
     .slice(0, 3)
 
   return (
-    <aside className="lg-surface mb-4 p-4">
-      <div className="mb-4 rounded-lg border border-sky-500/20 bg-sky-500/10 p-3 text-xs leading-relaxed text-sky-100">
-        BokBac is an educational probabilistic assistant. It suggests likely matches inside the selected candidate group and should not be used as a definitive clinical identification system.
+    <aside style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+      {/* Educational Notice Banner */}
+      <div style={{
+        background: 'rgba(56, 189, 248, 0.05)',
+        border: '1px solid rgba(56, 189, 248, 0.15)',
+        borderRadius: '12px',
+        padding: '14px 18px',
+        fontSize: '13px',
+        color: '#bae6fd',
+        lineHeight: '1.5',
+        display: 'flex',
+        alignItems: 'flex-start',
+        gap: '12px',
+        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2)'
+      }}>
+        <span style={{ fontSize: '18px', lineHeight: '1' }}>💡</span>
+        <div>
+          <strong style={{ color: '#fff', display: 'block', marginBottom: '2px' }}>คำแนะนำเพื่อการเรียนรู้ (Educational Assistant)</strong>
+          <span className="sr-only">BokBac is an educational probabilistic assistant.</span>
+          BokBac เป็นระบบช่วยคำนวณและวิเคราะห์โอกาสในการจำแนกเชื้อแบคทีเรีย เพื่อวัตถุประสงค์ในการศึกษาเท่านั้น ไม่สามารถนำไปใช้ในการวินิจฉัยทางคลินิกจริงได้
+        </div>
       </div>
 
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-zinc-500">
-            Ranking Rationale
-          </p>
-          <h3 className="text-sm font-semibold text-zinc-100">
-            Why this is the current most likely match
-          </h3>
-          <p className="mt-1 text-sm text-zinc-400">
-            <span className="font-medium text-zinc-200">{top.name}</span>
-            {' '}is the suggested match within the selected candidate group with{' '}
-            <span className="font-semibold text-zinc-100">{Math.round(top.posteriorWithinCandidateSet ?? top.pct)}%</span>
-            {' '}candidate-set support. {answerLabel}.
-          </p>
-          {top._confidence && (
-            <p className="mt-1 text-xs leading-relaxed text-zinc-500">
-              Confidence guide: {CONFIDENCE_EXPLANATION[top._confidence]}
+      {/* Main Ranking Rationale Hero Card */}
+      <div style={{
+        background: 'linear-gradient(135deg, rgba(31, 41, 55, 0.4) 0%, rgba(17, 24, 39, 0.6) 100%)',
+        border: '1px solid rgba(255, 255, 255, 0.08)',
+        borderRadius: '16px',
+        padding: '24px',
+        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+      }}>
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div style={{ flex: 1 }}>
+            <span className="sr-only">Why this is the current most likely match</span>
+            <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '2px', display: 'block', marginBottom: '8px' }}>
+              📊 วิเคราะห์ผลอันดับสูงสุด (TOP IDENTIFICATION MATCH)
+            </span>
+            <h3 style={{ fontSize: '24px', fontWeight: 800, color: '#fff', margin: '0 0 8px 0', letterSpacing: '-0.5px', fontFamily: "var(--font-serif-header), serif" }}>
+              <em>{top.name}</em>
+            </h3>
+            <p style={{ fontSize: '14px', color: 'var(--text2)', margin: '0 0 12px 0', lineHeight: '1.6' }}>
+              เป็นเชื้อที่สอดคล้องมากที่สุดในขณะนี้ โดยมีระดับความน่าเชื่อถือภายในกลุ่ม {Math.round(top.posteriorWithinCandidateSet ?? top.pct)}% ({answerLabel})
             </p>
-          )}
+            {top._confidence && (
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', fontSize: '12px', color: 'var(--text3)', background: 'rgba(255,255,255,0.02)', padding: '10px 14px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.04)' }}>
+                <span>🛡️</span>
+                <span><strong>ระดับความมั่นใจ:</strong> {CONFIDENCE_EXPLANATION[top._confidence]}</span>
+              </div>
+            )}
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: '120px' }}>
+            <div style={{
+              width: '90px',
+              height: '90px',
+              borderRadius: '50%',
+              background: 'linear-gradient(135deg, rgba(167, 139, 250, 0.1) 0%, rgba(99, 102, 241, 0.1) 100%)',
+              border: '4px solid var(--accent)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxShadow: '0 0 20px rgba(167, 139, 250, 0.2)',
+              marginBottom: '10px'
+            }}>
+              <span style={{ fontSize: '26px', fontWeight: 800, color: '#fff' }}>
+                {Math.round(top.posteriorWithinCandidateSet ?? top.pct)}%
+              </span>
+            </div>
+            {top._confidence && <ConfidenceBadge level={top._confidence} />}
+          </div>
         </div>
-        {top._confidence && <ConfidenceBadge level={top._confidence} />}
       </div>
 
-      <dl className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-5">
-        <div className="rounded-lg border border-white/5 bg-white/[0.03] p-3">
-          <dt className="text-[10px] font-semibold uppercase tracking-wider text-zinc-500">
-            Evidence source
+      {/* Metrics Dashboard Grid */}
+      <dl style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px', margin: 0 }}>
+        <div style={{
+          background: 'rgba(255,255,255,0.02)',
+          border: '1px solid rgba(255,255,255,0.06)',
+          borderRadius: '12px',
+          padding: '16px',
+          transition: 'all 0.2s',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between'
+        }} className="hover:bg-white/[0.04] hover:border-white/10">
+          <dt style={{ fontSize: '10px', fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '8px' }}>
+            📖 แหล่งข้อมูล (SOURCE)
           </dt>
-          <dd className="mt-1 text-sm font-medium text-zinc-100">{mcmLabel}</dd>
-        </div>
-        <div className="rounded-lg border border-white/5 bg-white/[0.03] p-3">
-          <dt className="text-[10px] font-semibold uppercase tracking-wider text-zinc-500">
-            Runner-up gap
-          </dt>
-          <dd className="mt-1 text-sm font-medium text-zinc-100">
-            {Math.round(gap)}% {runnerUp ? `above ${runnerUp.name}` : ''}
+          <dd style={{ fontSize: '15px', fontWeight: 600, color: '#fff', margin: 0 }}>
+            {mcmLabel}
           </dd>
         </div>
-        <div className="rounded-lg border border-white/5 bg-white/[0.03] p-3">
-          <dt className="text-[10px] font-semibold uppercase tracking-wider text-zinc-500">
-            Key tests
+        <div style={{
+          background: 'rgba(255,255,255,0.02)',
+          border: '1px solid rgba(255,255,255,0.06)',
+          borderRadius: '12px',
+          padding: '16px',
+          transition: 'all 0.2s',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between'
+        }} className="hover:bg-white/[0.04] hover:border-white/10">
+          <dt style={{ fontSize: '10px', fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '8px' }}>
+            ⚡ นำอันดับสองอยู่ (RUNNER-UP GAP)
           </dt>
-          <dd className="mt-1 text-sm font-medium text-zinc-100">
-            support {top._keyMatch} / conflict {top._keyMismatch}
+          <dd style={{ fontSize: '14px', fontWeight: 600, color: '#fff', margin: 0 }}>
+            {Math.round(gap)}% {runnerUp ? <>เหนือ <em>{runnerUp.name}</em></> : ''}
           </dd>
         </div>
-        <div className="rounded-lg border border-white/5 bg-white/[0.03] p-3">
-          <dt className="text-[10px] font-semibold uppercase tracking-wider text-zinc-500">
-            Ruled out
+        <div style={{
+          background: 'rgba(255,255,255,0.02)',
+          border: '1px solid rgba(255,255,255,0.06)',
+          borderRadius: '12px',
+          padding: '16px',
+          transition: 'all 0.2s',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between'
+        }} className="hover:bg-white/[0.04] hover:border-white/10">
+          <dt style={{ fontSize: '10px', fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '8px' }}>
+            🔑 การทดสอบหลัก (KEY TESTS)
           </dt>
-          <dd className="mt-1 text-sm font-medium text-zinc-100">
-            {excludedCount} candidates
+          <dd style={{ fontSize: '15px', fontWeight: 600, color: '#fff', margin: 0 }}>
+            สอดคล้อง {top._keyMatch} / ขัดแย้ง {top._keyMismatch}
+          </dd>
+        </div>
+        <div style={{
+          background: 'rgba(255,255,255,0.02)',
+          border: '1px solid rgba(255,255,255,0.06)',
+          borderRadius: '12px',
+          padding: '16px',
+          transition: 'all 0.2s',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between'
+        }} className="hover:bg-white/[0.04] hover:border-white/10">
+          <dt style={{ fontSize: '10px', fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '8px' }}>
+            🚫 ถูกคัดออก (RULED OUT)
+          </dt>
+          <dd style={{ fontSize: '15px', fontWeight: 600, color: '#fff', margin: 0 }}>
+            {excludedCount} สายพันธุ์
           </dd>
         </div>
         {top.caseFitScore !== undefined && (
-          <div className="rounded-lg border border-white/5 bg-white/[0.03] p-3">
-            <dt className="text-[10px] font-semibold uppercase tracking-wider text-zinc-500">
-              Case fit
+          <div style={{
+            background: 'rgba(255,255,255,0.02)',
+            border: '1px solid rgba(255,255,255,0.06)',
+            borderRadius: '12px',
+            padding: '16px',
+            transition: 'all 0.2s',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between'
+          }} className="hover:bg-white/[0.04] hover:border-white/10">
+            <dt style={{ fontSize: '10px', fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '8px' }}>
+              🎯 CASE FIT
             </dt>
-            <dd className="mt-1 text-sm font-medium text-zinc-100">
+            <dd style={{ fontSize: '15px', fontWeight: 600, color: '#fff', margin: 0 }}>
               {Math.round(top.caseFitScore * 100)}%
             </dd>
           </div>
         )}
       </dl>
 
+      {/* Warning Alert Banner */}
       {(answeredCount === 0 || top.evidenceCoverage < 0.5 || contradictionCount > 0 || conflictingEvidence.length > 0) && (
-        <div className="mt-4 rounded-lg border border-amber-500/20 bg-amber-500/10 p-3 text-xs leading-relaxed text-amber-100">
-          {answeredCount === 0 && 'No biochemical tests have been entered. The current order is prior-driven and should be treated as a starting point.'}
-          {answeredCount > 0 && top.evidenceCoverage < 0.5 && 'Many entered results have no reference data for this candidate. More standard biochemical tests are needed before teaching confidence should increase.'}
-          {contradictionCount > 0 && ` ${contradictionCount} strong contradiction${contradictionCount === 1 ? '' : 's'} were detected for this candidate.`}
-          {conflictingEvidence.length > 0 && ' Review the conflicting evidence before accepting this as a likely match.'}
+        <div style={{
+          background: 'rgba(245, 158, 11, 0.05)',
+          border: '1px solid rgba(245, 158, 11, 0.15)',
+          borderRadius: '12px',
+          padding: '14px 18px',
+          fontSize: '12px',
+          color: '#fef3c7',
+          lineHeight: '1.6',
+          display: 'flex',
+          gap: '10px',
+        }}>
+          <span style={{ fontSize: '16px' }}>⚠️</span>
+          <div>
+            {answeredCount === 0 && <p style={{ margin: 0 }}><strong>ยังไม่มีการกรอกผลทดสอบ:</strong> อันดับของเชื้อมาจากการประมาณค่าความชุกเบื้องต้น (Prevalence prior) กรุณากรอกผลการทดสอบ biochemical ในขั้นตอนที่ 2 ก่อนนำไปวิเคราะห์ผลละเอียด</p>}
+            {answeredCount > 0 && top.evidenceCoverage < 0.5 && <p style={{ margin: 0 }}><strong>ข้อมูลอ้างอิงมีจำกัด:</strong> การทดสอบที่กรอกหลายตัวไม่มีข้อมูลสถิติอ้างอิงสำหรับสายพันธุ์นี้ ควรทำการทดสอบมาตรฐานเพิ่มเติมนอก suite นี้หากเป็นไปได้</p>}
+            {contradictionCount > 0 && <p style={{ margin: 0 }}><strong>ตรวจพบข้อขัดแย้ง:</strong> พบจุดขัดแย้งกับข้อมูลอ้างอิงในระบบอย่างน้อย {contradictionCount} จุด กรุณาตรวจสอบผลการทดสอบอีกครั้ง</p>}
+            {conflictingEvidence.length > 0 && <p style={{ margin: 0 }}><strong>มีผลขัดแย้ง:</strong> มีผลการทดสอบบางตัวที่ค้านกับการจัดอันดับเชื้อนี้ (ความน่าจะเป็นลดลง) ควรศึกษาลักษณะเด่นอื่นๆ เพิ่มเติม</p>}
+          </div>
         </div>
       )}
 
+      {/* Evidence Summary Lists */}
       {(supportiveEvidence.length > 0 || conflictingEvidence.length > 0 || missingEvidence.length > 0 || neutralKeyEvidence.length > 0) && (
-        <div className="mt-4 border-t border-white/10 pt-3">
-          <h4 className="text-[10px] font-semibold uppercase tracking-wider text-zinc-500">
-            Evidence summary
+        <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '20px' }}>
+          <h4 style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '12px' }}>
+            <span className="sr-only">Evidence summary</span>
+            📊 สรุปหลักฐานสนับสนุนและคัดค้าน (EVIDENCE SUMMARY)
           </h4>
-          <div className="mt-2 grid gap-3 lg:grid-cols-2">
+          <div className="grid gap-4 lg:grid-cols-2">
             <section>
-              <h5 className="mb-2 text-xs font-semibold text-emerald-200">Increased probability</h5>
+              <h5 style={{ fontSize: '13px', fontWeight: 700, color: '#34d399', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <span>🟢</span> ผลสนับสนุนการจัดอันดับ (Increased probability)
+              </h5>
               {supportiveEvidence.length > 0 ? (
-                <ul className="space-y-2">
+                <ul className="space-y-2 pl-0 list-none">
                   {supportiveEvidence.map((item) => <EvidenceItem key={`${item.test}-${item.answer}-support`} item={item} />)}
                 </ul>
               ) : (
-                <p className="rounded-lg border border-white/5 bg-white/[0.03] p-3 text-xs text-zinc-500">
-                  No entered result strongly supports this candidate yet.
+                <p style={{ background: 'rgba(255,255,255,0.01)', border: '1px dashed rgba(255,255,255,0.06)', borderRadius: '12px', padding: '16px', fontSize: '12px', color: 'var(--text3)', textAlign: 'center', margin: 0 }}>
+                  ยังไม่มีการกรอกผลทดสอบที่สนับสนุนสายพันธุ์นี้เป็นพิเศษ
                 </p>
               )}
             </section>
 
             <section>
-              <h5 className="mb-2 text-xs font-semibold text-rose-200">Decreased probability</h5>
+              <h5 style={{ fontSize: '13px', fontWeight: 700, color: '#f87171', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <span>🔴</span> ผลขัดแย้งกับการจัดอันดับ (Decreased probability)
+              </h5>
               {conflictingEvidence.length > 0 ? (
-                <ul className="space-y-2">
+                <ul className="space-y-2 pl-0 list-none">
                   {conflictingEvidence.map((item) => <EvidenceItem key={`${item.test}-${item.answer}-conflict`} item={item} />)}
                 </ul>
               ) : (
-                <p className="rounded-lg border border-white/5 bg-white/[0.03] p-3 text-xs text-zinc-500">
-                  No entered result strongly conflicts with this candidate.
+                <p style={{ background: 'rgba(255,255,255,0.01)', border: '1px dashed rgba(255,255,255,0.06)', borderRadius: '12px', padding: '16px', fontSize: '12px', color: 'var(--text3)', textAlign: 'center', margin: 0 }}>
+                  ไม่พบผลการทดสอบที่ขัดแย้งรุนแรงกับสายพันธุ์นี้
                 </p>
               )}
             </section>
           </div>
 
           {(missingEvidence.length > 0 || neutralKeyEvidence.length > 0) && (
-            <div className="mt-3 rounded-lg border border-white/5 bg-white/[0.03] p-3 text-xs leading-relaxed text-zinc-400">
+            <div style={{
+              marginTop: '16px',
+              background: 'rgba(255,255,255,0.01)',
+              border: '1px solid rgba(255,255,255,0.04)',
+              borderRadius: '12px',
+              padding: '14px 18px',
+              fontSize: '12px',
+              color: 'var(--text3)',
+              lineHeight: '1.6'
+            }}>
               {missingEvidence.length > 0 && (
-                <p>
-                  Unsupported or missing reference data: {missingEvidence.map((item) => item.test).join(', ')}. These answers lower evidence coverage but do not push the ranking up or down.
+                <p style={{ margin: 0 }}>
+                  ⚠️ <strong>การทดสอบที่ไม่มีสถิติอ้างอิง:</strong> {missingEvidence.map((item) => item.test).join(', ')} (ค่าเหล่านี้จะไม่ส่งผลดันอันดับขึ้นหรือลงเนื่องจากไม่มีข้อมูล Positivity ในระบบ)
                 </p>
               )}
               {neutralKeyEvidence.length > 0 && (
-                <p className={missingEvidence.length > 0 ? 'mt-1' : ''}>
-                  Neutral key evidence: {neutralKeyEvidence.map((item) => `${item.test} = ${item.answer}`).join(', ')}.
+                <p style={{ margin: missingEvidence.length > 0 ? '8px 0 0 0' : 0 }}>
+                  ℹ️ <strong>ข้อมูลคีย์หลักที่เป็นกลาง (Neutral key evidence):</strong> {neutralKeyEvidence.map((item) => `${item.test} = ${item.answer}`).join(', ')}
                 </p>
               )}
             </div>
@@ -231,26 +375,42 @@ export function ResultExplanation({
         </div>
       )}
 
+      {/* Key Differentiators Row Comparison */}
       {runnerUp && differentiators.length > 0 && (
-        <div className="mt-4 border-t border-white/10 pt-3">
-          <h4 className="text-[10px] font-semibold uppercase tracking-wider text-zinc-500">
-            Why it leads the runner-up
+        <div style={{ marginTop: '24px', borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '16px' }}>
+          <h4 style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '12px' }}>
+            🔑 ข้อแตกต่างหลักที่ทำให้อันดับสูงกว่า {runnerUp.name} (KEY DIFFERENTIATORS)
           </h4>
-          <div className="mt-2 grid gap-2">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             {differentiators.map(({ top: topItem, runner }) => (
               <div
                 key={`${topItem.test}-${runnerUp.id}`}
-                className="rounded-lg border border-white/5 bg-white/[0.03] p-3"
+                style={{
+                  background: 'rgba(255,255,255,0.02)',
+                  border: '1px solid rgba(255,255,255,0.05)',
+                  borderRadius: '12px',
+                  padding: '14px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '8px',
+                }}
               >
-                <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-                  <span className="text-sm font-medium text-zinc-100">
-                    {topItem.test} = {topItem.answer}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: '14px', fontWeight: 700, color: '#fff' }}>
+                    🧪 {topItem.test} = <strong>{topItem.answer}</strong>
                   </span>
-                  <span className="text-xs text-zinc-500">
-                    {top.name}: {getSourceLabel(topItem.source)} ({(topItem.likelihood * 100).toFixed(0)}%)
-                    {' '}vs{' '}
-                    {runnerUp.name}: {runner ? getSourceLabel(runner.source) : 'ไม่มีข้อมูล'} ({(runner?.likelihood || 0) * 100}%)
-                  </span>
+                  <span style={{ fontSize: '11px', color: 'var(--accent)', fontWeight: 600 }}>ความแตกต่างสำคัญ</span>
+                </div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', fontSize: '12px', color: 'var(--text2)', alignItems: 'center' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'rgba(167, 139, 250, 0.1)', padding: '4px 8px', borderRadius: '6px', border: '1px solid rgba(167, 139, 250, 0.15)' }}>
+                    <span style={{ fontWeight: 600, color: '#c084fc' }}>{top.name}</span>
+                    <span style={{ color: '#fff' }}>positivity ({(topItem.expectedPct ?? topItem.likelihood * 100).toFixed(0)}%)</span>
+                  </div>
+                  <span style={{ color: 'var(--text3)' }}>vs</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'rgba(255, 255, 255, 0.04)', padding: '4px 8px', borderRadius: '6px', border: '1px solid rgba(255, 255, 255, 0.06)' }}>
+                    <span style={{ fontWeight: 600, color: 'var(--text2)' }}>{runnerUp.name}</span>
+                    <span style={{ color: '#fff' }}>positivity ({runner ? (runner.expectedPct ?? runner.likelihood * 100).toFixed(0) : '0'}%)</span>
+                  </div>
                 </div>
               </div>
             ))}

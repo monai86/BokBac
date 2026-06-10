@@ -128,7 +128,7 @@ export function SettingsPage() {
     <div className="settings-page workspace-page space-y-6">
       {/* Page Header */}
       <header className="border-b border-white/5 pb-4">
-        <h1 className="text-2xl font-bold tracking-tight text-zinc-50 sm:text-3xl">
+        <h1 className="font-sans-header text-2xl font-bold tracking-tight text-zinc-50 sm:text-3xl">
           ⚙️ ตั้งค่า
         </h1>
         <p className="mt-2 text-sm font-bold uppercase tracking-[0.16em] text-zinc-500">

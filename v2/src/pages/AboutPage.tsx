@@ -1,7 +1,7 @@
 export function AboutPage() {
   return (
     <div className="mx-auto max-w-3xl p-6 sm:p-8 text-zinc-300">
-      <h1 className="text-2xl font-bold text-zinc-50 mb-4">เกี่ยวกับแอป</h1>
+      <h1 className="font-sans-header text-2xl font-bold text-zinc-50 mb-4">เกี่ยวกับแอป</h1>
 
       <div className="lg-surface p-6 space-y-4 text-sm leading-relaxed">
         <p>

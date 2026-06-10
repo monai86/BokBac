@@ -31,7 +31,7 @@ export function TestSuitesPage() {
               🧪
             </div>
             <div>
-              <h1 className="text-3xl font-black tracking-tight text-zinc-50">Test Suite Reference</h1>
+              <h1 className="font-sans-header text-3xl font-black tracking-tight text-zinc-50">Test Suite Reference</h1>
               <p className="mt-1 text-sm font-semibold text-zinc-500">
                 รายการ Biochemical Tests ที่ใช้ในแต่ละกลุ่มเชื้อ
               </p>
