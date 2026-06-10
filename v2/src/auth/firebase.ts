@@ -1,5 +1,5 @@
 import { initializeApp, getApps, getApp } from 'firebase/app'
-import { getAuth } from 'firebase/auth'
+import { getAuth, setPersistence, browserLocalPersistence } from 'firebase/auth'
 import type { Auth } from 'firebase/auth'
 import { getFirestore } from 'firebase/firestore'
 import type { Firestore } from 'firebase/firestore'
@@ -41,6 +41,10 @@ if (firebaseConfig && firebaseConfig.apiKey && firebaseConfig.apiKey !== "YOUR_A
   try {
     app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp()
     auth = getAuth(app)
+    // Set explicit persistence to avoid Safari ITP blocking auth state
+    setPersistence(auth, browserLocalPersistence).catch((e) =>
+      console.warn('Firebase Auth persistence warning:', e)
+    )
     db = getFirestore(app)
     isFirebaseActive = true
     console.log("🔥 Firebase Initialized successfully in v2/src/auth/firebase.ts")
