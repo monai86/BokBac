@@ -2,9 +2,10 @@ import { useState, useEffect } from 'react'
 import { useIdentifyStore } from '@/store/identifyStore'
 import { EmailAuthProvider, reauthenticateWithCredential, updatePassword, updateProfile } from 'firebase/auth'
 import { isFirebaseActive } from '@/auth/firebase'
+import { useAuth } from '@/auth/useAuth'
 
 export function SettingsPage() {
-  const user = useIdentifyStore((s) => s.user)
+  const { user } = useAuth()
   const settings = useIdentifyStore((s) => s.settings)
   const saveSettings = useIdentifyStore((s) => s.saveSettings)
 

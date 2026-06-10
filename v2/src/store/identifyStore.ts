@@ -20,22 +20,12 @@ import {
   UNVERSIONED_SUITE,
 } from '@/lib/suiteCatalog'
 import { selectSuiteForObservation } from '@/lib/selectSuiteForObservation'
-import { auth as firebaseAuth, db as firestoreDb, isFirebaseActive } from '@/auth/firebase'
+import { db as firestoreDb, isFirebaseActive } from '@/auth/firebase'
 import { caseStorage, getLocalCases } from '@/services/caseStorage'
-import {
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  signOut,
-  updateProfile,
-  signInWithPopup,
-  GoogleAuthProvider,
-} from 'firebase/auth'
-import { doc, getDoc, setDoc } from 'firebase/firestore'
+import { doc, setDoc } from 'firebase/firestore'
 
 const CUSTOM_SUITES_KEY = 'microbial-world:v4:custom-suites'
 const ACTIVE_SUITE_ID_KEY = 'microbial-world:v4:active-suite-id'
-let authListenerInitialized = false
 
 function canUseStorage() {
   return typeof window !== 'undefined' && typeof window.localStorage !== 'undefined'
@@ -68,10 +58,9 @@ interface IdentifyState {
   activeSuiteId: string
   suiteSelectionReason?: string
   
-  // Auth and settings states
-  user: any | null
-  isGuest: boolean
-  loadingAuth: boolean
+  // AuthProvider is the auth source of truth. The store only mirrors the UID
+  // needed by case/settings persistence.
+  authUserId: string | null
   settings: {
     displayName?: string
     defaultGram?: string
@@ -92,13 +81,11 @@ interface IdentifyState {
   setActiveSuiteId: (id: string) => void
   recompute: () => void
   
-  // Auth actions
-  initAuthListener: () => void
-  loginWithEmail: (email: string, pass: string) => Promise<void>
-  signupWithEmail: (email: string, pass: string, name: string) => Promise<void>
-  loginWithGoogle: () => Promise<void>
-  logout: () => Promise<void>
-  setGuest: (isGuest: boolean) => void
+  applyAuthSnapshot: (snapshot: {
+    authUserId: string | null
+    savedCases?: SavedCase[]
+    settings?: IdentifyState['settings']
+  }) => void
   saveSettings: (settings: any) => Promise<void>
 }
 
@@ -118,10 +105,7 @@ export const useIdentifyStore = create<IdentifyState>()((set, get) => ({
   activeSuiteId: canUseStorage() ? window.localStorage.getItem(ACTIVE_SUITE_ID_KEY) || 'enterobacterales_default' : 'enterobacterales_default',
   suiteSelectionReason: undefined,
   
-  // Auth states initialization
-  user: null,
-  isGuest: false,
-  loadingAuth: isFirebaseActive,
+  authUserId: null,
   settings: canUseStorage() ? JSON.parse(window.localStorage.getItem('mbsettings') || '{}') : {},
 
   setGroup: (g) => {
@@ -200,7 +184,7 @@ export const useIdentifyStore = create<IdentifyState>()((set, get) => ({
   },
 
   saveCurrentCase: async () => {
-    const { group, answers, results, initialObservation, defaultSuites, customSuites, activeSuiteId, user } = get()
+    const { group, answers, results, initialObservation, defaultSuites, customSuites, activeSuiteId, authUserId } = get()
     const activeSuite = getActiveSuite(defaultSuites, customSuites, activeSuiteId, group)
     const top = results.find((r) => !r._excluded)
     const savedCase: SavedCase = {
@@ -219,13 +203,13 @@ export const useIdentifyStore = create<IdentifyState>()((set, get) => ({
       topPct: top?.pct,
     }
 
-    await caseStorage.saveCase(savedCase, user?.uid)
+    await caseStorage.saveCase(savedCase, authUserId || undefined)
     set({ savedCases: getLocalCases() })
   },
 
   updateCase: async (id, updates) => {
-    const { user } = get()
-    await caseStorage.updateCase(id, updates, user?.uid)
+    const { authUserId } = get()
+    await caseStorage.updateCase(id, updates, authUserId || undefined)
     set({ savedCases: getLocalCases() })
   },
 
@@ -257,8 +241,8 @@ export const useIdentifyStore = create<IdentifyState>()((set, get) => ({
   },
 
   deleteCase: async (id) => {
-    const { user } = get()
-    await caseStorage.deleteCase(id, user?.uid)
+    const { authUserId } = get()
+    await caseStorage.deleteCase(id, authUserId || undefined)
     set({ savedCases: getLocalCases() })
   },
 
@@ -294,72 +278,11 @@ export const useIdentifyStore = create<IdentifyState>()((set, get) => ({
     set({ results: ranked, recommendedTests: recs })
   },
 
-  // Auth and Firestore Syncing Actions
-  initAuthListener: () => {
-    if (authListenerInitialized) {
-      return
-    }
-    authListenerInitialized = true
-
-    if (!isFirebaseActive || !firebaseAuth) {
-      set({ loadingAuth: false })
-      return
-    }
-    onAuthStateChanged(firebaseAuth, async (usr) => {
-      set({ user: usr, loadingAuth: false })
-      if (usr) {
-        set({ isGuest: false })
-        try {
-          // Sync settings
-          const prefDoc = await getDoc(doc(firestoreDb, 'users', usr.uid, 'settings', 'preferences'))
-          if (prefDoc.exists()) {
-            const cloudSettings = prefDoc.data()
-            set({ settings: cloudSettings })
-            if (canUseStorage()) {
-              window.localStorage.setItem('mbsettings', JSON.stringify(cloudSettings))
-            }
-          }
-
-          // Sync cases using caseStorage sync strategy
-          const syncedCases = await caseStorage.syncLocalToCloud(usr.uid)
-          set({ savedCases: syncedCases })
-        } catch (e) {
-          console.error('Error syncing with Firestore:', e)
-        }
-      } else {
-        set({ savedCases: getLocalCases() })
-      }
-    })
-  },
-
-  loginWithEmail: async (email, pass) => {
-    if (!isFirebaseActive || !firebaseAuth) throw new Error('Firebase is not active')
-    await signInWithEmailAndPassword(firebaseAuth, email, pass)
-  },
-
-  signupWithEmail: async (email, pass, name) => {
-    if (!isFirebaseActive || !firebaseAuth) throw new Error('Firebase is not active')
-    const cred = await createUserWithEmailAndPassword(firebaseAuth, email, pass)
-    if (cred.user) {
-      await updateProfile(cred.user, { displayName: name.trim() })
-    }
-  },
-
-  loginWithGoogle: async () => {
-    if (!isFirebaseActive || !firebaseAuth) throw new Error('Firebase is not active')
-    const provider = new GoogleAuthProvider()
-    await signInWithPopup(firebaseAuth, provider)
-  },
-
-  logout: async () => {
-    if (isFirebaseActive && firebaseAuth) {
-      await signOut(firebaseAuth)
-    }
-    set({ user: null, isGuest: false })
-  },
-
-  setGuest: (isGuest) => {
-    set({ isGuest })
+  applyAuthSnapshot: ({ authUserId, savedCases, settings }) => {
+    const next: Partial<IdentifyState> = { authUserId }
+    if (savedCases) next.savedCases = savedCases
+    if (settings) next.settings = settings
+    set(next)
   },
 
   saveSettings: async (newSettings) => {
@@ -367,10 +290,10 @@ export const useIdentifyStore = create<IdentifyState>()((set, get) => ({
     if (canUseStorage()) {
       window.localStorage.setItem('mbsettings', JSON.stringify(newSettings))
     }
-    const { user } = get()
-    if (isFirebaseActive && firestoreDb && user) {
+    const { authUserId } = get()
+    if (isFirebaseActive && firestoreDb && authUserId) {
       try {
-        await setDoc(doc(firestoreDb, 'users', user.uid, 'settings', 'preferences'), newSettings)
+        await setDoc(doc(firestoreDb, 'users', authUserId, 'settings', 'preferences'), newSettings)
       } catch (e) {
         console.error('Error saving settings to Firestore:', e)
       }

@@ -1,6 +1,7 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { AuthProvider } from '@/auth/AuthProvider'
 import { Layout } from '@/components/Layout'
+import { ProtectedRoute } from '@/components/ProtectedRoute'
 import { IdentifyPage } from '@/pages/IdentifyPage'
 import { AboutPage } from '@/pages/AboutPage'
 import { LibraryPage } from '@/pages/LibraryPage'
@@ -16,7 +17,14 @@ export default function App() {
     <AuthProvider>
       <BrowserRouter>
         <Routes>
-          <Route element={<Layout />}>
+          <Route path="login" element={<LoginPage />} />
+          <Route
+            element={
+              <ProtectedRoute>
+                <Layout />
+              </ProtectedRoute>
+            }
+          >
             <Route index element={<IdentifyPage />} />
             <Route path="specimen" element={<SpecimenPage />} />
             <Route path="cases" element={<CasesPage />} />
@@ -26,7 +34,6 @@ export default function App() {
             <Route path="suites" element={<TestSuitesPage />} />
             <Route path="settings" element={<SettingsPage />} />
             <Route path="about" element={<AboutPage />} />
-            <Route path="login" element={<LoginPage />} />
           </Route>
         </Routes>
       </BrowserRouter>

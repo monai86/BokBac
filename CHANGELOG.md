@@ -9,13 +9,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **v4 Playwright workflow coverage** — added login-first guest-mode E2E coverage for initial observation, suggested suite selection, biochemical inputs, ranked result review, saved case creation, and saved case reload.
 - **v4 library browsing** — added searchable `LibraryPage` and linked `SpeciesDetailPage` in `v2/` so users can browse the species catalog, filter by bacterial group, and open organism-specific teaching details.
 - **Project-local workflow skill** — added `.project-skills/bok-bac-project` and `AGENTS.md` to centralize repository workflow guidance for legacy v3, modern v4, MCM data pipeline, validation, release, and deploy tasks.
 - **Version Update Checklist** — added `docs/development/version-update-checklist.md` to standardize the process of updating changelogs, versions, and documentation for workflow and tooling changes.
 - **Repository organization** — moved secondary workflow/deployment docs under `docs/`, local reference materials under `assets/references/local/`, and deprecated local-only files under `archive/`.
 
 ### Fixed
+- **v4 authentication flow** — protected the modern app shell behind `ProtectedRoute`, made `/login` the unauthenticated entry point, and kept explicit Guest Mode from redirecting back to login on reload.
+- **v4 auth state ownership** — consolidated Firebase session ownership in `AuthProvider`; Zustand now only mirrors the authenticated UID needed for case/settings persistence.
 - **NaCl test alias collision** — split `6.5% NaCl` (`nacl_6_5`) from `6% NaCl` (`nacl_6`) across legacy and v4 data to remove duplicate-key overrides during Vite build.
+
+### Changed
+- **v4 workflow hierarchy** — moved saved-case actions to the ranked-result review step and reduced global Liquid Glass tilt/mouse tracking to opt-in surfaces for better readability and performance.
 
 ## [3.1.1] - 2026-04-27
 

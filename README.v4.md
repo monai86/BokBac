@@ -6,6 +6,8 @@ Modern rewrite of the bacterial identification web app using Vite + React 19 + T
 
 Current modern app version: `v4.0.0`
 
+Legacy v3 remains `3.1.1` in the root `VERSION` file. The modern v4 version is authoritative in [`v2/package.json`](v2/package.json).
+
 ## 🛠 Tech Stack
 
 | Layer | Tool | Why |
@@ -52,6 +54,10 @@ VITE_FIREBASE_MEASUREMENT_ID=
 ```
 
 Use [`v2/.env.example`](v2/.env.example) as the template for local development and configure the same names in the hosting provider. Keep `.env`, `.env.local`, and real project values out of git.
+
+## Auth And Guest Access
+
+The app shell is protected by default. Opening `/`, `/cases`, `/library`, `/reference`, `/suites`, `/settings`, or `/about` redirects unauthenticated users to `/login`. From there, users can sign in with Firebase-backed email or Google authentication, or explicitly choose Guest Mode. Guest Mode is local-only, persists in the browser until sign-out or storage reset, and does not bypass the educational disclaimer or diagnostic workflow safeguards.
 
 ## 📁 Structure
 
@@ -117,7 +123,7 @@ Same Naive Bayes engine as legacy v3.1.1, ported to TypeScript:
 
 ## Backend/Auth Readiness
 
-The v4 app remains local-first and deploys as a static Cloudflare Pages app. If multi-user sync is needed later, keep saved case contracts compatible with `SavedCase` in `src/lib/types.ts` and add server-side validation around:
+The v4 app remains static-hostable and deploys to Cloudflare Pages. Firebase is optional for authenticated sync; guest users continue to save cases locally. If multi-user sync expands later, keep saved case contracts compatible with `SavedCase` in `src/lib/types.ts` and add server-side validation around:
 
 - case ownership and sharing permissions
 - immutable audit timestamps for created/updated cases

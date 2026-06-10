@@ -1,6 +1,6 @@
-import { useEffect } from 'react'
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
-import { useIdentifyStore } from '@/store/identifyStore'
+import { useEffect } from 'react'
+import { useAuth } from '@/auth/useAuth'
 
 const NAV = [
   { to: '/specimen', label: 'ตัวอย่างตรวจ', emoji: '🧫', short: '🧫 ตัวอย่าง' },
@@ -13,23 +13,18 @@ const NAV = [
 ]
 
 export function Layout() {
-  const initAuthListener = useIdentifyStore((s) => s.initAuthListener)
-  const user = useIdentifyStore((s) => s.user)
-  const loadingAuth = useIdentifyStore((s) => s.loadingAuth)
-  const logout = useIdentifyStore((s) => s.logout)
+  const { user, isGuest, logout } = useAuth()
   const location = useLocation()
-
-  useEffect(() => {
-    initAuthListener()
-  }, [initAuthListener])
 
   // Activate Liquid Glass interactive effects (mouse tracking + tilt)
   useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     const container = document.body
     const handlers = new Map<HTMLElement, { onMove: (e: MouseEvent) => void; onLeave: () => void }>()
 
     const attach = (el: HTMLElement) => {
       if (handlers.has(el)) return
+      if (!el.classList.contains('lg-interactive')) return
       const specular = el.querySelector(':scope > .lg-specular') as HTMLElement | null
 
       const onMove = (e: MouseEvent) => {
@@ -44,10 +39,10 @@ export function Layout() {
           specular.style.top = y + 'px'
         }
 
-        const maxTilt = 2
+        const maxTilt = 0.75
         const rx = ((y - cy) / cy) * -maxTilt
         const ry = ((x - cx) / cx) * maxTilt
-        el.style.transform = `perspective(1000px) rotateX(${rx}deg) rotateY(${ry}deg) scale3d(1.005, 1.005, 1.005)`
+        el.style.transform = `perspective(1000px) rotateX(${rx}deg) rotateY(${ry}deg) scale3d(1.002, 1.002, 1.002)`
         el.style.transition = 'transform 0.1s ease-out'
 
         const angle = Math.atan2(y - cy, x - cx) * (180 / Math.PI) + 135
@@ -74,7 +69,7 @@ export function Layout() {
     }
 
     // Initial scan
-    container.querySelectorAll<HTMLElement>('.lg-surface').forEach(attach)
+    container.querySelectorAll<HTMLElement>('.lg-surface.lg-interactive').forEach(attach)
 
     // Observe future additions/removals
     const observer = new MutationObserver((mutations) => {
@@ -83,13 +78,13 @@ export function Layout() {
           if (node.nodeType !== 1) return
           const el = node as HTMLElement
           if (el.classList && el.classList.contains('lg-surface')) attach(el)
-          if (el.querySelectorAll) el.querySelectorAll<HTMLElement>('.lg-surface').forEach(attach)
+          if (el.querySelectorAll) el.querySelectorAll<HTMLElement>('.lg-surface.lg-interactive').forEach(attach)
         })
         m.removedNodes.forEach((node) => {
           if (node.nodeType !== 1) return
           const el = node as HTMLElement
           if (handlers.has(el)) detach(el)
-          if (el.querySelectorAll) el.querySelectorAll<HTMLElement>('.lg-surface').forEach(detach)
+          if (el.querySelectorAll) el.querySelectorAll<HTMLElement>('.lg-surface.lg-interactive').forEach(detach)
         })
       })
     })
@@ -105,17 +100,6 @@ export function Layout() {
       handlers.clear()
     }
   }, [])
-
-  if (loadingAuth) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-[#030712] text-zinc-400">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-violet-500/30 border-t-violet-500 rounded-full animate-spin"></div>
-          <p className="text-sm font-semibold tracking-wide">กำลังตรวจสอบระบบ...</p>
-        </div>
-      </div>
-    )
-  }
 
   if (location.pathname === '/login') {
     return <Outlet />
@@ -159,8 +143,8 @@ export function Layout() {
               </button>
             </>
           ) : (
-            <Link to="/login" className="btn btn-primary" style={{ padding: '8px 20px', fontSize: '13px' }}>
-              เข้าสู่ระบบ
+            <Link to="/login" className="btn btn-ghost" style={{ padding: '8px 16px', fontSize: '12px' }}>
+              {isGuest ? 'Guest mode' : 'เข้าสู่ระบบ'}
             </Link>
           )}
         </div>

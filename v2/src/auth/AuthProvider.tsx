@@ -2,6 +2,25 @@ import React, { createContext, useState, useEffect } from 'react'
 import type { User } from 'firebase/auth'
 import * as authService from './authService'
 import { useIdentifyStore } from '@/store/identifyStore'
+import { db as firestoreDb, isFirebaseActive } from './firebase'
+import { caseStorage, getLocalCases } from '@/services/caseStorage'
+import { doc, getDoc } from 'firebase/firestore'
+
+const GUEST_MODE_KEY = 'microbial-world:v4:guest-mode'
+
+function loadGuestMode() {
+  if (typeof window === 'undefined') return false
+  return window.localStorage.getItem(GUEST_MODE_KEY) === 'true'
+}
+
+function persistGuestMode(guest: boolean) {
+  if (typeof window === 'undefined') return
+  if (guest) {
+    window.localStorage.setItem(GUEST_MODE_KEY, 'true')
+  } else {
+    window.localStorage.removeItem(GUEST_MODE_KEY)
+  }
+}
 
 export interface AuthContextType {
   user: User | null
@@ -17,34 +36,59 @@ export const AuthContext = createContext<AuthContextType | null>(null)
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
-  const [isGuest, setIsGuestState] = useState(false)
+  const [isGuest, setIsGuestState] = useState(loadGuestMode)
 
   const setGuest = (guest: boolean) => {
     setIsGuestState(guest)
-    useIdentifyStore.setState({ isGuest: guest })
+    persistGuestMode(guest)
   }
 
   const logout = async () => {
     await authService.logout()
     setUser(null)
     setIsGuestState(false)
-    useIdentifyStore.setState({ user: null, isGuest: false })
+    persistGuestMode(false)
+    useIdentifyStore.getState().applyAuthSnapshot({
+      authUserId: null,
+      savedCases: getLocalCases(),
+    })
   }
 
   useEffect(() => {
-    const unsubscribe = authService.onAuthStateChanged((usr) => {
+    const unsubscribe = authService.onAuthStateChanged(async (usr) => {
       setUser(usr)
       setLoading(false)
 
-      const currentGuest = useIdentifyStore.getState().isGuest
-      useIdentifyStore.setState({
-        user: usr,
-        loadingAuth: false,
-        isGuest: usr ? false : currentGuest,
-      })
-
       if (usr) {
         setIsGuestState(false)
+        persistGuestMode(false)
+        try {
+          let settings = useIdentifyStore.getState().settings
+          if (isFirebaseActive && firestoreDb) {
+            const prefDoc = await getDoc(doc(firestoreDb, 'users', usr.uid, 'settings', 'preferences'))
+            if (prefDoc.exists()) {
+              settings = prefDoc.data()
+              window.localStorage.setItem('mbsettings', JSON.stringify(settings))
+            }
+          }
+          const syncedCases = await caseStorage.syncLocalToCloud(usr.uid)
+          useIdentifyStore.getState().applyAuthSnapshot({
+            authUserId: usr.uid,
+            savedCases: syncedCases,
+            settings,
+          })
+        } catch (error) {
+          console.error('Error syncing authenticated BokBac data:', error)
+          useIdentifyStore.getState().applyAuthSnapshot({
+            authUserId: usr.uid,
+            savedCases: getLocalCases(),
+          })
+        }
+      } else {
+        useIdentifyStore.getState().applyAuthSnapshot({
+          authUserId: null,
+          savedCases: getLocalCases(),
+        })
       }
     })
 

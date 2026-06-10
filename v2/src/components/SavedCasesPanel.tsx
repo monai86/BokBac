@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import { useIdentifyStore } from '@/store/identifyStore'
 import type { SavedCase } from '@/lib/types'
 import { isFirebaseActive } from '@/auth/firebase'
+import { AuthContext } from '@/auth/AuthProvider'
 
 function formatSavedDate(value: string) {
   return new Intl.DateTimeFormat('th-TH', {
@@ -64,7 +65,7 @@ export function SavedCasesPanel({ standalone = false }: { standalone?: boolean }
   const deleteCase = useIdentifyStore((s) => s.deleteCase)
   const defaultSuites = useIdentifyStore((s) => s.defaultSuites)
   const customSuites = useIdentifyStore((s) => s.customSuites)
-  const user = useIdentifyStore((s) => s.user)
+  const user = useContext(AuthContext)?.user || null
   const answeredCount = Object.keys(answers).length
   const filteredCases = savedCases.filter((item) => matchesCase(item, query))
   const exportPayload = JSON.stringify(filteredCases, null, 2)

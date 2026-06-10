@@ -21,7 +21,7 @@ npm run dev
 ```
 Open the URL shown in the console (usually `http://localhost:5173`).
 
-The maintained UI is public-first and login-optional. If Firebase variables are absent, the app should still load in guest mode and save cases locally with `localStorage`.
+The maintained UI is login-first with explicit Guest Mode. If Firebase variables are absent, the app should still render the login page, allow Guest Mode, and save guest cases locally with `localStorage`.
 
 ---
 

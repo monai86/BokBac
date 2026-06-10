@@ -234,9 +234,6 @@ export function IdentifyPage() {
             <NextBestTestPanel />
           </section>
 
-          {/* Saved Workups list */}
-          <SavedCasesPanel />
-
           {isStepMode && (
             <div className="flex gap-4 pt-2">
               <button
@@ -338,6 +335,8 @@ export function IdentifyPage() {
                     <SpeciesCard key={s.id} species={s} rank={i} />
                   ))}
                 </div>
+
+                <SavedCasesPanel />
               </>
             )}
           </section>

@@ -2,7 +2,7 @@
 
 BokBac is an interactive educational web application and decision-support tool designed for medical technology students, microbiology educators, and software reviewers. It demonstrates how clinical microbiology reasoning, standard biochemical testing, and Bayesian probability models intersect to identify bacterial species.
 
-The maintained modern app follows a public-first workflow: users can open BokBac and begin the identification workflow immediately as guests, save cases locally in the browser, and optionally sign in later for account-linked settings and cloud sync.
+The maintained modern app uses a login-first workflow. Users start at the login page, then either sign in for account-linked settings and cloud sync or explicitly continue as guests for local-only case storage.
 
 > [!WARNING]
 > **Clinical Safety & Usage Disclaimer**: BokBac is strictly an educational tool and simulation platform. It **must not** be used for clinical diagnosis, patient management, or to replace standard professional microbiology laboratory confirmation (e.g., automated systems, culture confirmation, or mass spectrometry). It does not guarantee clinical accuracy.
@@ -11,8 +11,8 @@ The maintained modern app follows a public-first workflow: users can open BokBac
 
 ## 📌 Version History & Track Authority
 
-* **Maintained Modern Track (v4.x)**: Built using Vite + React + TypeScript, located in the [`v2/`](v2/) directory. **This is the only maintained version of the application.**
-* **Archived Legacy Track (v3.x)**: Built using static React/Babel, archived in the [`legacy/`](legacy/) directory. (No longer maintained, preserved for reference).
+* **Maintained Modern Track (v4.x)**: Built using Vite + React + TypeScript, located in the [`v2/`](v2/) directory. **This is the only maintained version of the application.** Its version authority is [`v2/package.json`](v2/package.json).
+* **Archived Legacy Track (v3.x)**: Built using static React/Babel, archived in the [`legacy/`](legacy/) directory. Its version authority is [`VERSION`](VERSION), currently `3.1.1`.
 
 | Track | Version | Release Date | Status | Description |
 |---|---|---|---|---|
@@ -111,6 +111,14 @@ npm run test
 # Build production assets
 npm run build
 ```
+
+To create a shareable source archive from the repository root:
+
+```bash
+scripts/create_export_zip.sh
+```
+
+The export helper excludes Git metadata, dependency folders, build outputs, local deployment caches, test reports, macOS archive folders, logs, and environment files.
 
 Firebase is optional. To enable Firebase Auth/Firestore in v2, copy [`v2/.env.example`](v2/.env.example) to `v2/.env.local` and fill:
 

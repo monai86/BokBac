@@ -1,8 +1,9 @@
 import { SavedCasesPanel } from '@/components/SavedCasesPanel'
 import { useIdentifyStore } from '@/store/identifyStore'
+import { useAuth } from '@/auth/useAuth'
 
 export function CasesPage() {
-  const user = useIdentifyStore((s) => s.user)
+  const { user } = useAuth()
   const savedCases = useIdentifyStore((s) => s.savedCases)
 
   return (

@@ -26,7 +26,7 @@
 
   /* Liquid Glass System */
   --lg-bg: rgba(12, 8, 28, 0.45);
-  --lg-blur: blur(44px) saturate(1.9) brightness(1.1);
+  --lg-blur: blur(22px) saturate(1.4) brightness(1.05);
   --lg-border-light: rgba(255,255,255,0.35);
   --lg-border-dark: rgba(255,255,255,0.05);
   --lg-specular-size: 240px;
@@ -127,8 +127,13 @@ body::after {
     inset -1px 0 0 rgba(0,0,0,0.08),
     inset 0 0 100px rgba(167,139,250,0.04);
 
-  transition: transform 0.4s cubic-bezier(0.23,1,0.32,1),
-              box-shadow 0.4s cubic-bezier(0.23,1,0.32,1);
+  transition: box-shadow 0.24s cubic-bezier(0.16,1,0.3,1),
+              border-color 0.24s cubic-bezier(0.16,1,0.3,1);
+}
+
+.lg-surface.lg-interactive {
+  transition: transform 0.24s cubic-bezier(0.16,1,0.3,1),
+              box-shadow 0.24s cubic-bezier(0.16,1,0.3,1);
   will-change: transform;
 }
 
@@ -278,7 +283,7 @@ body::after {
 .stagger-8 { animation: cardEntrance 0.5s cubic-bezier(0.23,1,0.32,1) 0.40s both; }
 
 .animate-fade-in {
-  animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: fadeIn 0.24s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 /* Active Nav Glow */
@@ -326,10 +331,7 @@ h2, h3, h4, h5, h6, .font-sans-header {
   font-weight: 800;
   font-size: 16px;
   letter-spacing: -0.5px;
-  background: linear-gradient(135deg, #c4b5fd, #C9A84C);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #e7defd;
   text-shadow: 0 0 24px rgba(167,139,250,0.35);
   flex-shrink: 0;
 }
@@ -518,12 +520,24 @@ h2, h3, h4, h5, h6, .font-sans-header {
     #030712;
 }
 
+.premium-login-page::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #7c3aed, #C9A84C, #06b6d4);
+  pointer-events: none;
+}
+
 .login-card {
   max-width: 560px;
   min-height: auto;
   border-radius: 22px;
   background: rgba(19, 22, 36, 0.78);
   border: 1px solid rgba(171, 149, 255, 0.16);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.48);
 }
 .login-card .lg-content {
   height: auto !important;
@@ -586,6 +600,21 @@ h2, h3, h4, h5, h6, .font-sans-header {
   border-color: rgba(167, 139, 250, 0.72);
   background: rgba(255, 255, 255, 0.06);
   box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.18);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .lg-caustic {
+    animation: none;
+  }
 }
 
 .specimen-workspace {
