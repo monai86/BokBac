@@ -1,66 +1,52 @@
-# ย้ายจาก Netlify ไป Cloudflare Pages
+# Cloudflare Pages Deployment
 
-## ขั้นตอนการย้าย
+Cloudflare Pages is the recommended production host for BokBac v4.
 
-### 1. สร้างไฟล์ `_redirects` (เสร็จแล้ว)
-ไฟล์นี้จัดการ routing สำหรับ Cloudflare Pages:
-- Redirect `/` ไป `MicroBactElite.html`
-- SPA fallback สำหรับทุก route
+## Current Target
 
-### 2. หยุด/ลบ Netlify Site
+- Maintained app: `v2/`
+- Build command: `npm run build`
+- Output directory: `dist`
+- Node.js version: `22` or higher
+- Legacy app: `legacy/` reference only, not a deployment target
 
-#### วิธีที่ 1: หยุด Deploy ชั่วคราว (แนะนำ)
-1. เข้า https://app.netlify.com
-2. เลือก Site ของคุณ
-3. ไปที่ **Site settings** → **Build & deploy** → **Continuous deployment**
-4. กด **Stop builds** (ปุ่มสีแดง)
-5. เว็บจะยังเข้าได้ แต่จะไม่ auto-deploy อีกต่อไป
+## Setup Steps
 
-#### วิธีที่ 2: ลบ Site ถาวร
-1. เข้า https://app.netlify.com
-2. เลือก Site ของคุณ
-3. ไปที่ **Site settings** → **General** → **Site details**
-4. เลื่อนลงไปล่างสุด → กด **Delete site** (ปุ่มสีแดง)
-
-### 3. Deploy บน Cloudflare Pages
-
-1. Push โค้ดขึ้น GitHub (รวมไฟล์ `_redirects` ที่สร้างไว้)
-2. เข้า https://dash.cloudflare.com
-3. ไปที่ **Workers & Pages** → **Create application** → **Pages**
-4. เลือก **Connect to Git**
-5. เลือก GitHub repo ของคุณ
-6. ตั้งค่า:
-   - **Project name:** `microbactelite` (หรือชื่อที่ต้องการ)
+1. Push the repository to GitHub.
+2. Open Cloudflare Dashboard → Workers & Pages → Create application → Pages.
+3. Connect the GitHub repository.
+4. Configure the Pages project:
+   - **Project name:** `bokbac` or the preferred production name
    - **Production branch:** `main`
-   - **Build command:** (เว้นว่าง)
-   - **Output directory:** `.`
-7. กด **Save and Deploy**
-8. รอ 1-2 นาที จะได้ URL: `https://microbactelite.pages.dev`
+   - **Root directory:** `v2`
+   - **Framework preset:** `Vite`
+   - **Build command:** `npm run build`
+   - **Build output directory:** `dist`
+   - **Node.js version:** `22`
+5. Add Firebase environment variables only if Auth/Firestore sync is enabled.
+6. Deploy.
 
-### 4. ตั้งค่า Custom Domain (ถ้ามี)
+## Firebase Variables
 
-1. ใน Cloudflare Pages → เลือก project → **Custom domains**
-2. กด **Set up a custom domain**
-3. ใส่โดเมนของคุณ เช่น `microbactelite.com`
-4. ทำตามขั้นตอนเพิ่ม DNS records
+Set these in Cloudflare Pages → Settings → Environment variables when Firebase is enabled:
 
-## ไฟล์ที่เกี่ยวข้อง
+```bash
+VITE_FIREBASE_API_KEY=
+VITE_FIREBASE_AUTH_DOMAIN=
+VITE_FIREBASE_PROJECT_ID=
+VITE_FIREBASE_STORAGE_BUCKET=
+VITE_FIREBASE_MESSAGING_SENDER_ID=
+VITE_FIREBASE_APP_ID=
+VITE_FIREBASE_MEASUREMENT_ID=
+```
 
-| ไฟล์ | ใช้กับ | สถานะ |
-|------|--------|--------|
-| `_redirects` | Cloudflare Pages | ✅ สร้างแล้ว |
-| `netlify.toml` | Netlify | ⏸️ ไม่จำเป็นแล้ว |
+Do not commit real Firebase values to the repository.
 
-## หมายเหตุ
+## Files Involved
 
-- ไฟล์ `netlify.toml` ไม่ต้องลบออก แต่จะไม่มีผลบน Cloudflare Pages
-- ถ้าต้องการ deploy ทั้งสองที่พร้อมกัน สามารถทำได้ (แต่ไม่แนะนำ เพราะจะสับสน)
-- Cloudflare Pages มี CDN เร็วกว่า Netlify ในเอเชีย
-
-## การตรวจสอบว่าใช้ Cloudflare สำเร็จแล้ว
-
-1. เข้าเว็บที่ได้จาก Cloudflare Pages
-2. เปิด DevTools (F12) → Network tab
-3. รีเฟรชหน้า (F5)
-4. ดู Response Headers ของ request ใดก็ได้
-5. ควรเห็น: `server: cloudflare` และ `cf-cache-status: HIT`
+| File | Purpose |
+| --- | --- |
+| `v2/public/_redirects` | SPA route fallback for Cloudflare Pages |
+| `v2/public/_headers` | Security headers copied into the build |
+| `v2/.env.example` | Local Firebase variable template |
+| `config/netlify.toml` | Optional Netlify template targeting `v2/dist` |

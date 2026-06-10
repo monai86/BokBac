@@ -4,6 +4,17 @@ This document provides a guide to the user interface, clinical workflow simulato
 
 ---
 
+## 0. Entry Workflow, Guest Mode, and Login
+
+The maintained v4 app is public-first. Opening the home route should take users directly into the identification workspace without requiring authentication first.
+
+* **Guest mode is the default**: Users can explore the organism workflow, enter biochemical results, and save cases locally in the browser.
+* **Login is optional**: Authentication is intended for account-linked preferences, cloud-backed case storage, and future user-specific features.
+* **Local cases should survive login**: When a guest later signs in, BokBac attempts to merge the locally saved cases into the authenticated account rather than discarding them.
+* **Clinical wording remains educational**: Results are presented as suggested probabilistic matches, not definitive clinical identification.
+
+---
+
 ## 1. Diagnostic Identification Workflow
 
 BokBac guides users through a structured, three-step clinical identification workflow that mirrors real-world laboratory benches.
@@ -85,6 +96,8 @@ Educators and advanced users can create custom panels to simulate specific hospi
 ## 4. Saved Cases Framework
 
 To facilitate student practice and case-based learning, BokBac allows users to save active isolate workups. A **Saved Case** stores the complete state of the workspace.
+
+In guest mode, saved cases are written to browser `localStorage`. When a user signs in and Firebase/Firestore is configured, BokBac uses the authenticated account as the cloud-backed store while keeping a local mirror for resilience.
 
 ### JSON Schema of a Saved Case
 

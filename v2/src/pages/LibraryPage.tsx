@@ -30,36 +30,21 @@ export function LibraryPage() {
   )
 
   return (
-    <div className="mx-auto max-w-6xl p-4 sm:p-6 lg:p-8">
-      <header className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-zinc-50 sm:text-3xl">
-            คลังเชื้อแบคทีเรีย
-          </h1>
-          <p className="mt-1 max-w-2xl text-sm text-zinc-400">
-            Browse 157 species พร้อมข้อมูล gram stain, colony morphology, biochemical clues,
-            และ clinical context เพื่อใช้คู่กับ workflow วินิจฉัย
-          </p>
-        </div>
-        <div className="lg-surface flex w-full max-w-md flex-col gap-3 p-4">
-          <label className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
-            Search
-            <input
-              type="search"
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              placeholder="ค้นหาชื่อเชื้อ, tag, test, media"
-              className="mt-2 w-full rounded-xl border border-white/10 bg-black/20 px-3 py-2 text-sm text-zinc-100 outline-none transition placeholder:text-zinc-600 focus:border-violet-400/70"
-            />
-          </label>
-          <p className="text-xs text-zinc-500">
-            {filtered.length} / {species.length} species
-          </p>
-        </div>
-      </header>
+    <div className="workspace-page max-w-none px-4 sm:px-6">
+      <header className="mb-3 flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
+        <label className="relative w-full xl:max-w-[280px]">
+          <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500 text-lg">🔍</span>
+          <span className="sr-only">ค้นหาเชื้อ</span>
+          <input
+            type="search"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="ค้นหาชื่อเชื้อ..."
+            className="input-field min-h-[42px] rounded-lg pl-10 text-sm"
+          />
+        </label>
 
-      <section className="mb-5">
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <button
             type="button"
             onClick={() => setGroup('all')}
@@ -86,27 +71,30 @@ export function LibraryPage() {
               {item.label}
             </button>
           ))}
+          <span className="ml-auto hidden text-sm font-semibold text-zinc-500 xl:inline">
+            {filtered.length} organisms
+          </span>
         </div>
-      </section>
+      </header>
 
       {filtered.length === 0 ? (
         <div className="lg-surface p-8 text-center text-sm text-zinc-500">
           ไม่พบ species ที่ตรงกับคำค้นนี้
         </div>
       ) : (
-        <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+        <section className="library-dense-list">
           {filtered.map((item) => {
             const groupMeta = getGroupMeta(item.group)
             return (
               <Link
                 key={item.id}
                 to={`/library/${item.id}`}
-                className="lg-surface group block p-4 transition hover:-translate-y-0.5 hover:border-white/15 hover:bg-white/[0.05]"
+                className="library-row-card lg-surface group block transition hover:-translate-y-0.5 hover:border-white/15 hover:bg-white/[0.05]"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
-                      <h2 className="text-base font-semibold text-zinc-50 transition group-hover:text-white">
+                      <h2 className="text-lg italic font-bold text-zinc-100 transition group-hover:text-white">
                         {item.name}
                       </h2>
                       {item.importance && (
@@ -121,7 +109,9 @@ export function LibraryPage() {
                       <p className="mt-1 text-sm text-zinc-500">{item.thai}</p>
                     )}
                   </div>
-                  <span className="text-xl">{groupMeta?.emoji || '🧫'}</span>
+                  <span className="rounded-full border border-cyan-400/25 bg-cyan-500/10 px-3 py-1 text-xs font-bold text-cyan-300">
+                    {groupMeta?.emoji || '🧫'} {groupMeta?.label || item.group}
+                  </span>
                 </div>
 
                 <div className="mt-3 flex flex-wrap gap-2 text-xs text-zinc-400">
@@ -145,9 +135,7 @@ export function LibraryPage() {
                   </div>
                 )}
 
-                <p className="mt-4 text-xs font-medium text-violet-300">
-                  เปิดรายละเอียด species
-                </p>
+                <p className="sr-only">เปิดรายละเอียด species</p>
               </Link>
             )
           })}

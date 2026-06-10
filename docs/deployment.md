@@ -1,56 +1,45 @@
 # BokBac Local Execution & Deployment Manual
 
-This document provides a technical guide for setting up, running, building, and deploying the BokBac project in both local development environments and production hosting environments.
+This document provides the maintained setup, build, and deployment path for BokBac. The only maintained app is the modern v4 Vite + React + TypeScript application in [`v2/`](../v2/). Legacy v3 is preserved under [`legacy/`](../legacy/) for reference and should not be used as the production deployment target.
 
 ---
 
 ## 1. Running Locally
 
-BokBac contains two separate tracks that run differently.
-
-### Track 1: Legacy v3.x Static Application (Root Directory)
-The legacy track is a pure client-side application. It loads React 18, ReactDOM, and Babel standalone from CDNs.
-
-* **Option A: Direct File Open**:
-  You can run the application offline by double-clicking the root [`index.html`](../index.html) file.
-* **Option B: Local Static Server**:
-  To serve the files with proper HTTP headers and simulate hosting behavior:
-  ```bash
-  # Install and run a simple static server
-  npx serve .
-  ```
-  Open `http://localhost:3000` (or the port specified) in your browser.
-
-### Track 2: Modern v4.x Vite Application (Located in `v2/`)
-The modern track is built using Vite, React 18, and TypeScript.
+The maintained app is built using Vite, React, and TypeScript.
 
 To run the modern app locally:
 ```bash
 # Navigate to the v2 workspace directory
 cd v2
 
-# Install dependencies (requires Node.js v22+)
-npm install
+# Install dependencies from the lockfile (requires Node.js v22+)
+npm ci
 
 # Start the Vite local development server
 npm run dev
 ```
 Open the URL shown in the console (usually `http://localhost:5173`).
 
+The maintained UI is public-first and login-optional. If Firebase variables are absent, the app should still load in guest mode and save cases locally with `localStorage`.
+
 ---
 
-## 2. Compiling the Production Bundle (Modern Track)
+## 2. Compiling the Production Bundle
 
 To compile the TypeScript code and bundle assets for web deployment, execute:
 
 ```bash
 cd v2
 
+# Run linter checks
+npm run lint
+
 # Verify type safety
 npm run typecheck
 
-# Run linter checks
-npm run lint
+# Run unit and integration tests
+npm run test
 
 # Compile production build
 npm run build
@@ -62,9 +51,8 @@ The output bundle is written to the [`v2/dist/`](../v2/dist/) directory. This di
 
 ## 3. Production Deployment: Cloudflare Pages
 
-The recommended hosting platform for both tracks is **Cloudflare Pages**.
+The recommended hosting platform is **Cloudflare Pages**.
 
-### Deploying the Modern Vite Track (v4.x)
 Configure the Cloudflare Pages project using the following parameters:
 
 | Configuration Setting | Value |
@@ -74,15 +62,6 @@ Configure the Cloudflare Pages project using the following parameters:
 | **Build Command** | `npm run build` |
 | **Build Output Directory** | `dist` |
 | **Node.js Version** | `22` (or higher) |
-
-### Deploying the Legacy Static Track (v3.x)
-If deploying the legacy app directly from the repository root:
-
-| Configuration Setting | Value |
-|---|---|
-| **Root Directory** | `/` (Repository root) |
-| **Build Command** | *Leave empty* |
-| **Build Output Directory** | `/` (Repository root) |
 
 ### Deploying to Vercel (Modern Track)
 Vercel is fully supported using the provided [`v2/vercel.json`](../v2/vercel.json) file. 
@@ -109,16 +88,21 @@ If hosting under a repository subpath (e.g., `https://<username>.github.io/BokBa
 
 Before publishing the project to a public environment, review the following security considerations:
 
-### 1. Firebase API Configuration Separation
+### 1. Firebase Environment Variables
 If enabling Google Sign-In or Firestore case syncing:
-* The application loads configuration settings from `firebase-config.js` at runtime.
-* For security, the actual active `firebase-config.js` is excluded from git version control via `.gitignore`.
-* A template file is provided at [`config/firebase-config.example.js`](../config/firebase-config.example.js). Copy this template to create your local config:
+* The v2 app reads Firebase settings from Vite environment variables.
+* Use [`v2/.env.example`](../v2/.env.example) as the local template.
+* Configure the same variables in Cloudflare Pages, Vercel, Netlify, or Firebase Hosting:
   ```bash
-  cp config/firebase-config.example.js firebase-config.js
-  # Edit firebase-config.js to insert your actual Firebase developer credentials
+  VITE_FIREBASE_API_KEY=
+  VITE_FIREBASE_AUTH_DOMAIN=
+  VITE_FIREBASE_PROJECT_ID=
+  VITE_FIREBASE_STORAGE_BUCKET=
+  VITE_FIREBASE_MESSAGING_SENDER_ID=
+  VITE_FIREBASE_APP_ID=
+  VITE_FIREBASE_MEASUREMENT_ID=
   ```
-* Do not commit your private API keys or authentication credentials to the repository.
+* Do not commit `.env`, `.env.local`, real Firebase values, private service-account keys, or authentication tokens.
 
 ### 2. Firestore Security Rules
 If using Firestore database sync, deploy the security rules in [`config/firestore.rules`](../config/firestore.rules) to enforce user isolation:
@@ -126,5 +110,6 @@ If using Firestore database sync, deploy the security rules in [`config/firestor
 * Restrict public read access to system suites.
 
 ### 3. Build & Deployment Audit Checklist
-* **Excluding Reference Materials**: Ensure that no local reference textbooks, copyright PDFs, raw extraction CSVs, or internal scripts are included in the public deployment output directory.
-* **HTTP Headers**: Configure [`_headers`](../_headers) to set security policies (e.g., Content-Security-Policy, X-Frame-Options, X-Content-Type-Options) to protect client sessions.
+* **Deployment target**: Production hosts must build from `v2` and publish `v2/dist` (or `dist` when the provider root is `v2`).
+* **Excluding Reference Materials**: Ensure that no local reference textbooks, copyright PDFs, raw extraction CSVs, or local-only assets are included in the public deployment output directory.
+* **HTTP Headers**: Use [`v2/public/_headers`](../v2/public/_headers) for security policies (e.g., Content-Security-Policy, X-Frame-Options, X-Content-Type-Options).

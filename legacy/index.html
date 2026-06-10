@@ -112,15 +112,15 @@
     // ══════════════════════════════════════
     // Priority:
     // 1) window.MICROBACT_FIREBASE_CONFIG from firebase-config.js
-    // 2) fallback local config below (optional, for quick local testing)
+    // 2) placeholder fallback below; replace through firebase-config.js only
     const fallbackFirebaseConfig = {
-      apiKey: "AIzaSyClVCg0EoCxF2qhJKJxN2tz_ctKRg_fpGw",
-      authDomain: "microbialworld-3ab5d.firebaseapp.com",
-      projectId: "microbialworld-3ab5d",
-      storageBucket: "microbialworld-3ab5d.firebasestorage.app",
-      messagingSenderId: "756709081394",
-      appId: "1:756709081394:web:a5c304b151429fbe49d72b",
-      measurementId: "G-3VD4ZKXGPJ"
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT.firebasestorage.app",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID",
+      measurementId: "YOUR_MEASUREMENT_ID"
     };
     const firebaseConfig = window.MICROBACT_FIREBASE_CONFIG || fallbackFirebaseConfig;
 

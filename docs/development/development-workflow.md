@@ -64,10 +64,9 @@
   ```
 
 ### 3. ทดสอบว่า code รันได้
-- เปิด `index.html` ใน browser → ตรวจสอบว่าโหลดไม่ error
-- ตรวจสอบ Console (F12) → ไม่มี error แดง
-- Test หน้า Workflow → Step 1-3 ทำงานได้
-- Test หน้า Library → แสดงข้อมูลครบ
+- สำหรับ modern v4 ให้รันจาก `v2/`: `npm run lint`, `npm run typecheck`, `npm run test`, `npm run build`
+- ถ้าแตะ UI behavior ให้เปิด Vite dev server แล้วตรวจ browser เพิ่มเติม
+- Legacy v3 ใน `legacy/` เป็น reference-only; รัน `node scripts/test_bayes.mjs` เฉพาะเมื่อแตะ legacy algorithm/data
 
 ### 4. Commit message ต้องชัดเจน
 
@@ -194,10 +193,10 @@ git diff v2.0.0..v2.1.0
 1. **อัปเดต CHANGELOG.md** — บันทึก version ล่าสุด
 2. **อัปเดต VERSION** — เลขเวอร์ชันตรงกับ CHANGELOG
 3. **อัปเดต README.md** — ตาราง Version History
-4. **ทดสอบใน browser** — เปิด index.html ตรวจสอบไม่มี error
+4. **ทดสอบ modern app** — `cd v2 && npm run lint && npm run typecheck && npm run test && npm run build`
 5. **Push ไป GitHub** — ตรวจสอบว่าทุกอย่าง sync แล้ว
 6. **Create git tag** — ถ้าเป็น major milestone
-7. **Deploy ไป Cloudflare Pages** — ตามขั้นตอนใน README
+7. **Deploy ไป Cloudflare Pages** — root directory `v2`, build command `npm run build`, output directory `dist`
 
 ---
 

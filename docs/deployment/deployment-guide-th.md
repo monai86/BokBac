@@ -1,118 +1,92 @@
-# Deploy MicroBactElite (Production Guide)
+# Deploy BokBac v4
 
-คู่มือนี้ทำให้เว็บในโฟลเดอร์นี้เปิดใช้กับคนอื่นผ่านลิงก์ได้จริง และปลอดภัยขึ้นสำหรับ Firebase.
+คู่มือนี้เป็นเส้นทาง deploy ที่ maintain อยู่สำหรับ BokBac หลังรวม legacy และ v2 แล้ว
 
-> **⚠️ หมายเหตุสำคัญ:** Netlify ฟรีมีข้อจำกัด **300 build minutes/เดือน** อาจหมดเร็วถ้า deploy บ่อย แนะนำใช้ **Cloudflare Pages** หรือ **GitHub Pages** แทน (ไม่จำกัด bandwidth/traffic)
+## สถานะ app
 
-## 1) เตรียมไฟล์ก่อนปล่อย
+- **Modern v4 ใน `v2/`** คือ app เดียวที่ maintain และใช้ deploy production
+- **Legacy v3 ใน `legacy/`** เก็บไว้เพื่ออ้างอิงเท่านั้น ไม่ใช่ deploy target
+- Build output ของ production คือ `v2/dist`
 
-- Entry page ใช้ `index.html` (redirect ไป `MicroBactElite.html` แล้ว)
-- ไฟล์หลักแอป: `MicroBactElite.html`
-- รูปประกอบ: `IMG_*.jpg`, `Unknown*.jpeg`
+## ตรวจ local ก่อน deploy
 
-## 2) Deploy แบบฟรี ไม่จำกัด Traffic (แนะนำ)
+```bash
+cd v2
+npm ci
+npm run lint
+npm run typecheck
+npm run test
+npm run build
+```
 
-### 🥇 Cloudflare Pages (แนะนำอันดับ 1 - ฟรีจริง ไม่จำกัด)
+ถ้าทุกคำสั่งผ่าน ให้ deploy จาก output `dist`
 
-**ข้อดี:** ไม่จำกัด bandwidth, requests, build minutes | CDN เร็วทั่วโลก | ไม่มี surprise billing
+## Cloudflare Pages
 
-1. push โค้ดไป GitHub repo (public หรือ private ก็ได้)
-2. เข้า [dash.cloudflare.com](https://dash.cloudflare.com) → Workers & Pages → Create application → Pages
-3. เชื่อมกับ GitHub repo
-4. ตั้งค่า:
-   - **Project name:** ตั้งชื่อเว็บของคุณ
-   - **Build command:** (เว้นว่าง หรือใส่ `echo "No build"`)
-   - **Output directory:** `.`
-5. Deploy ได้ทันที
-6. ได้ URL แบบ `https://[project-name].pages.dev`
-7. (optional) ตั้งค่า Custom Domain ได้ฟรี
+แนะนำให้ใช้ Cloudflare Pages เป็น production host หลัก
 
-### 🥈 GitHub Pages (แนะนำอันดับ 2 - ง่ายที่สุด)
+| Setting | Value |
+| --- | --- |
+| Root directory | `v2` |
+| Framework preset | `Vite` |
+| Build command | `npm run build` |
+| Build output directory | `dist` |
+| Node.js version | `22` หรือสูงกว่า |
 
-**ข้อดี:** ฟรี ไม่จำกัด traffic สำหรับ public repo | ไม่ต้องสมัครเพิ่ม
+ไฟล์ `v2/public/_headers` และ `v2/public/_redirects` จะถูก copy เข้า build output อัตโนมัติ
 
-1. push โค้ดไป GitHub repo (public)
-2. ที่ repo → Settings → Pages (แถบซ้าย)
-3. Source: **Deploy from a branch**
-4. เลือก branch: `main` และ folder: `/ (root)`
-5. Save → รอ 1-2 นาที
-6. ได้ URL แบบ `https://[username].github.io/[repo-name]/`
+## Vercel
 
-### 🥉 Vercel (แนะนำอันดับ 3)
+ใช้ `v2/vercel.json` เมื่อ import repo:
 
-**ข้อดี:** ฟรี ไม่จำกัด bandwidth สำหรับ static sites | Auto-deploy จาก GitHub
+| Setting | Value |
+| --- | --- |
+| Root directory | `v2` |
+| Build command | `npm run build` |
+| Output directory | `dist` |
 
-1. push โค้ดไป GitHub repo
-2. เข้า [vercel.com](https://vercel.com) → Import Project
-3. เลือก repo → Framework preset: `Other`
-4. ตั้งค่า:
-   - **Build command:** (เว้นว่าง)
-   - **Output directory:** `.`
-5. Deploy ได้ทันที
+ถ้าใช้ config template ที่ root ให้ดู `config/vercel.json` ซึ่งชี้ไปที่ `v2/dist`
 
-## 3) ทางเลือกอื่น (ระวังข้อจำกัด)
+## Netlify
 
-### Netlify (มีข้อจำกัด Build Minutes)
+ใช้ `config/netlify.toml` เป็น template:
 
-**ข้อควรระวัง:** แพลนฟรีจำกัด **300 build minutes/เดือน** - อาจหมดเร็วถ้า deploy บ่อย
+```toml
+[build]
+  base = "v2"
+  command = "npm run build"
+  publish = "dist"
+```
 
-**ใช้ได้กรณี:** ไม่ deploy บ่อย (เดือนละไม่กี่ครั้ง) หรือใช้ Netlify Drop (ไม่ผ่าน Git)
+Redirect `/* -> /index.html` ใช้สำหรับ SPA route refresh
 
-#### Netlify Drop (ไม่ผ่าน Git - ไม่ใช้ build minutes)
+## Firebase Hosting และ Firestore
 
-1. ไปที่ https://app.netlify.com/drop
-2. ลากโฟลเดอร์ `NewML` เข้าไป
-3. ได้ URL สำหรับแชร์ทันที
-4. ข้อเสีย: ต้องลากไฟล์ใหม่ทุกครั้งที่อัปเดต
+Firebase เป็น optional สำหรับ Auth/Firestore saved cases
 
-#### Netlify ผ่าน GitHub (ใช้ build minutes)
+- Hosting target ต้องเป็น `v2/dist`
+- Firestore rules อยู่ที่ `config/firestore.rules`
+- Firebase config template สำหรับ v4 อยู่ที่ `v2/.env.example`
 
-1. push โค้ดขึ้น GitHub
-2. Netlify → Add new site → Import from Git
-3. ตั้งค่า:
-   - Build command: (เว้นว่าง)
-   - Publish directory: `.`
-4. Deploy
+ตัวแปร environment ที่ต้องตั้งเมื่อเปิด Firebase:
 
-## 4) Firebase สำหรับ multi-user (สำคัญ)
+```bash
+VITE_FIREBASE_API_KEY=
+VITE_FIREBASE_AUTH_DOMAIN=
+VITE_FIREBASE_PROJECT_ID=
+VITE_FIREBASE_STORAGE_BUCKET=
+VITE_FIREBASE_MESSAGING_SENDER_ID=
+VITE_FIREBASE_APP_ID=
+VITE_FIREBASE_MEASUREMENT_ID=
+```
 
-ไฟล์ที่เตรียมไว้:
+สำหรับ local development ให้ copy `v2/.env.example` เป็น `v2/.env.local` แล้วใส่ค่าจริงในเครื่องเท่านั้น
 
-- `firestore.rules`
-- `firebase.json`
+## Security checklist ก่อนแชร์ลิงก์
 
-### สิ่งที่ต้องทำใน Firebase Console
-
-1. สร้าง Firebase project ของคุณเอง
-2. เปิดบริการ:
-   - Authentication (Email/Password + Google)
-   - Firestore
-3. สร้างไฟล์ `firebase-config.js` โดย copy จาก `firebase-config.example.js`
-4. ใส่ค่า Firebase project จริงลงใน `firebase-config.js`
-5. นำค่าเดิมใน `MicroBactElite.html` ออกแล้ว (โค้ดปัจจุบันอ่านจาก `window.MICROBACT_FIREBASE_CONFIG` ก่อนเสมอ)
-6. Deploy rules:
-   - ติดตั้ง CLI: `npm i -g firebase-tools`
-   - login: `firebase login`
-   - ผูกโปรเจกต์: `firebase use --add`
-   - deploy rules: `firebase deploy --only firestore:rules`
-
-## 5) Security checklist ก่อนแชร์ลิงก์
-
-- [ ] Firestore rules ต้องไม่เป็น allow read,write: if true
-- [ ] Authentication ต้องเปิดเฉพาะ provider ที่ใช้จริง
-- [ ] ทดสอบ user A ไม่เห็นข้อมูล user B
-- [ ] ทดสอบ Guest mode ยังทำงานได้ (localStorage)
-- [ ] เปิดเว็บจากมือถือ/desktop แล้วใช้งาน flow ครบ
-- [ ] ใน Netlify ตั้งค่า header `X-Frame-Options`/`X-Content-Type-Options` เพิ่ม (ถ้าต้องการ hardening)
-
-## 6) อัปเดตเวอร์ชันในอนาคต
-
-1. แก้โค้ด
-2. ทดสอบ local (`python3 -m http.server 5500`)
-3. push ขึ้น GitHub
-4. ระบบ deploy จะอัปเดตลิงก์อัตโนมัติ (Vercel/Netlify/Pages)
-
-## 7) ข้อควรระวังสำคัญ
-
-- อย่า commit `firebase-config.js` ที่เป็นของจริงลง public repo
-- ให้เก็บ `firebase-config.example.js` ไว้เป็น template เท่านั้น
+- [ ] Deploy จาก `v2` และ publish เฉพาะ `dist`
+- [ ] ไม่ commit `.env`, `.env.local`, `firebase-config.js`, service-account key, token, หรือค่า Firebase จริง
+- [ ] Firestore rules ไม่เปิด `allow read, write: if true`
+- [ ] ทดสอบ user A ไม่เห็นข้อมูล user B เมื่อเปิด Firebase sync
+- [ ] Guest/localStorage mode ยังทำงานได้ถ้าไม่ได้ตั้ง Firebase env
+- [ ] ตรวจว่าไม่มี PDF, CSV, raw extraction output, `node_modules`, `dist`, `test-results`, `.DS_Store`, หรือ `__MACOSX` ใน commit

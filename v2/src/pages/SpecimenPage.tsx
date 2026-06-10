@@ -35,26 +35,13 @@ export function SpecimenPage() {
   }
 
   return (
-    <div className="mx-auto max-w-6xl p-4 sm:p-6 lg:p-8">
-      {/* Page Header */}
-      <header className="mb-6">
-        <h1 className="text-2xl font-bold tracking-tight text-zinc-50 sm:text-3xl">
-          🧫 แนะนำสิ่งส่งตรวจ (Specimen Guide)
-        </h1>
-        <p className="mt-1 text-sm text-zinc-400">
-          คู่มือแนะนำอาหารเลี้ยงเชื้อ (Culture Media) สภาพแวดล้อม และเชื้อที่พบบ่อยตามประเภทสิ่งส่งตรวจ
-        </p>
-      </header>
-
-      {/* Main Layout Split */}
-      <div className="grid gap-6 lg:grid-cols-[250px_1fr]">
+    <div className="specimen-workspace">
+      <div className="specimen-shell">
         {/* Sidebar Selector */}
-        <aside className="lg-surface p-4 flex flex-col h-fit bg-zinc-900/35">
-          <div className="lg-specular" />
-          <div className="lg-caustic" />
-          <div className="lg-content flex flex-col gap-1.5">
-            <div className="text-[10px] font-semibold tracking-wider text-zinc-500 uppercase px-3 py-1 mb-1">
-              Specimen List
+        <aside className="specimen-sidebar">
+          <div className="flex flex-col gap-3">
+            <div className="text-[13px] font-bold tracking-widest text-zinc-500 uppercase px-3 py-1 mb-1">
+              Specimen
             </div>
             {SPECIMEN_GUIDE.map((spec) => {
               const isActive = spec.id === selectedId
@@ -63,13 +50,13 @@ export function SpecimenPage() {
                   key={spec.id}
                   type="button"
                   onClick={() => setSelectedId(spec.id)}
-                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left text-xs font-semibold border transition ${
+                  className={`legacy-list-button w-full flex items-center gap-4 px-4 py-3 rounded-xl text-left font-semibold border transition ${
                     isActive
                       ? 'border-violet-500/40 bg-violet-500/10 text-violet-200'
                       : 'border-transparent text-zinc-400 hover:text-zinc-200 hover:bg-white/5'
                   }`}
                 >
-                  <span className="text-base">{spec.emoji}</span>
+                  <span className="text-xl">{spec.emoji}</span>
                   {spec.label}
                 </button>
               )
@@ -78,17 +65,17 @@ export function SpecimenPage() {
         </aside>
 
         {/* Specimen Detail Area */}
-        <div className="space-y-6">
+        <div className="specimen-main space-y-7">
           {/* Hero Header Card */}
-          <div className="lg-surface p-6 bg-gradient-to-br from-violet-500/10 via-white/[0.02] to-yellow-500/5 border border-white/10 shadow-lg">
+          <div className="legacy-hero-card lg-surface p-8 bg-gradient-to-br from-violet-500/10 via-white/[0.02] to-yellow-500/5 border border-white/10 shadow-lg">
             <div className="lg-specular" />
             <div className="lg-caustic" />
-            <div className="lg-content flex items-center gap-4">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-500/20 to-yellow-500/10 border border-white/15 flex items-center justify-center text-3xl shadow-md">
+            <div className="lg-content flex items-center gap-7">
+              <div className="w-28 h-28 rounded-3xl bg-gradient-to-br from-violet-500/20 to-yellow-500/10 border border-violet-400/25 flex items-center justify-center text-5xl shadow-md">
                 {currentSpecimen.emoji}
               </div>
               <div>
-                <h2 className="text-xl sm:text-2xl font-bold text-zinc-50">
+                <h2 className="text-3xl sm:text-4xl font-black text-zinc-50">
                   {currentSpecimen.label.split(' (')[0]}
                 </h2>
                 <p className="text-xs uppercase tracking-widest text-zinc-500 font-semibold mt-0.5">
@@ -99,26 +86,26 @@ export function SpecimenPage() {
           </div>
 
           {/* Cards Grid */}
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid gap-5 xl:grid-cols-2">
             {/* Culture Media Card */}
-            <div className="lg-surface p-5 space-y-4">
+            <div className="legacy-info-card lg-surface p-7 space-y-4">
               <div className="lg-specular" />
               <div className="lg-caustic" />
               <div className="lg-content space-y-4">
                 <div className="flex items-center gap-2">
                   <div className="w-1 h-5 bg-gradient-to-b from-indigo-500 to-purple-500 rounded-sm" />
-                  <span className="text-base font-bold text-zinc-200">🧫 อาหารเลี้ยงเชื้อที่แนะนำ</span>
+                  <span className="text-lg font-bold text-zinc-200">🧫 อาหารเลี้ยงเชื้อ</span>
                 </div>
                 <div className="flex flex-col gap-2">
                   {currentSpecimen.plates.map((plate, index) => (
                     <div
                       key={plate}
-                      className="flex items-center gap-3 bg-white/[0.02] border border-white/5 rounded-xl px-4 py-3 transition hover:translate-x-1 hover:border-violet-500/25 hover:bg-violet-500/5"
+                      className="flex items-center gap-4 bg-white/[0.035] border border-white/7 rounded-xl px-5 py-4 transition hover:translate-x-1 hover:border-violet-500/25 hover:bg-violet-500/5"
                     >
-                      <span className="w-6 h-6 rounded-lg bg-violet-500/20 text-violet-300 text-[11px] font-bold flex items-center justify-center border border-violet-500/30 shrink-0">
+                      <span className="w-9 h-9 rounded-xl bg-violet-500/40 text-white text-sm font-bold flex items-center justify-center border border-violet-500/30 shrink-0 shadow-lg shadow-violet-500/20">
                         {index + 1}
                       </span>
-                      <span className="text-xs font-semibold text-zinc-300">{plate}</span>
+                      <span className="text-base font-semibold text-zinc-300">{plate}</span>
                     </div>
                   ))}
                 </div>
@@ -126,20 +113,20 @@ export function SpecimenPage() {
             </div>
 
             {/* Incubation Conditions Card */}
-            <div className="lg-surface p-5 space-y-4">
+            <div className="legacy-info-card lg-surface p-7 space-y-4">
               <div className="lg-specular" />
               <div className="lg-caustic" />
               <div className="lg-content space-y-4">
                 <div className="flex items-center gap-2">
                   <div className="w-1 h-5 bg-gradient-to-b from-cyan-500 to-blue-500 rounded-sm" />
-                  <span className="text-base font-bold text-zinc-200">🌡️ เงื่อนไขการบ่มเพาะเชื้อ</span>
+                  <span className="text-lg font-bold text-zinc-200">🌡️ เงื่อนไขการบ่ม</span>
                 </div>
                 <div className="p-4 rounded-xl border border-cyan-500/20 bg-cyan-500/5">
                   <div className="flex items-center gap-2 text-xs font-bold text-cyan-400 mb-2">
                     <span>🌡️</span>
                     <span>อุณหภูมิ & สภาพแวดล้อม</span>
                   </div>
-                  <p className="text-xs text-zinc-300 leading-relaxed">
+                  <p className="text-base text-zinc-300 leading-relaxed">
                     {currentSpecimen.condition}
                   </p>
                 </div>
@@ -147,16 +134,16 @@ export function SpecimenPage() {
             </div>
 
             {/* Important Notes Card */}
-            <div className={`lg-surface p-5 space-y-4 ${organismList.length === 0 ? 'md:col-span-2' : ''}`}>
+            <div className={`lg-surface p-7 space-y-4 ${organismList.length === 0 ? 'xl:col-span-2' : ''}`}>
               <div className="lg-specular" />
               <div className="lg-caustic" />
               <div className="lg-content space-y-4">
                 <div className="flex items-center gap-2">
                   <div className="w-1 h-5 bg-gradient-to-b from-emerald-500 to-teal-500 rounded-sm" />
-                  <span className="text-base font-bold text-zinc-200">📋 หมายเหตุสำคัญ (Important Notes)</span>
+                  <span className="text-lg font-bold text-zinc-200">📋 หมายเหตุสำคัญ</span>
                 </div>
                 <div className="p-4 rounded-xl border border-emerald-500/20 bg-emerald-500/5">
-                  <p className="text-xs text-zinc-300 leading-relaxed">
+                  <p className="text-base text-zinc-300 leading-relaxed">
                     {currentSpecimen.notes}
                   </p>
                 </div>
@@ -165,13 +152,13 @@ export function SpecimenPage() {
 
             {/* Common Pathogens Card */}
             {organismList.length > 0 && (
-              <div className="lg-surface p-5 space-y-4">
+              <div className="lg-surface p-7 space-y-4">
                 <div className="lg-specular" />
                 <div className="lg-caustic" />
                 <div className="lg-content space-y-4">
                   <div className="flex items-center gap-2">
                     <div className="w-1 h-5 bg-gradient-to-b from-purple-500 to-pink-500 rounded-sm" />
-                    <span className="text-base font-bold text-zinc-200">🦠 เชื้อสาเหตุที่พบบ่อย</span>
+                    <span className="text-lg font-bold text-zinc-200">🦠 เชื้อสาเหตุที่พบบ่อย</span>
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {organismList.map((org) => (

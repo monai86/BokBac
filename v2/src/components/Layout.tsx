@@ -1,24 +1,23 @@
 import { useEffect } from 'react'
-import { Link, NavLink, Outlet } from 'react-router-dom'
+import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
 import { useIdentifyStore } from '@/store/identifyStore'
-import { AuthModal } from './AuthModal'
 
 const NAV = [
-  { to: '/', label: 'วินิจฉัย', emoji: '🔬', short: '🔬 วินิจฉัย' },
   { to: '/specimen', label: 'ตัวอย่างตรวจ', emoji: '🧫', short: '🧫 ตัวอย่าง' },
+  { to: '/', label: 'วินิจฉัย', emoji: '🔬', short: '🔬 วินิจฉัย' },
+  { to: '/cases', label: 'Case ที่บันทึก', emoji: '💾', short: '💾 Case' },
   { to: '/library', label: 'คลังเชื้อ', emoji: '📚', short: '📚 คลัง' },
-  { to: '/reference', label: 'คู่มือทดสอบ', emoji: '⚗️', short: '⚗️ Tests' },
+  { to: '/reference', label: 'การทดสอบ', emoji: '⚗️', short: '⚗️ Tests' },
+  { to: '/suites', label: 'Test Suites', emoji: '📊', short: '📊 Suites' },
   { to: '/settings', label: 'ตั้งค่า', emoji: '⚙️', short: '⚙️' },
-  { to: '/about', label: 'เกี่ยวกับ', emoji: 'ℹ️', short: 'ℹ️' },
 ]
 
 export function Layout() {
   const initAuthListener = useIdentifyStore((s) => s.initAuthListener)
   const user = useIdentifyStore((s) => s.user)
-  const isGuest = useIdentifyStore((s) => s.isGuest)
   const loadingAuth = useIdentifyStore((s) => s.loadingAuth)
   const logout = useIdentifyStore((s) => s.logout)
-  const setGuest = useIdentifyStore((s) => s.setGuest)
+  const location = useLocation()
 
   useEffect(() => {
     initAuthListener()
@@ -118,11 +117,14 @@ export function Layout() {
     )
   }
 
+  if (location.pathname === '/login') {
+    return <Outlet />
+  }
+
   return (
-    <div className="min-h-screen flex flex-col">
-      {!user && !isGuest && <AuthModal />}
+    <div className="min-h-screen flex flex-col app-shell">
       <header className="nav-bar">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 w-full px-4 sm:px-6">
+        <div className="flex items-center justify-between gap-4 w-full px-4 sm:px-6">
           <Link to="/" className="brand">
             <span className="emoji">🦠</span>
             <div>
@@ -131,7 +133,7 @@ export function Layout() {
             </div>
           </Link>
           <div className="flex items-center gap-4">
-            <nav className="flex gap-1 items-center">
+            <nav className="flex gap-1 items-center app-nav-scroll">
               {NAV.map((n) => (
                 <NavLink
                   key={n.to}
@@ -161,9 +163,9 @@ export function Layout() {
                   </button>
                 </div>
               ) : (
-                <button onClick={() => setGuest(false)} className="px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-bold hover:scale-[1.02] active:scale-[0.98] transition">
+                <Link to="/login" className="px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-bold hover:scale-[1.02] active:scale-[0.98] transition">
                   เข้าสู่ระบบ
-                </button>
+                </Link>
               )}
             </div>
           </div>
@@ -173,10 +175,6 @@ export function Layout() {
       <main className="flex-1">
         <Outlet />
       </main>
-
-      <footer className="border-t border-white/5 py-4 text-center text-xs text-zinc-600">
-        Microbial World v4 · MCM 11th · Cloudflare Pages
-      </footer>
     </div>
   )
 }

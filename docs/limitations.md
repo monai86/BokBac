@@ -52,13 +52,12 @@ The prior probability weights ($0.05$ to $1.0$) are mapped to general clinical p
 
 ---
 
-## 4. Codebase Track Synchronization (Dual-Track Architecture)
+## 4. Codebase Synchronization
 
-BokBac maintains two active tracks of code:
-1. **Legacy Track (v3.x)**: Uses static JavaScript files (`js/data.js` and `js/mcm_data.js`) loaded directly via `<script>` tags in the root `index.html`.
-2. **Modern Track (v4.x)**: Uses TypeScript files (`v2/src/data/mcmData.ts` and `v2/src/data/bacteriaLibrary.ts`) loaded as ES Modules.
+BokBac maintains one active application: **Modern Track v4.x** in `v2/`, using TypeScript files (`v2/src/data/mcmData.ts` and `v2/src/data/bacteriaLibrary.ts`) loaded as ES Modules. Legacy v3 is archived under `legacy/` for reference only.
 
 ### The Risk of Divergence
-The two tracks do not share a single runtime database.
-* If a developer updates an organism's profile in `js/data.js` but fails to update the corresponding entry in `v2/src/data/bacteriaLibrary.ts`, the legacy and modern apps will produce different identification probabilities and recommendations for the same test inputs.
-* Updates to the data parsing pipelines under `scripts/` must be compiled and ported to both tracks simultaneously to prevent diagnostic divergence.
+The archived legacy reference and the maintained v4 app do not share a single runtime database.
+* Production behavior should be changed in `v2/`.
+* Legacy files under `legacy/` should not be treated as deployment sources.
+* Updates to the data parsing pipelines under `scripts/` must be propagated into `v2/src/data/` before they affect the maintained app.

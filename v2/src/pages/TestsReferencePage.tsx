@@ -96,7 +96,7 @@ export function TestsReferencePage() {
   }, [])
 
   return (
-    <div className="mx-auto max-w-5xl p-4 sm:p-6 lg:p-8 space-y-6">
+    <div className="reference-page space-y-6">
       {/* Header */}
       <header className="lg-surface p-5 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-zinc-900/35 border-white/10 shadow-lg">
         <div className="lg-specular" />
@@ -107,10 +107,10 @@ export function TestsReferencePage() {
           </div>
           <div>
             <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-zinc-50">
-              Biochemical Tests & Media Reference
+              Biochemical Tests Reference
             </h1>
             <p className="text-xs text-zinc-400 mt-0.5">
-              คู่มืออ้างอิงการทดสอบทางชีวเคมี อาหารเลี้ยงเชื้อ ตัวชี้วัด และการเตรียมสารเคมี
+              คู่มืออ้างอิงการทดสอบทางชีวเคมี (MTMI 202 - Mahidol University)
             </p>
           </div>
         </div>
@@ -163,8 +163,8 @@ export function TestsReferencePage() {
             <div key={category.category} className="space-y-3">
               {/* Category Title */}
               <div
-                className="flex items-center justify-between px-4 py-2 rounded-xl border bg-white/[0.01]"
-                style={{ borderLeft: `3px solid ${category.color}`, borderColor: 'rgba(255,255,255,0.05)' }}
+                className="flex items-center justify-between px-4 py-3 rounded-xl border bg-white/[0.01]"
+                style={{ borderColor: `${category.color}40`, boxShadow: `inset 0 0 0 1px ${category.color}12` }}
               >
                 <h2 className="text-xs font-bold uppercase tracking-wider" style={{ color: category.color }}>
                   {category.category}

@@ -42,7 +42,7 @@ interface MissingSuiteWarning {
   fallbackSuite: string
 }
 
-export function SavedCasesPanel() {
+export function SavedCasesPanel({ standalone = false }: { standalone?: boolean }) {
   const [query, setQuery] = useState('')
   const [missingSuiteWarning, setMissingSuiteWarning] = useState<MissingSuiteWarning | null>(null)
   const answers = useIdentifyStore((s) => s.answers)
@@ -53,16 +53,35 @@ export function SavedCasesPanel() {
   const deleteCase = useIdentifyStore((s) => s.deleteCase)
   const defaultSuites = useIdentifyStore((s) => s.defaultSuites)
   const customSuites = useIdentifyStore((s) => s.customSuites)
+  const user = useIdentifyStore((s) => s.user)
   const answeredCount = Object.keys(answers).length
   const filteredCases = savedCases.filter((item) => matchesCase(item, query))
   const exportPayload = JSON.stringify(filteredCases, null, 2)
   const exportHref = `data:application/json;charset=utf-8,${encodeURIComponent(exportPayload)}`
 
+  if (standalone && savedCases.length === 0) {
+    return (
+      <section className="saved-cases-standalone">
+        <div className="lg-surface p-10 text-center">
+          <div className="lg-specular" />
+          <div className="lg-caustic" />
+          <div className="lg-content flex min-h-[300px] flex-col items-center justify-center">
+            <div className="text-6xl opacity-80">📁</div>
+            <h2 className="mt-8 text-2xl font-black text-zinc-100">ยังไม่มีเคสที่ถูกบันทึกไว้</h2>
+            <p className="mt-4 max-w-md text-sm font-semibold text-zinc-500">
+              ข้อมูลเชื้อที่คุณเลือกบันทึกจะถูกเก็บรวบรวมไว้ที่นี่
+            </p>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
   return (
-    <section className="mb-5">
+    <section className={standalone ? 'saved-cases-standalone' : 'mb-5'}>
       <div className="mb-2 flex items-center justify-between gap-3">
         <h2 className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
-          Case History
+          {standalone ? '' : `Case History ${user ? '☁️ (Cloud synced)' : '💾 (Local only)'}`}
         </h2>
         <button
           type="button"

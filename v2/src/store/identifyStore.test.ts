@@ -38,11 +38,11 @@ describe('identifyStore reset flow', () => {
     expect(resetState.results[0]?.pct).toBe(initialTop.pct)
   })
 
-  it('saves, loads, and deletes local cases', () => {
+  it('saves, loads, and deletes local cases', async () => {
     const store = useIdentifyStore.getState()
 
     store.setAnswer('Indole', '+')
-    useIdentifyStore.getState().saveCurrentCase()
+    await useIdentifyStore.getState().saveCurrentCase()
 
     const saved = useIdentifyStore.getState().savedCases[0]
     expect(saved).toBeDefined()
@@ -59,11 +59,11 @@ describe('identifyStore reset flow', () => {
     expect(useIdentifyStore.getState().answers).toEqual({ indole: '+' })
     expect(useIdentifyStore.getState().results.length).toBeGreaterThan(0)
 
-    useIdentifyStore.getState().deleteCase(saved.id)
+    await useIdentifyStore.getState().deleteCase(saved.id)
     expect(useIdentifyStore.getState().savedCases).toEqual([])
   })
 
-  it('restores saved custom suite provenance when loading a case', () => {
+  it('restores saved custom suite provenance when loading a case', async () => {
     const store = useIdentifyStore.getState()
     const baseSuite = store.defaultSuites.find((suite) => suite.id === 'enterobacterales_default')
     expect(baseSuite).toBeDefined()
@@ -79,7 +79,7 @@ describe('identifyStore reset flow', () => {
     store.setCustomSuites([customSuite])
     useIdentifyStore.getState().setActiveSuiteId(customSuite.id)
     useIdentifyStore.getState().setAnswer('Indole (IMViC)', '+')
-    useIdentifyStore.getState().saveCurrentCase()
+    await useIdentifyStore.getState().saveCurrentCase()
 
     const saved = useIdentifyStore.getState().savedCases[0]
     expect(saved.suiteId).toBe(customSuite.id)

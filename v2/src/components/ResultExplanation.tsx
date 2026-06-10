@@ -108,6 +108,9 @@ export function ResultExplanation({
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-zinc-500">
+            Ranking Rationale
+          </p>
           <h3 className="text-sm font-semibold text-zinc-100">
             Why this is the current most likely match
           </h3>

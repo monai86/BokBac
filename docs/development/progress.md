@@ -1,6 +1,6 @@
 Microbial World — Progress & Backlog
 =====================================
-Last updated: 2026-04-28
+Last updated: 2026-06-10
 
 Current state
 -------------
@@ -10,9 +10,9 @@ Current state
     7a0bc8e  feat(v4): Phase 2 — UI shell + Liquid Glass + routing
     8b8f233  feat: v4.0.0-alpha modernization scaffold (Phase 0+1)
     48e4255  feat: v3.1.1 expanded validation suite (50 + DK concordance)
-- Test: 50/50 PASS (vitest, ~1.8s)
-- Build: 453 KB JS / 119 KB gz (vite build, ~1.7s)
-- Legacy v3.1.1 (root index.html) still functional and untouched.
+- Maintained app: v4 in `v2/`
+- Archived reference: legacy v3.1.1 in `legacy/`
+- Required validation: `cd v2 && npm ci && npm run lint && npm run typecheck && npm run test && npm run build`
 
 Phases done
 -----------
@@ -24,7 +24,7 @@ Phases done
               ConfidenceBadge, McmBadge,
               IdentifyPage, AboutPage,
               identifyStore (zustand)
-[x] Phase 4 — GitHub Actions CI (.github/workflows/ci.yml: v4 + legacy jobs)
+[x] Phase 4 — GitHub Actions CI (.github/workflows/ci.yml: v4 lint/typecheck/test/build + legacy validation)
               Cloudflare Pages config (v2/public/_headers, _redirects)
 
 Phase pending
@@ -60,9 +60,8 @@ C. DX / cleanup
    - Lazy-load routes (React.lazy + Suspense) — code-split AboutPage
 
 D. Root docs
-   - Update root README.md to reference v2/ as the active codebase
-   - Add CHANGELOG entry for v4.0.0-alpha
-   - Bump VERSION → 4.0.0-alpha
+   - Keep root README.md, deployment docs, and project structure docs aligned on v2/ as the only maintained app
+   - Keep legacy docs clearly marked as reference-only
 
 E. Algorithm enhancements (longer-term)
    - PWA / offline (vite-plugin-pwa)
@@ -84,6 +83,6 @@ Notes for next session
   Some scenarios accept multiple top-IDs for taxonomic synonyms
   (enterobacter_aerogenes ≡ klebsiella_aerogenes) and genus-level
   entries (shigella, aeromonas).
-- v2/ is self-contained: cd v2 && npm install && npm run dev
+- v2/ is self-contained: cd v2 && npm ci && npm run dev
 - @ts-nocheck on data files is intentional for now — switching to
   proper types is task C.

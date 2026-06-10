@@ -70,22 +70,6 @@ export function IdentifyPage() {
 
   return (
     <div className="mx-auto max-w-6xl p-4 sm:p-6 lg:p-8 space-y-6">
-      {/* Educational Header */}
-      <header className="glass-header flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h2 style={{ fontSize: '20px', fontWeight: 800, color: '#fff', margin: 0 }}>
-            🧫 BokBac Diagnostic Engine
-          </h2>
-          <p style={{ fontSize: '13px', color: '#64748b', margin: '4px 0 0' }}>
-            Educational Bacterial Identification System · v4.0.0
-          </p>
-        </div>
-        <div className="text-right text-[10px] text-zinc-500 font-mono shrink-0">
-          <div>Posteriors & Coverage Split</div>
-          <div>MCM 11th Edition calibrated</div>
-        </div>
-      </header>
-
       {/* Progress Stepper Bar (Only in Step Mode) */}
       {isStepMode && (
         <div className="lg-surface p-4 bg-zinc-900/40 border border-white/5 shadow-md flex flex-col sm:flex-row gap-4 items-center justify-between">
@@ -272,9 +256,14 @@ export function IdentifyPage() {
       {(!isStepMode || step === 3) && (
         <div className="space-y-6 animate-fade-in">
           <section className="space-y-3">
-            <h2 className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
-              ขั้นตอนที่ 3: Suggested probabilistic matches (Top 10)
-            </h2>
+            <div className="space-y-1">
+              <h2 className="text-sm font-bold tracking-wide text-zinc-200">
+                ขั้นตอนที่ 3: ผลการวินิจฉัย
+              </h2>
+              <p className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
+                Suggested probabilistic matches (Top 10)
+              </p>
+            </div>
             {top10.length === 0 ? (
               <div className="lg-surface p-6 text-center text-zinc-500">
                 กำลังประมวลผลความน่าจะเป็น…

@@ -22,7 +22,7 @@ Current modern app version: `v4.0.0`
 
 ```bash
 # Development
-npm install
+npm ci
 npm run dev          # http://localhost:5173
 
 # Testing (50 textbook scenarios)
@@ -36,6 +36,22 @@ npm run test:e2e     # browser flow tests (Playwright)
 npm run build        # outputs to dist/
 npm run preview      # preview built bundle
 ```
+
+## Firebase Environment
+
+Firebase Auth/Firestore is optional. The app reads Firebase client config from Vite environment variables:
+
+```bash
+VITE_FIREBASE_API_KEY=
+VITE_FIREBASE_AUTH_DOMAIN=
+VITE_FIREBASE_PROJECT_ID=
+VITE_FIREBASE_STORAGE_BUCKET=
+VITE_FIREBASE_MESSAGING_SENDER_ID=
+VITE_FIREBASE_APP_ID=
+VITE_FIREBASE_MEASUREMENT_ID=
+```
+
+Use [`v2/.env.example`](v2/.env.example) as the template for local development and configure the same names in the hosting provider. Keep `.env`, `.env.local`, and real project values out of git.
 
 ## 📁 Structure
 

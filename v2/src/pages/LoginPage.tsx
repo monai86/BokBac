@@ -1,13 +1,13 @@
 import { useState } from 'react'
-import { useIdentifyStore } from '@/store/identifyStore'
-import { isFirebaseActive, auth } from '@/lib/firebase'
-import { sendPasswordResetEmail } from 'firebase/auth'
+import { useNavigate, useLocation } from 'react-router-dom'
+import { useAuth } from '@/auth/useAuth'
+import { isFirebaseActive } from '@/auth/firebase'
+import { loginWithEmail, signupWithEmail, loginWithGoogle } from '@/auth/authService'
 
-export function AuthModal() {
-  const loginWithEmail = useIdentifyStore((s) => s.loginWithEmail)
-  const signupWithEmail = useIdentifyStore((s) => s.signupWithEmail)
-  const loginWithGoogle = useIdentifyStore((s) => s.loginWithGoogle)
-  const setGuest = useIdentifyStore((s) => s.setGuest)
+export function LoginPage() {
+  const { setGuest } = useAuth()
+  const navigate = useNavigate()
+  const location = useLocation()
 
   const [mode, setMode] = useState<'login' | 'signup'>('login')
   const [email, setEmail] = useState('')
@@ -23,6 +23,12 @@ export function AuthModal() {
   const [resetEmail, setResetEmail] = useState('')
   const [resetMsg, setResetMsg] = useState('')
   const [resetLoading, setResetLoading] = useState(false)
+
+  const from = (location.state as any)?.from?.pathname || '/'
+
+  const handleSuccess = () => {
+    navigate(from, { replace: true })
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -55,6 +61,7 @@ export function AuthModal() {
       } else {
         await signupWithEmail(email.trim(), pwd, name.trim())
       }
+      handleSuccess()
     } catch (err: any) {
       console.error(err)
       let msg = err.message || 'เกิดข้อผิดพลาดในการตรวจสอบสิทธิ์'
@@ -64,8 +71,6 @@ export function AuthModal() {
         msg = 'อีเมลนี้ถูกใช้งานแล้วในระบบ'
       } else if (msg.includes('invalid-email')) {
         msg = 'รูปแบบอีเมลไม่ถูกต้อง'
-      } else if (msg.includes('operation-not-allowed')) {
-        msg = 'ล็อกอินด้วยอีเมลยังไม่ถูกเปิดใช้งานใน Firebase'
       }
       setAuthErr('❌ ' + msg)
     } finally {
@@ -76,14 +81,18 @@ export function AuthModal() {
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault()
     setResetMsg('')
-    if (!isFirebaseActive || !auth) {
+    if (!isFirebaseActive) {
       setResetMsg('กรุณาตั้งค่า Firebase Config ใน code ก่อนใช้งานครับ')
       return
     }
     setResetLoading(true)
     try {
-      await sendPasswordResetEmail(auth, resetEmail.trim())
-      setResetMsg('✅ ระบบได้ส่งอีเมลรีเซ็ตรหัสผ่านไปยังเมลของคุณแล้ว กรุณาตรวจสอบ Inbox/Spam')
+      const { auth } = await import('@/auth/firebase')
+      const { sendPasswordResetEmail } = await import('firebase/auth')
+      if (auth) {
+        await sendPasswordResetEmail(auth, resetEmail.trim())
+        setResetMsg('✅ ระบบได้ส่งอีเมลรีเซ็ตรหัสผ่านไปยังเมลของคุณแล้ว กรุณาตรวจสอบ Inbox/Spam')
+      }
     } catch (err: any) {
       console.error(err)
       let msg = err.message || 'เกิดข้อผิดพลาดในการส่งอีเมลรีเซ็ต'
@@ -106,6 +115,7 @@ export function AuthModal() {
     }
     try {
       await loginWithGoogle()
+      handleSuccess()
     } catch (err: any) {
       console.error(err)
       if (err.code === 'auth/operation-not-supported-in-this-environment' || window.location.protocol === 'file:') {
@@ -116,16 +126,22 @@ export function AuthModal() {
     }
   }
 
+  const handleGuest = () => {
+    setGuest(true)
+    handleSuccess()
+  }
+
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-md px-4 py-8 overflow-y-auto">
-      <div className="lg-surface card fade-in login-card p-6 sm:p-8 max-w-md w-full relative">
+    <div className="premium-login-page">
+      <div className="lg-surface card fade-in login-card p-8 sm:p-10 w-full relative">
         <div className="lg-specular" />
         <div className="lg-caustic" />
         <div className="lg-content relative z-10 flex flex-col gap-6">
           <div className="text-center">
-            <span className="text-4xl">🦠</span>
-            <h1 className="text-2xl font-black tracking-tight text-white mt-2">BOK BAC</h1>
-            <p className="text-xs uppercase tracking-widest text-zinc-400 font-bold mt-1">Diagnostic Engine & Reference</p>
+            <span className="login-logo-mark" aria-hidden="true">🦠</span>
+            <h1 className="login-brand-title">BOK BAC</h1>
+            <p className="login-kicker">Diagnostic Engine</p>
+            <p className="login-subtitle">ระบบวินิจฉัยเชื้อแบคทีเรีย</p>
           </div>
 
           {authErr && (
@@ -155,7 +171,7 @@ export function AuthModal() {
                 <input
                   type="email"
                   required
-                  placeholder="name@example.com"
+                  placeholder="อีเมล (Email)"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="input-field"
@@ -179,7 +195,7 @@ export function AuthModal() {
                   <input
                     type={showPwd ? 'text' : 'password'}
                     required
-                    placeholder="••••••••"
+                    placeholder="รหัสผ่าน (6 ตัวอักษรขึ้นไป)"
                     value={pwd}
                     onChange={(e) => setPwd(e.target.value)}
                     minLength={6}
@@ -188,9 +204,10 @@ export function AuthModal() {
                   <button
                     type="button"
                     onClick={() => setShowPwd(!showPwd)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300 text-xs px-2 py-1"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300 text-lg px-2 py-1"
+                    aria-label={showPwd ? 'ซ่อนรหัสผ่าน' : 'แสดงรหัสผ่าน'}
                   >
-                    {showPwd ? 'ซ่อน' : 'แสดง'}
+                    {showPwd ? '🙈' : '👁️‍🗨️'}
                   </button>
                 </div>
               </div>
@@ -300,7 +317,7 @@ export function AuthModal() {
               Continue with Google
             </button>
             <button
-              onClick={() => setGuest(true)}
+              onClick={handleGuest}
               className="btn btn-ghost w-full border-dashed border-violet-500/30 text-violet-300 hover:bg-violet-500/5 transition text-xs font-semibold"
             >
               ใช้งานโดยไม่ล็อกอิน (Guest Mode)

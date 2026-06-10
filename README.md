@@ -2,6 +2,8 @@
 
 BokBac is an interactive educational web application and decision-support tool designed for medical technology students, microbiology educators, and software reviewers. It demonstrates how clinical microbiology reasoning, standard biochemical testing, and Bayesian probability models intersect to identify bacterial species.
 
+The maintained modern app follows a public-first workflow: users can open BokBac and begin the identification workflow immediately as guests, save cases locally in the browser, and optionally sign in later for account-linked settings and cloud sync.
+
 > [!WARNING]
 > **Clinical Safety & Usage Disclaimer**: BokBac is strictly an educational tool and simulation platform. It **must not** be used for clinical diagnosis, patient management, or to replace standard professional microbiology laboratory confirmation (e.g., automated systems, culture confirmation, or mass spectrometry). It does not guarantee clinical accuracy.
 
@@ -43,9 +45,9 @@ For detailed reviews of the engineering, algorithms, and design choices behind B
    * Critically evaluates the independence assumption of Naive Bayes in biological contexts.
    * Defines data boundaries (137 species coverage) and known clinical trade-offs.
 5. **[Local Execution & Deployment Guide](docs/deployment.md)**
-   * Explains how to run the legacy (v3) and modern (v4) tracks locally.
-   * Provides instructions for Cloudflare Pages production deployment.
-   * Covers security hardening (Firebase configuration splitting, security rules).
+   * Explains how to run and deploy the maintained modern v4 app.
+   * Provides Cloudflare Pages, Vercel, Netlify, and Firebase Hosting settings that point to `v2/dist`.
+   * Covers Firebase environment variables, security rules, and secret hygiene.
 
 ---
 
@@ -68,14 +70,14 @@ For detailed reviews of the engineering, algorithms, and design choices behind B
 │   ├── user-guide.md       # User manuals, interface workflows, and custom suites
 │   ├── limitations.md      # Scientific and statistical caveats
 │   └── deployment.md       # Local developer startup and hosting guidelines
-├── scripts/                # Python scripts for data parsing and local validation mjs
+├── scripts/                # Data extraction/parsing and legacy validation helpers
 │   ├── parse_mcm_*.py      # Genus-group text extraction and parsers
 │   ├── generate_mcm_js.py  # Compiler for mcm_extract/parsed JSON → legacy/js/mcm_data.js & v2
 │   └── test_bayes.mjs      # Node.js console validation suite (50 scenarios)
 ├── v2/                     # Modern Track v4.x (Vite + React + TypeScript)
 │   ├── src/lib/            # Bayesian engine, adapters, and Shannon entropy recommendation
 │   └── package.json        # NPM scripts and dependencies for modern v4.x
-├── config/                 # Deployment config templates (Firebase, Netlify)
+├── config/                 # Optional deployment config templates targeting v2/dist
 ├── VERSION                 # Version authority for Legacy v3.x
 └── CHANGELOG.md            # Git changelog history
 ```
@@ -85,7 +87,7 @@ For detailed reviews of the engineering, algorithms, and design choices behind B
 ## ⚡ Quick Start for Developers
 
 ### Maintained Modern Track (v4.x)
-To run, lint, typecheck, or test the maintained Vite + React + TS application:
+To run, lint, typecheck, test, or build the maintained Vite + React + TS application:
 
 ```bash
 # Navigate to the maintained application directory
@@ -109,6 +111,20 @@ npm run test
 # Build production assets
 npm run build
 ```
+
+Firebase is optional. To enable Firebase Auth/Firestore in v2, copy [`v2/.env.example`](v2/.env.example) to `v2/.env.local` and fill:
+
+```bash
+VITE_FIREBASE_API_KEY=
+VITE_FIREBASE_AUTH_DOMAIN=
+VITE_FIREBASE_PROJECT_ID=
+VITE_FIREBASE_STORAGE_BUCKET=
+VITE_FIREBASE_MESSAGING_SENDER_ID=
+VITE_FIREBASE_APP_ID=
+VITE_FIREBASE_MEASUREMENT_ID=
+```
+
+Do not commit `v2/.env`, `v2/.env.local`, or any real Firebase values.
 
 ### Archived Legacy Track (v3.x)
 The legacy app is archived under [`legacy/`](legacy/) and is no longer actively maintained. 

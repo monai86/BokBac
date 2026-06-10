@@ -1,8 +1,10 @@
 {
-  "cleanUrls": false,
+  "buildCommand": "cd v2 && npm run build",
+  "outputDirectory": "v2/dist",
+  "cleanUrls": true,
   "rewrites": [
     {
-      "source": "/",
+      "source": "/(.*)",
       "destination": "/index.html"
     }
   ]

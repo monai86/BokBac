@@ -1,5 +1,6 @@
-// Copy this file to firebase-config.js and fill with your real Firebase project config.
-// This file is loaded only in browser context.
+// Legacy v3 reference template only.
+// The maintained v4 app uses VITE_FIREBASE_* variables from v2/.env.example.
+// Do not commit a firebase-config.js file with real project values.
 window.MICROBACT_FIREBASE_CONFIG = {
   apiKey: "YOUR_API_KEY",
   authDomain: "YOUR_PROJECT.firebaseapp.com",

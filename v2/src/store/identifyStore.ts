@@ -20,7 +20,8 @@ import {
   UNVERSIONED_SUITE,
 } from '@/lib/suiteCatalog'
 import { selectSuiteForObservation } from '@/lib/selectSuiteForObservation'
-import { auth as firebaseAuth, db as firestoreDb, isFirebaseActive } from '@/lib/firebase'
+import { auth as firebaseAuth, db as firestoreDb, isFirebaseActive } from '@/auth/firebase'
+import { caseStorage, getLocalCases } from '@/services/caseStorage'
 import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
@@ -30,45 +31,14 @@ import {
   signInWithPopup,
   GoogleAuthProvider,
 } from 'firebase/auth'
-import {
-  doc,
-  setDoc,
-  getDoc,
-  collection,
-  getDocs,
-  deleteDoc,
-  query,
-  orderBy,
-} from 'firebase/firestore'
+import { doc, getDoc, setDoc } from 'firebase/firestore'
 
-const SAVED_CASES_KEY = 'microbial-world:v4:saved-cases'
 const CUSTOM_SUITES_KEY = 'microbial-world:v4:custom-suites'
 const ACTIVE_SUITE_ID_KEY = 'microbial-world:v4:active-suite-id'
+let authListenerInitialized = false
 
 function canUseStorage() {
   return typeof window !== 'undefined' && typeof window.localStorage !== 'undefined'
-}
-
-function loadSavedCases(): SavedCase[] {
-  if (!canUseStorage()) return []
-  try {
-    const raw = window.localStorage.getItem(SAVED_CASES_KEY)
-    const parsed = raw ? JSON.parse(raw) : []
-    if (!Array.isArray(parsed)) return []
-    return parsed.map((item): SavedCase => ({
-      ...item,
-      title: typeof item.title === 'string' && item.title.trim() ? item.title : item.topSpecies || 'Untitled case',
-      tags: Array.isArray(item.tags) ? item.tags : [],
-      answers: normalizeAnswersToTestIds(item.answers || {}),
-    }))
-  } catch {
-    return []
-  }
-}
-
-function persistSavedCases(cases: SavedCase[]) {
-  if (!canUseStorage()) return
-  window.localStorage.setItem(SAVED_CASES_KEY, JSON.stringify(cases))
 }
 
 function loadCustomSuites(): TestSuite[] {
@@ -142,7 +112,7 @@ export const useIdentifyStore = create<IdentifyState>()((set, get) => ({
   answers: {},
   results: [],
   recommendedTests: [],
-  savedCases: loadSavedCases(),
+  savedCases: getLocalCases(),
   defaultSuites: DEFAULT_SUITES,
   customSuites: loadCustomSuites(),
   activeSuiteId: canUseStorage() ? window.localStorage.getItem(ACTIVE_SUITE_ID_KEY) || 'enterobacterales_default' : 'enterobacterales_default',
@@ -230,7 +200,7 @@ export const useIdentifyStore = create<IdentifyState>()((set, get) => ({
   },
 
   saveCurrentCase: async () => {
-    const { group, answers, results, savedCases, initialObservation, defaultSuites, customSuites, activeSuiteId, user } = get()
+    const { group, answers, results, initialObservation, defaultSuites, customSuites, activeSuiteId, user } = get()
     const activeSuite = getActiveSuite(defaultSuites, customSuites, activeSuiteId, group)
     const top = results.find((r) => !r._excluded)
     const savedCase: SavedCase = {
@@ -248,45 +218,15 @@ export const useIdentifyStore = create<IdentifyState>()((set, get) => ({
       topSpecies: top?.name,
       topPct: top?.pct,
     }
-    const next = [savedCase, ...savedCases].slice(0, 50)
-    persistSavedCases(next)
-    set({ savedCases: next })
 
-    if (isFirebaseActive && firestoreDb && user) {
-      try {
-        await setDoc(doc(firestoreDb, 'users', user.uid, 'cases', savedCase.id), savedCase)
-      } catch (e) {
-        console.error('Error saving case to Firestore:', e)
-      }
-    }
+    await caseStorage.saveCase(savedCase, user?.uid)
+    set({ savedCases: getLocalCases() })
   },
 
   updateCase: async (id, updates) => {
-    let updatedItem: SavedCase | null = null
-    const next = get().savedCases.map((item) => {
-      if (item.id === id) {
-        updatedItem = {
-          ...item,
-          ...updates,
-          title: updates.title ?? item.title,
-          tags: updates.tags?.map((tag) => tag.trim()).filter(Boolean) ?? item.tags,
-          updatedAt: new Date().toISOString(),
-        }
-        return updatedItem
-      }
-      return item
-    })
-    persistSavedCases(next)
-    set({ savedCases: next })
-
     const { user } = get()
-    if (isFirebaseActive && firestoreDb && user && updatedItem) {
-      try {
-        await setDoc(doc(firestoreDb, 'users', user.uid, 'cases', id), updatedItem)
-      } catch (e) {
-        console.error('Error updating case in Firestore:', e)
-      }
-    }
+    await caseStorage.updateCase(id, updates, user?.uid)
+    set({ savedCases: getLocalCases() })
   },
 
   loadCase: (id) => {
@@ -317,18 +257,9 @@ export const useIdentifyStore = create<IdentifyState>()((set, get) => ({
   },
 
   deleteCase: async (id) => {
-    const next = get().savedCases.filter((item) => item.id !== id)
-    persistSavedCases(next)
-    set({ savedCases: next })
-
     const { user } = get()
-    if (isFirebaseActive && firestoreDb && user) {
-      try {
-        await deleteDoc(doc(firestoreDb, 'users', user.uid, 'cases', id))
-      } catch (e) {
-        console.error('Error deleting case from Firestore:', e)
-      }
-    }
+    await caseStorage.deleteCase(id, user?.uid)
+    set({ savedCases: getLocalCases() })
   },
 
   setCustomSuites: (suites) => {
@@ -365,6 +296,11 @@ export const useIdentifyStore = create<IdentifyState>()((set, get) => ({
 
   // Auth and Firestore Syncing Actions
   initAuthListener: () => {
+    if (authListenerInitialized) {
+      return
+    }
+    authListenerInitialized = true
+
     if (!isFirebaseActive || !firebaseAuth) {
       set({ loadingAuth: false })
       return
@@ -384,17 +320,14 @@ export const useIdentifyStore = create<IdentifyState>()((set, get) => ({
             }
           }
 
-          // Sync cases
-          const casesQuery = query(collection(firestoreDb, 'users', usr.uid, 'cases'), orderBy('createdAt', 'desc'))
-          const snap = await getDocs(casesQuery)
-          const cloudCases = snap.docs.map(d => d.data() as SavedCase)
-          set({ savedCases: cloudCases })
-          persistSavedCases(cloudCases)
+          // Sync cases using caseStorage sync strategy
+          const syncedCases = await caseStorage.syncLocalToCloud(usr.uid)
+          set({ savedCases: syncedCases })
         } catch (e) {
           console.error('Error syncing with Firestore:', e)
         }
       } else {
-        set({ savedCases: loadSavedCases() })
+        set({ savedCases: getLocalCases() })
       }
     })
   },
