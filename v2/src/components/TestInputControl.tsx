@@ -33,8 +33,8 @@ export function TestInputControl({
 
   const buttonBase =
     layout === 'fill'
-      ? 'flex-1 rounded-lg border py-1.5 text-xs font-semibold transition'
-      : 'min-w-[28px] rounded-md border px-2 py-0.5 text-xs font-medium transition'
+      ? 'flex-1 wf-opt-btn py-1.5'
+      : 'min-w-[28px] wf-opt-btn px-2 py-0.5 text-center flex items-center justify-center'
 
   return (
     <div className={`flex items-center ${layout === 'fill' ? 'gap-1.5' : 'gap-1'}`}>
@@ -47,11 +47,7 @@ export function TestInputControl({
             aria-label={`${ariaPrefix} ${displayLabel} to ${option}`}
             aria-pressed={isSelected}
             onClick={() => onChange(isSelected ? null : option)}
-            className={`${buttonBase} ${
-              isSelected
-                ? 'border-violet-400 bg-violet-500/30 text-violet-100 shadow-[0_0_8px_rgba(139,92,246,0.2)]'
-                : 'border-white/10 bg-white/5 text-zinc-400 hover:border-white/20 hover:text-zinc-200'
-            }`}
+            className={`${buttonBase} ${isSelected ? 'selected' : ''}`}
           >
             {option}
           </button>

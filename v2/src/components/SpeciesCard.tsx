@@ -11,8 +11,8 @@ export function SpeciesCard({ species, rank }: { species: RankedSpecies; rank: n
   return (
     <Link
       to={`/library/${species.id}`}
-      className={`lg-surface p-4 block transition-colors hover:border-violet-500/30 hover:bg-white/[0.06] group ${
-        isTop ? 'ring-2 ring-violet-500/40 shadow-lg shadow-violet-500/10 bg-violet-950/[0.03]' : ''
+      className={`result-card block group ${
+        isTop ? 'top' : ''
       }`}
     >
       <div className="flex items-start justify-between gap-3">

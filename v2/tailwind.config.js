@@ -5,16 +5,17 @@ export default {
   theme: {
     extend: {
       colors: {
-        bg: '#0a0a0f',
+        bg: '#030712',
         panel: '#13131a',
-        accent: '#7c5cff',
+        accent: '#a78bfa',
         accent2: '#5cc8ff',
-        good: '#34d399',
+        good: '#10b981',
         warn: '#fbbf24',
-        bad: '#f87171',
+        bad: '#ef4444',
       },
       fontFamily: {
-        sans: ['"Inter"', '"IBM Plex Sans Thai"', 'system-ui', 'sans-serif'],
+        sans: ['"Inter"', '"Prompt"', '"IBM Plex Sans Thai"', 'system-ui', 'sans-serif'],
+        serif: ['"Cormorant Garamond"', 'Georgia', 'serif'],
       },
       backdropBlur: {
         glass: '20px',

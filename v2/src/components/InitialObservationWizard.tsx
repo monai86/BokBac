@@ -163,7 +163,7 @@ export function InitialObservationWizard() {
               <select
                 value={initialObservation.arrangement || 'unknown'}
                 onChange={(e) => updateObs({ arrangement: e.target.value as Arrangement })}
-                className="w-full rounded-lg border border-white/10 bg-zinc-950 p-2 text-xs text-zinc-300 focus:border-violet-500 focus:outline-none focus:ring-1 focus:ring-violet-500"
+                className="input-field py-2 text-xs"
               >
                 {ARRANGEMENT_OPTIONS.map((arr) => (
                   <option key={arr.value} value={arr.value}>

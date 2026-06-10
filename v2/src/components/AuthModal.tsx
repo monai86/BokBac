@@ -118,7 +118,7 @@ export function AuthModal() {
 
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-md px-4 py-8 overflow-y-auto">
-      <div className="lg-surface p-6 sm:p-8 max-w-md w-full bg-zinc-950/80 border border-white/10 shadow-2xl relative">
+      <div className="lg-surface card fade-in login-card p-6 sm:p-8 max-w-md w-full relative">
         <div className="lg-specular" />
         <div className="lg-caustic" />
         <div className="lg-content relative z-10 flex flex-col gap-6">
@@ -145,7 +145,7 @@ export function AuthModal() {
                     placeholder="เช่น Dr. Somsak"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                    className="input-field"
                   />
                 </div>
               )}
@@ -158,7 +158,7 @@ export function AuthModal() {
                   placeholder="name@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                  className="input-field"
                 />
               </div>
 
@@ -183,7 +183,7 @@ export function AuthModal() {
                     value={pwd}
                     onChange={(e) => setPwd(e.target.value)}
                     minLength={6}
-                    className="w-full bg-white/[0.03] border border-white/10 rounded-xl pl-4 pr-12 py-3 text-sm text-white focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                    className="input-field pr-12"
                   />
                   <button
                     type="button"
@@ -205,7 +205,7 @@ export function AuthModal() {
                     value={pwd2}
                     onChange={(e) => setPwd2(e.target.value)}
                     minLength={6}
-                    className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                    className="input-field"
                   />
                 </div>
               )}
@@ -213,7 +213,7 @@ export function AuthModal() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3 rounded-xl font-bold text-sm bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg shadow-violet-500/20 hover:scale-[1.02] active:scale-[0.98] transition disabled:opacity-50 disabled:pointer-events-none"
+                className="btn btn-primary w-full"
               >
                 {loading ? 'กำลังดำเนินการ...' : mode === 'login' ? 'เข้าสู่ระบบ' : 'สร้างบัญชีใหม่'}
               </button>
@@ -242,20 +242,20 @@ export function AuthModal() {
                   placeholder="name@example.com"
                   value={resetEmail}
                   onChange={(e) => setResetEmail(e.target.value)}
-                  className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-violet-500"
+                  className="input-field"
                 />
                 <div className="flex gap-2">
                   <button
                     type="button"
                     onClick={() => { setShowForgot(false); setResetMsg(''); }}
-                    className="flex-1 py-2 rounded-xl text-xs font-semibold border border-white/10 text-zinc-400 hover:bg-white/5 transition"
+                    className="btn btn-ghost flex-1 py-2 text-xs font-semibold"
                   >
                     ย้อนกลับ
                   </button>
                   <button
                     type="submit"
                     disabled={resetLoading}
-                    className="flex-1 py-2 rounded-xl text-xs font-bold bg-violet-600 text-white hover:bg-violet-500 transition disabled:opacity-50"
+                    className="btn btn-primary flex-1 py-2 text-xs font-bold"
                   >
                     {resetLoading ? 'กำลังส่ง...' : 'ส่งอีเมลรีเซ็ต'}
                   </button>
@@ -289,9 +289,9 @@ export function AuthModal() {
           <div className="flex flex-col gap-2">
             <button
               onClick={handleGoogleLogin}
-              className="w-full py-3 rounded-xl border border-white/10 hover:bg-white/5 transition flex items-center justify-center gap-2 text-sm text-white font-medium"
+              className="btn btn-google w-full"
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <svg className="mr-2 shrink-0" width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
                 <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
                 <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
@@ -301,7 +301,7 @@ export function AuthModal() {
             </button>
             <button
               onClick={() => setGuest(true)}
-              className="w-full py-2.5 rounded-xl border border-dashed border-violet-500/30 text-violet-300 hover:bg-violet-500/5 transition text-xs font-semibold"
+              className="btn btn-ghost w-full border-dashed border-violet-500/30 text-violet-300 hover:bg-violet-500/5 transition text-xs font-semibold"
             >
               ใช้งานโดยไม่ล็อกอิน (Guest Mode)
             </button>

@@ -44,10 +44,12 @@ export function TestSelector() {
           return (
             <div
               key={t.testId}
-              className={`flex items-center justify-between gap-2 rounded-lg border px-3 py-2 transition-all ${
+              className={`wf-test-card flex items-center justify-between gap-2 ${
+                current ? 'answered' : ''
+              } ${
                 isRecommended
-                  ? 'border-violet-500/20 bg-violet-950/10 shadow-[0_0_12px_rgba(139,92,246,0.05)]'
-                  : 'border-white/5 bg-white/[0.03]'
+                  ? 'border-violet-500/30 bg-violet-950/10 shadow-[0_0_15px_rgba(139,92,246,0.15)]'
+                  : ''
               }`}
             >
               <div className="flex items-center gap-1.5 min-w-0">

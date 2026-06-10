@@ -69,7 +69,7 @@ export function SavedCasesPanel() {
           onClick={saveCurrentCase}
           disabled={answeredCount === 0}
           aria-label="Save current identification case"
-          className="rounded-md border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-medium text-zinc-300 transition hover:border-white/20 hover:text-zinc-100 disabled:cursor-not-allowed disabled:opacity-40"
+          className="btn btn-primary px-3 py-1.5 text-xs h-fit"
         >
           Save case
         </button>
@@ -198,7 +198,7 @@ export function SavedCasesPanel() {
                         loadCase(item.id)
                       }}
                       aria-label={`Load saved case ${item.topSpecies || item.id}`}
-                      className="rounded-md border border-white/10 bg-white/5 px-2 py-1 text-xs text-zinc-300 hover:border-white/20 hover:text-zinc-100"
+                      className="btn btn-ghost px-2 py-1 text-xs font-semibold"
                     >
                       โหลดข้อมูล (Load)
                     </button>
@@ -206,7 +206,7 @@ export function SavedCasesPanel() {
                       type="button"
                       onClick={() => deleteCase(item.id)}
                       aria-label={`Delete saved case ${item.topSpecies || item.id}`}
-                      className="rounded-md border border-rose-500/20 bg-rose-500/10 px-2 py-1 text-xs text-rose-300 hover:border-rose-400/40"
+                      className="btn px-2 py-1 text-xs bg-rose-500/10 border border-rose-500/20 text-rose-400 hover:bg-rose-500/20"
                     >
                       ลบเคส (Delete)
                     </button>
