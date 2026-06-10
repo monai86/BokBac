@@ -9,11 +9,13 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:e2e": "playwright test",
+    "typecheck": "tsc -b --pretty false",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "lint": "eslint ."
   },
   "dependencies": {
+    "firebase": "^12.14.0",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
     "react-router-dom": "^7.14.2",

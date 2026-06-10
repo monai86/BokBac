@@ -6,6 +6,7 @@ import { LibraryPage } from '@/pages/LibraryPage'
 import { SpeciesDetailPage } from '@/pages/SpeciesDetailPage'
 import { SpecimenPage } from '@/pages/SpecimenPage'
 import { TestsReferencePage } from '@/pages/TestsReferencePage'
+import { SettingsPage } from '@/pages/SettingsPage'
 
 export default function App() {
   return (
@@ -17,6 +18,7 @@ export default function App() {
           <Route path="library" element={<LibraryPage />} />
           <Route path="library/:speciesId" element={<SpeciesDetailPage />} />
           <Route path="reference" element={<TestsReferencePage />} />
+          <Route path="settings" element={<SettingsPage />} />
           <Route path="about" element={<AboutPage />} />
         </Route>
       </Routes>

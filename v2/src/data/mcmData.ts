@@ -1,6 +1,5 @@
-// @ts-nocheck — auto-imported from legacy js/mcm_data.js
-// js/mcm_data.js — Auto-generated from MCM 11th edition extraction
-// Generated: 2026-04-26T23:10:39.013004
+// src/data/mcmData.ts — Auto-generated from MCM 11th edition extraction
+// Generated: 2026-06-10T16:52:49.583637
 // Source: Manual of Clinical Microbiology, 11th Edition (2015)
 // DO NOT EDIT MANUALLY — re-run scripts/generate_mcm_js.py instead
 
@@ -2377,5 +2376,3 @@ export const MCM_DATA = {
     "tests": {}
   }
 };
-
-// Export for ES module / non-module use

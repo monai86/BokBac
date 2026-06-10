@@ -3,11 +3,13 @@ import { expect, test } from '@playwright/test'
 test('identify, explain, save, reset, and reload a case', async ({ page }) => {
   await page.goto('/')
 
-  await expect(page.getByRole('heading', { name: /ผลการวินิจฉัย/i })).toBeVisible()
-  await expect(page.getByText('Why this result is leading')).toBeVisible()
+  await page.getByRole('button', { name: /แสดงหน้าเดียว/i }).click()
+
+  await expect(page.getByRole('heading', { name: /ขั้นตอนที่ 3: ผลการวินิจฉัย/i })).toBeVisible()
+  await expect(page.getByText(/Ranking Rationale/i)).toBeVisible()
 
   await page.getByRole('button', { name: /set oxidase to \+/i }).click()
-  await expect(page.getByText(/1 answer considered/i)).toBeVisible()
+  await expect(page.getByText(/1 การทดสอบ|1 answer considered/i)).toBeVisible()
 
   await page.getByRole('button', { name: /save current identification case/i }).click()
   await expect(page.getByRole('button', { name: /load saved case/i })).toBeVisible()
@@ -19,8 +21,8 @@ test('identify, explain, save, reset, and reload a case', async ({ page }) => {
   await expect(page.getByLabel('Case title')).toHaveValue('Teaching oxidase case')
 
   await page.getByRole('button', { name: /reset all biochemical/i }).click()
-  await expect(page.getByText(/prevalence priors/i)).toBeVisible()
+  await expect(page.getByText(/Prevalence prior|ค่าความชุก/i)).toBeVisible()
 
   await page.getByRole('button', { name: /load saved case/i }).click()
-  await expect(page.getByText(/1 answer considered/i)).toBeVisible()
+  await expect(page.getByText(/1 การทดสอบ|1 answer considered/i)).toBeVisible()
 })

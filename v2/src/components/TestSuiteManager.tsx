@@ -21,6 +21,7 @@ export function TestSuiteManager() {
   const [editedDesc, setEditedDesc] = useState('')
   const [editedTests, setEditedTests] = useState<TestSuiteItem[]>([])
   const [validationError, setValidationError] = useState<string | null>(null)
+  const [importReport, setImportReport] = useState<{ type: 'error' | 'success', message: string } | null>(null)
 
   if (!currentSuite) return null
 
@@ -129,6 +130,7 @@ export function TestSuiteManager() {
 
   // Import JSON
   const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setImportReport(null)
     const fileReader = new FileReader()
     if (e.target.files && e.target.files[0]) {
       fileReader.readAsText(e.target.files[0], 'UTF-8')
@@ -136,22 +138,22 @@ export function TestSuiteManager() {
         try {
           const parsed = JSON.parse(event.target?.result as string) as TestSuite
           if (!parsed.id || !parsed.name || !Array.isArray(parsed.tests)) {
-            alert('ไฟล์ JSON ไม่ถูกต้องสำหรับ Test Suite')
+            setImportReport({ type: 'error', message: 'ไฟล์ JSON ไม่ถูกต้อง ขาดฟิลด์สำคัญ (id, name, tests)' })
             return
           }
           // Validate tests in imported suite
-          const invalidTest = parsed.tests.find((t) => !BIOCHEMICAL_TEST_REGISTRY.some((reg) => reg.id === t.testId))
-          if (invalidTest) {
-            alert(`พบ Test ID ที่ไม่มีในระบบ: ${invalidTest.testId}`)
+          const invalidTests = parsed.tests.filter((t) => !BIOCHEMICAL_TEST_REGISTRY.some((reg) => reg.id === t.testId))
+          if (invalidTests.length > 0) {
+            setImportReport({ type: 'error', message: `พบ ${invalidTests.length} Test ID ที่ไม่มีในระบบ: ${invalidTests.map(t => t.testId).join(', ')}` })
             return
           }
           parsed.owner = 'user' // Mark as custom
           const nextCustoms = [...customSuites.filter((s) => s.id !== parsed.id), parsed]
           setCustomSuites(nextCustoms)
           setActiveSuiteId(parsed.id)
-          alert(`นำเข้า Test Suite "${parsed.name}" สำเร็จ`)
+          setImportReport({ type: 'success', message: `นำเข้า Suite '${parsed.name}' สำเร็จ (${parsed.tests.length} tests)` })
         } catch {
-          alert('ไม่สามารถอ่านไฟล์ JSON ได้')
+          setImportReport({ type: 'error', message: 'ไม่สามารถอ่านไฟล์ JSON ได้ กรุณาตรวจสอบรูปแบบไฟล์' })
         }
       }
     }
@@ -208,11 +210,21 @@ export function TestSuiteManager() {
               type="file"
               accept=".json"
               onChange={handleImport}
+              onClick={(e) => { (e.target as HTMLInputElement).value = '' }}
               className="hidden"
             />
           </label>
         </div>
       </div>
+
+      {importReport && (
+        <div className={`mb-4 p-3 rounded-lg border text-xs leading-normal ${importReport.type === 'error' ? 'bg-rose-500/10 border-rose-500/20 text-rose-300' : 'bg-emerald-500/10 border-emerald-500/20 text-emerald-300'}`}>
+          <div className="flex justify-between items-start gap-2">
+            <span>{importReport.type === 'error' ? '❌' : '✅'} {importReport.message}</span>
+            <button type="button" onClick={() => setImportReport(null)} className="opacity-50 hover:opacity-100">✕</button>
+          </div>
+        </div>
+      )}
 
       {/* Select suite dropdown */}
       <div className="mb-4 flex items-center gap-3">

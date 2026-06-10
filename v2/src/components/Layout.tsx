@@ -1,15 +1,29 @@
 import { useEffect } from 'react'
 import { Link, NavLink, Outlet } from 'react-router-dom'
+import { useIdentifyStore } from '@/store/identifyStore'
+import { AuthModal } from './AuthModal'
 
 const NAV = [
   { to: '/', label: 'วินิจฉัย', emoji: '🔬' },
   { to: '/specimen', label: 'ตัวอย่างตรวจ', emoji: '🧫' },
   { to: '/library', label: 'คลังเชื้อ', emoji: '📚' },
   { to: '/reference', label: 'คู่มือทดสอบ', emoji: '⚗️' },
+  { to: '/settings', label: 'ตั้งค่า', emoji: '⚙️' },
   { to: '/about', label: 'เกี่ยวกับ', emoji: 'ℹ️' },
 ]
 
 export function Layout() {
+  const initAuthListener = useIdentifyStore((s) => s.initAuthListener)
+  const user = useIdentifyStore((s) => s.user)
+  const isGuest = useIdentifyStore((s) => s.isGuest)
+  const loadingAuth = useIdentifyStore((s) => s.loadingAuth)
+  const logout = useIdentifyStore((s) => s.logout)
+  const setGuest = useIdentifyStore((s) => s.setGuest)
+
+  useEffect(() => {
+    initAuthListener()
+  }, [initAuthListener])
+
   // Activate Liquid Glass interactive effects (mouse tracking + tilt)
   useEffect(() => {
     const container = document.body
@@ -93,36 +107,63 @@ export function Layout() {
     }
   }, [])
 
+  if (loadingAuth) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#030712] text-zinc-400">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-violet-500/30 border-t-violet-500 rounded-full animate-spin"></div>
+          <p className="text-sm font-semibold tracking-wide">กำลังตรวจสอบระบบ...</p>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen flex flex-col">
-      <header className="sticky top-0 z-20 border-b-2 border-transparent bg-bg/85 backdrop-blur-xl" style={{ borderImage: 'linear-gradient(90deg, #7c3aed, #C9A84C, #06b6d4) 1' }}>
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
-          <Link to="/" className="flex items-center gap-2 text-zinc-100 font-semibold">
-            <span className="text-xl">🦠</span>
-            <span className="hidden sm:inline">Microbial World</span>
-            <span className="rounded-md border border-violet-500/40 bg-violet-500/15 px-1.5 py-0.5 text-[10px] font-semibold text-violet-300">
-              v4.0.0
-            </span>
+      {!user && !isGuest && <AuthModal />}
+      <header className="nav-bar">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 w-full px-4 sm:px-6">
+          <Link to="/" className="brand">
+            <span className="emoji">🦠</span>
+            <div>
+              <div style={{ color: '#fff', fontSize: '15px', fontWeight: 800 }}>BOK BAC</div>
+              <div style={{ fontSize: '8px', color: '#a78bfa', letterSpacing: '2px', textTransform: 'uppercase', fontWeight: 600, marginTop: '-2px', WebkitTextFillColor: 'initial' }}>DIAGNOSTIC ENGINE</div>
+            </div>
           </Link>
-          <nav className="flex gap-1">
-            {NAV.map((n) => (
-              <NavLink
-                key={n.to}
-                to={n.to}
-                end={n.to === '/'}
-                className={({ isActive }) =>
-                  `rounded-full px-3 py-1.5 text-xs font-medium transition ${
-                    isActive
-                      ? 'bg-violet-500/20 text-violet-200 border border-violet-500/40 nav-glow-pulse'
-                      : 'text-zinc-400 hover:text-zinc-100 hover:bg-white/5 border border-transparent'
-                  }`
-                }
-              >
-                <span className="mr-1">{n.emoji}</span>
-                {n.label}
-              </NavLink>
-            ))}
-          </nav>
+          <div className="flex items-center gap-4">
+            <nav className="flex gap-1 items-center">
+              {NAV.map((n) => (
+                <NavLink
+                  key={n.to}
+                  to={n.to}
+                  end={n.to === '/'}
+                  className={({ isActive }) =>
+                    `nav-tab ${isActive ? 'active-tab' : ''}`
+                  }
+                >
+                  <span className="mr-1">{n.emoji}</span>
+                  <span className="nav-label-full">{n.label}</span>
+                </NavLink>
+              ))}
+            </nav>
+            <div className="flex items-center gap-2 text-xs border-l border-white/10 pl-4">
+              {user ? (
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center font-bold text-white shadow-md border border-white/10 select-none">
+                    {user.displayName ? user.displayName.charAt(0).toUpperCase() : '?'}
+                  </div>
+                  <span className="hidden md:inline text-zinc-300 font-medium max-w-[80px] truncate">{user.displayName || 'Doctor'}</span>
+                  <button onClick={logout} className="px-2.5 py-1.5 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 font-semibold hover:bg-red-500/20 transition">
+                    ออก
+                  </button>
+                </div>
+              ) : (
+                <button onClick={() => setGuest(false)} className="px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-bold hover:scale-[1.02] active:scale-[0.98] transition">
+                  เข้าสู่ระบบ
+                </button>
+              )}
+            </div>
+          </div>
         </div>
       </header>
 

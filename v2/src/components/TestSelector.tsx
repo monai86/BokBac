@@ -1,38 +1,18 @@
 import { useIdentifyStore } from '@/store/identifyStore'
-import { ALL_SUITES } from '@/lib/dataLoader'
-
-const COMMON_VALUES: Array<{ value: string; label: string }> = [
-  { value: '+', label: '+' },
-  { value: '−', label: '−' },
-  { value: 'V', label: 'V' },
-]
-
-const HEMOLYSIS_VALUES: Array<{ value: string; label: string }> = [
-  { value: 'β', label: 'β' },
-  { value: 'α', label: 'α' },
-  { value: 'γ', label: 'γ' },
-]
-
-const SR_VALUES: Array<{ value: string; label: string }> = [
-  { value: 's', label: 'S' },
-  { value: 'r', label: 'R' },
-]
-
-function valuesForTest(testId: string, label: string): Array<{ value: string; label: string }> {
-  const lower = (testId + ' ' + label).toLowerCase()
-  if (lower.includes('hemolysis')) return [...HEMOLYSIS_VALUES, ...COMMON_VALUES]
-  if (lower.includes('bacitracin') || lower.includes('optochin') || lower.includes('novobiocin'))
-    return SR_VALUES
-  return COMMON_VALUES
-}
+import { getActiveSuite } from '@/lib/suiteCatalog'
+import { lookupTestDefinition } from '@/data/tests/biochemicalTestRegistry'
+import { TestInputControl } from './TestInputControl'
 
 export function TestSelector() {
   const group = useIdentifyStore((s) => s.group)
   const answers = useIdentifyStore((s) => s.answers)
   const setAnswer = useIdentifyStore((s) => s.setAnswer)
   const recommendedTests = useIdentifyStore((s) => s.recommendedTests)
+  const defaultSuites = useIdentifyStore((s) => s.defaultSuites)
+  const customSuites = useIdentifyStore((s) => s.customSuites)
+  const activeSuiteId = useIdentifyStore((s) => s.activeSuiteId)
 
-  const suite = ALL_SUITES[group]
+  const suite = getActiveSuite(defaultSuites, customSuites, activeSuiteId, group)
   if (!suite) {
     return (
       <div className="lg-surface p-6 text-center text-zinc-400">
@@ -55,14 +35,15 @@ export function TestSelector() {
       </div>
 
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-        {suite.tests.map((t) => {
-          const current = answers[t.label] || answers[t.id] || ''
-          const opts = valuesForTest(t.id, t.label)
-          const isRecommended = topRecs.some((r) => r.testId === t.id || r.testLabel === t.label)
+        {[...suite.tests].sort((a, b) => a.order - b.order).map((t) => {
+          const definition = lookupTestDefinition(t.testId)
+          const label = definition?.label || t.testId
+          const current = answers[t.testId] || ''
+          const isRecommended = topRecs.some((r) => r.testId === t.testId)
 
           return (
             <div
-              key={t.id}
+              key={t.testId}
               className={`flex items-center justify-between gap-2 rounded-lg border px-3 py-2 transition-all ${
                 isRecommended
                   ? 'border-violet-500/20 bg-violet-950/10 shadow-[0_0_12px_rgba(139,92,246,0.05)]'
@@ -70,33 +51,19 @@ export function TestSelector() {
               }`}
             >
               <div className="flex items-center gap-1.5 min-w-0">
-                <span className="text-sm text-zinc-200 truncate">{t.label}</span>
+                <span className="text-sm text-zinc-200 truncate">{label}</span>
                 {isRecommended && (
                   <span className="shrink-0 text-[9px] font-bold text-violet-300 bg-violet-500/25 px-1 py-0.5 rounded border border-violet-500/20 animate-pulse">
                     แนะนำ
                   </span>
                 )}
               </div>
-              <div className="flex items-center gap-1">
-                {opts.map((o) => (
-                  <button
-                    type="button"
-                    key={o.value}
-                    aria-label={`Set ${t.label} to ${o.label}`}
-                    aria-pressed={current === o.value}
-                    onClick={() =>
-                      setAnswer(t.label, current === o.value ? null : o.value)
-                    }
-                    className={`min-w-[28px] rounded-md border px-2 py-0.5 text-xs font-medium transition ${
-                      current === o.value
-                        ? 'border-violet-400 bg-violet-500/30 text-violet-100'
-                        : 'border-white/10 bg-white/5 text-zinc-400 hover:border-white/20 hover:text-zinc-200'
-                    }`}
-                  >
-                    {o.label}
-                  </button>
-                ))}
-              </div>
+              <TestInputControl
+                testId={t.testId}
+                label={label}
+                value={current}
+                onChange={(nextValue) => setAnswer(t.testId, nextValue)}
+              />
             </div>
           )
         })}

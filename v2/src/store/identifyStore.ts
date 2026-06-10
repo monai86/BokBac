@@ -7,12 +7,39 @@ import type {
   RecommendedTest,
   InitialObservation,
   TestSuite,
-  SuitesMap,
 } from '@/lib/types'
 import { calcProbabilityBayes, calcNextBestTests } from '@/lib/bayesianEngine'
 import { ALL_MCM_DATA, LIBRARY_CLEAN } from '@/lib/dataLoader'
 import { DEFAULT_SUITES } from '@/data/suites/defaultSuites'
-import { lookupTestDefinition } from '@/data/tests/biochemicalTestRegistry'
+import {
+  buildSuitesMap,
+  ENGINE_VERSION,
+  getActiveSuite,
+  normalizeAnswersToTestIds,
+  normalizeTestKeyToId,
+  UNVERSIONED_SUITE,
+} from '@/lib/suiteCatalog'
+import { selectSuiteForObservation } from '@/lib/selectSuiteForObservation'
+import { auth as firebaseAuth, db as firestoreDb, isFirebaseActive } from '@/lib/firebase'
+import {
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signOut,
+  updateProfile,
+  signInWithPopup,
+  GoogleAuthProvider,
+} from 'firebase/auth'
+import {
+  doc,
+  setDoc,
+  getDoc,
+  collection,
+  getDocs,
+  deleteDoc,
+  query,
+  orderBy,
+} from 'firebase/firestore'
 
 const SAVED_CASES_KEY = 'microbial-world:v4:saved-cases'
 const CUSTOM_SUITES_KEY = 'microbial-world:v4:custom-suites'
@@ -32,6 +59,7 @@ function loadSavedCases(): SavedCase[] {
       ...item,
       title: typeof item.title === 'string' && item.title.trim() ? item.title : item.topSpecies || 'Untitled case',
       tags: Array.isArray(item.tags) ? item.tags : [],
+      answers: normalizeAnswersToTestIds(item.answers || {}),
     }))
   } catch {
     return []
@@ -68,18 +96,40 @@ interface IdentifyState {
   defaultSuites: TestSuite[]
   customSuites: TestSuite[]
   activeSuiteId: string
+  suiteSelectionReason?: string
+  
+  // Auth and settings states
+  user: any | null
+  isGuest: boolean
+  loadingAuth: boolean
+  settings: {
+    displayName?: string
+    defaultGram?: string
+    autoSave?: boolean
+    gateMode?: 'strict' | 'hybrid' | 'exploratory'
+  }
+  
   setGroup: (g: string) => void
   setInitialObservation: (obs: Partial<InitialObservation>) => void
   resetInitialObservation: () => void
   setAnswer: (testKey: string, value: string | null) => void
   resetAnswers: () => void
-  saveCurrentCase: () => void
-  updateCase: (id: string, updates: Partial<Pick<SavedCase, 'title' | 'tags' | 'note'>>) => void
+  saveCurrentCase: () => Promise<void>
+  updateCase: (id: string, updates: Partial<Pick<SavedCase, 'title' | 'tags' | 'note'>>) => Promise<void>
   loadCase: (id: string) => void
-  deleteCase: (id: string) => void
+  deleteCase: (id: string) => Promise<void>
   setCustomSuites: (suites: TestSuite[]) => void
   setActiveSuiteId: (id: string) => void
   recompute: () => void
+  
+  // Auth actions
+  initAuthListener: () => void
+  loginWithEmail: (email: string, pass: string) => Promise<void>
+  signupWithEmail: (email: string, pass: string, name: string) => Promise<void>
+  loginWithGoogle: () => Promise<void>
+  logout: () => Promise<void>
+  setGuest: (isGuest: boolean) => void
+  saveSettings: (settings: any) => Promise<void>
 }
 
 export const useIdentifyStore = create<IdentifyState>()((set, get) => ({
@@ -96,6 +146,13 @@ export const useIdentifyStore = create<IdentifyState>()((set, get) => ({
   defaultSuites: DEFAULT_SUITES,
   customSuites: loadCustomSuites(),
   activeSuiteId: canUseStorage() ? window.localStorage.getItem(ACTIVE_SUITE_ID_KEY) || 'enterobacterales_default' : 'enterobacterales_default',
+  suiteSelectionReason: undefined,
+  
+  // Auth states initialization
+  user: null,
+  isGuest: false,
+  loadingAuth: isFirebaseActive,
+  settings: canUseStorage() ? JSON.parse(window.localStorage.getItem('mbsettings') || '{}') : {},
 
   setGroup: (g) => {
     // Find active suite or default for this group
@@ -122,7 +179,24 @@ export const useIdentifyStore = create<IdentifyState>()((set, get) => ({
 
   setInitialObservation: (obs) => {
     const next = { ...get().initialObservation, ...obs }
-    set({ initialObservation: next })
+    const selection = selectSuiteForObservation(next, [...get().defaultSuites, ...get().customSuites])
+    if (selection) {
+      if (canUseStorage()) {
+        window.localStorage.setItem(ACTIVE_SUITE_ID_KEY, selection.suiteId)
+      }
+      const groupChanged = get().group !== selection.groupId || get().activeSuiteId !== selection.suiteId
+      set({
+        initialObservation: next,
+        group: selection.groupId,
+        activeSuiteId: selection.suiteId,
+        answers: groupChanged ? {} : get().answers,
+        results: groupChanged ? [] : get().results,
+        recommendedTests: groupChanged ? [] : get().recommendedTests,
+        suiteSelectionReason: `${selection.suiteName}: ${selection.reason}`,
+      })
+    } else {
+      set({ initialObservation: next, suiteSelectionReason: undefined })
+    }
     get().recompute()
   },
 
@@ -133,16 +207,18 @@ export const useIdentifyStore = create<IdentifyState>()((set, get) => ({
         morphology: 'unknown',
         arrangement: 'unknown',
       },
+      suiteSelectionReason: undefined,
     })
     get().recompute()
   },
 
   setAnswer: (testKey, value) => {
+    const testId = normalizeTestKeyToId(testKey)
     const next = { ...get().answers }
     if (value == null || value === '') {
-      delete next[testKey]
+      delete next[testId]
     } else {
-      next[testKey] = value
+      next[testId] = value
     }
     set({ answers: next })
     get().recompute()
@@ -153,8 +229,9 @@ export const useIdentifyStore = create<IdentifyState>()((set, get) => ({
     get().recompute()
   },
 
-  saveCurrentCase: () => {
-    const { group, answers, results, savedCases, initialObservation } = get()
+  saveCurrentCase: async () => {
+    const { group, answers, results, savedCases, initialObservation, defaultSuites, customSuites, activeSuiteId, user } = get()
+    const activeSuite = getActiveSuite(defaultSuites, customSuites, activeSuiteId, group)
     const top = results.find((r) => !r._excluded)
     const savedCase: SavedCase = {
       id: `case-${Date.now()}`,
@@ -163,52 +240,95 @@ export const useIdentifyStore = create<IdentifyState>()((set, get) => ({
       tags: [],
       group,
       initialObservation: { ...initialObservation },
-      answers: { ...answers },
+      answers: normalizeAnswersToTestIds(answers),
+      suiteId: activeSuite?.id,
+      suiteName: activeSuite?.name,
+      suiteVersion: activeSuite?.version || UNVERSIONED_SUITE,
+      engineVersion: ENGINE_VERSION,
       topSpecies: top?.name,
       topPct: top?.pct,
     }
-    const next = [savedCase, ...savedCases].slice(0, 12)
+    const next = [savedCase, ...savedCases].slice(0, 50)
     persistSavedCases(next)
     set({ savedCases: next })
+
+    if (isFirebaseActive && firestoreDb && user) {
+      try {
+        await setDoc(doc(firestoreDb, 'users', user.uid, 'cases', savedCase.id), savedCase)
+      } catch (e) {
+        console.error('Error saving case to Firestore:', e)
+      }
+    }
   },
 
-  updateCase: (id, updates) => {
-    const next = get().savedCases.map((item) =>
-      item.id === id
-        ? {
-            ...item,
-            ...updates,
-            title: updates.title ?? item.title,
-            tags: updates.tags?.map((tag) => tag.trim()).filter(Boolean) ?? item.tags,
-            updatedAt: new Date().toISOString(),
-          }
-        : item
-    )
+  updateCase: async (id, updates) => {
+    let updatedItem: SavedCase | null = null
+    const next = get().savedCases.map((item) => {
+      if (item.id === id) {
+        updatedItem = {
+          ...item,
+          ...updates,
+          title: updates.title ?? item.title,
+          tags: updates.tags?.map((tag) => tag.trim()).filter(Boolean) ?? item.tags,
+          updatedAt: new Date().toISOString(),
+        }
+        return updatedItem
+      }
+      return item
+    })
     persistSavedCases(next)
     set({ savedCases: next })
+
+    const { user } = get()
+    if (isFirebaseActive && firestoreDb && user && updatedItem) {
+      try {
+        await setDoc(doc(firestoreDb, 'users', user.uid, 'cases', id), updatedItem)
+      } catch (e) {
+        console.error('Error updating case in Firestore:', e)
+      }
+    }
   },
 
   loadCase: (id) => {
     const match = get().savedCases.find((item) => item.id === id)
     if (!match) return
+    const allSuites = [...get().defaultSuites, ...get().customSuites]
+    const suite = match.suiteId
+      ? allSuites.find((item) => item.id === match.suiteId && item.group === match.group)
+      : undefined
+    const fallbackSuite = allSuites.find((item) => item.group === match.group)
+    const activeSuiteId = suite?.id || fallbackSuite?.id || get().activeSuiteId
+    if (canUseStorage()) {
+      window.localStorage.setItem(ACTIVE_SUITE_ID_KEY, activeSuiteId)
+    }
     set({
       group: match.group,
+      activeSuiteId,
       initialObservation: match.initialObservation || {
         gramReaction: 'unknown',
         morphology: 'unknown',
         arrangement: 'unknown',
       },
-      answers: { ...match.answers },
+      answers: normalizeAnswersToTestIds(match.answers),
       results: [],
       recommendedTests: [],
     })
     get().recompute()
   },
 
-  deleteCase: (id) => {
+  deleteCase: async (id) => {
     const next = get().savedCases.filter((item) => item.id !== id)
     persistSavedCases(next)
     set({ savedCases: next })
+
+    const { user } = get()
+    if (isFirebaseActive && firestoreDb && user) {
+      try {
+        await deleteDoc(doc(firestoreDb, 'users', user.uid, 'cases', id))
+      } catch (e) {
+        console.error('Error deleting case from Firestore:', e)
+      }
+    }
   },
 
   setCustomSuites: (suites) => {
@@ -226,59 +346,101 @@ export const useIdentifyStore = create<IdentifyState>()((set, get) => ({
   },
 
   recompute: () => {
-    const { group, answers, initialObservation, defaultSuites, customSuites, activeSuiteId } = get()
-    
-    // 1. Find active suite
-    const all = [...defaultSuites, ...customSuites]
-    let activeSuite = all.find((s) => s.id === activeSuiteId)
-    if (!activeSuite || activeSuite.group !== group) {
-      activeSuite = all.find((s) => s.group === group)
-    }
-
-    // 2. Map active suite to old format
-    const mappedSuite = activeSuite
-      ? {
-          name: activeSuite.name,
-          tests: activeSuite.tests.map((t) => {
-            const def = lookupTestDefinition(t.testId)
-            return {
-              id: t.testId,
-              label: def?.label || t.testId,
-              importance: t.required ? ('critical' as const) : ('moderate' as const),
-            }
-          }),
-        }
-      : undefined
-
-    // 3. Map all default suites to old format
-    const suitesMap: SuitesMap = {}
-    for (const s of defaultSuites) {
-      suitesMap[s.group] = {
-        name: s.name,
-        tests: s.tests.map((t) => {
-          const def = lookupTestDefinition(t.testId)
-          return {
-            id: t.testId,
-            label: def?.label || t.testId,
-            importance: t.required ? ('critical' as const) : ('moderate' as const),
-          }
-        }),
-      }
-    }
-
-    // Override active group suite with custom one if applicable
-    if (group && mappedSuite) {
-      suitesMap[group] = mappedSuite
-    }
+    const { group, answers, initialObservation, defaultSuites, customSuites, activeSuiteId, settings } = get()
+    const activeSuite = getActiveSuite(defaultSuites, customSuites, activeSuiteId, group)
+    const suitesMap = buildSuitesMap(defaultSuites, activeSuite)
 
     const opts = {
       library: LIBRARY_CLEAN,
       mcmData: ALL_MCM_DATA,
       suites: suitesMap,
+      gateMode: (settings.gateMode || 'hybrid') as 'strict' | 'hybrid' | 'exploratory',
     }
 
-    const ranked = calcProbabilityBayes(group, answers, opts, initialObservation)
-    const recs = calcNextBestTests(group, answers, ranked, opts)
+    const normalizedAnswers = normalizeAnswersToTestIds(answers)
+    const ranked = calcProbabilityBayes(group, normalizedAnswers, opts, initialObservation)
+    const recs = calcNextBestTests(group, normalizedAnswers, ranked, opts)
     set({ results: ranked, recommendedTests: recs })
+  },
+
+  // Auth and Firestore Syncing Actions
+  initAuthListener: () => {
+    if (!isFirebaseActive || !firebaseAuth) {
+      set({ loadingAuth: false })
+      return
+    }
+    onAuthStateChanged(firebaseAuth, async (usr) => {
+      set({ user: usr, loadingAuth: false })
+      if (usr) {
+        set({ isGuest: false })
+        try {
+          // Sync settings
+          const prefDoc = await getDoc(doc(firestoreDb, 'users', usr.uid, 'settings', 'preferences'))
+          if (prefDoc.exists()) {
+            const cloudSettings = prefDoc.data()
+            set({ settings: cloudSettings })
+            if (canUseStorage()) {
+              window.localStorage.setItem('mbsettings', JSON.stringify(cloudSettings))
+            }
+          }
+
+          // Sync cases
+          const casesQuery = query(collection(firestoreDb, 'users', usr.uid, 'cases'), orderBy('createdAt', 'desc'))
+          const snap = await getDocs(casesQuery)
+          const cloudCases = snap.docs.map(d => d.data() as SavedCase)
+          set({ savedCases: cloudCases })
+          persistSavedCases(cloudCases)
+        } catch (e) {
+          console.error('Error syncing with Firestore:', e)
+        }
+      } else {
+        set({ savedCases: loadSavedCases() })
+      }
+    })
+  },
+
+  loginWithEmail: async (email, pass) => {
+    if (!isFirebaseActive || !firebaseAuth) throw new Error('Firebase is not active')
+    await signInWithEmailAndPassword(firebaseAuth, email, pass)
+  },
+
+  signupWithEmail: async (email, pass, name) => {
+    if (!isFirebaseActive || !firebaseAuth) throw new Error('Firebase is not active')
+    const cred = await createUserWithEmailAndPassword(firebaseAuth, email, pass)
+    if (cred.user) {
+      await updateProfile(cred.user, { displayName: name.trim() })
+    }
+  },
+
+  loginWithGoogle: async () => {
+    if (!isFirebaseActive || !firebaseAuth) throw new Error('Firebase is not active')
+    const provider = new GoogleAuthProvider()
+    await signInWithPopup(firebaseAuth, provider)
+  },
+
+  logout: async () => {
+    if (isFirebaseActive && firebaseAuth) {
+      await signOut(firebaseAuth)
+    }
+    set({ user: null, isGuest: false })
+  },
+
+  setGuest: (isGuest) => {
+    set({ isGuest })
+  },
+
+  saveSettings: async (newSettings) => {
+    set({ settings: newSettings })
+    if (canUseStorage()) {
+      window.localStorage.setItem('mbsettings', JSON.stringify(newSettings))
+    }
+    const { user } = get()
+    if (isFirebaseActive && firestoreDb && user) {
+      try {
+        await setDoc(doc(firestoreDb, 'users', user.uid, 'settings', 'preferences'), newSettings)
+      } catch (e) {
+        console.error('Error saving settings to Firestore:', e)
+      }
+    }
   },
 }))

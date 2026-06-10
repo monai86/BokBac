@@ -26,6 +26,8 @@ npm install
 npm run dev          # http://localhost:5173
 
 # Testing (50 textbook scenarios)
+npm run lint         # static analysis
+npm run typecheck    # TypeScript project check
 npm run test         # one-shot
 npm run test:watch   # watch mode
 npm run test:e2e     # browser flow tests (Playwright)

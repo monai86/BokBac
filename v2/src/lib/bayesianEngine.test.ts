@@ -4,8 +4,11 @@
 
 import { describe, expect, it } from 'vitest'
 import { calcProbabilityBayes, calcNextBestTests } from './bayesianEngine'
+import { DEFAULT_SUITES } from '@/data/suites/defaultSuites'
 import { ALL_MCM_DATA, ALL_SUITES, LIBRARY_CLEAN } from './dataLoader'
-import type { AnswersMap } from './types'
+import { buildSuitesMap } from './suiteCatalog'
+import { selectSuiteForObservation } from './selectSuiteForObservation'
+import type { AnswersMap, RankedSpecies, TestSuite } from './types'
 
 interface Scenario {
   name: string
@@ -358,6 +361,133 @@ describe('MCM Bayesian engine — explainability metadata', () => {
   })
 })
 
+describe('MCM Bayesian engine — honesty and calibration guards', () => {
+  it('marks wrong-group observations as poor fit instead of a confident false leader', () => {
+    const ranked = calcProbabilityBayes(
+      'gpc_cluster',
+      { Coagulase: '+', Catalase: '−' },
+      opts,
+      { gramReaction: 'negative', morphology: 'bacilli', arrangement: 'unknown' }
+    )
+
+    expect(ranked.length).toBeGreaterThan(0)
+    expect(ranked[0].caseFitScore ?? 1).toBeLessThan(0.2)
+    expect(ranked[0]._confidence).toBe('very_low')
+    expect(ranked[0].contradictionCount ?? 0).toBeGreaterThan(0)
+  })
+
+  it('penalizes contradictory hybrid-mode profiles without hard-zeroing every candidate', () => {
+    const ranked = calcProbabilityBayes(
+      'enterobacterales',
+      { Oxidase: '+', Indole: '+', Lactose: '+', H2S: '+', Urease: '+' },
+      opts,
+      { gramReaction: 'positive', morphology: 'cocci', arrangement: 'cluster' }
+    )
+
+    expect(ranked.some((item) => !item._excluded && (item.posteriorWithinCandidateSet ?? 0) > 0)).toBe(true)
+    expect(ranked.every((item) => item._excluded)).toBe(false)
+    expect(ranked[0].caseFitScore ?? 1).toBeLessThan(0.4)
+    expect(ranked[0]._confidence).not.toBe('high')
+  })
+
+  it('strict mode can hard-exclude incompatible Gram or morphology gates', () => {
+    const ranked = calcProbabilityBayes(
+      'enterobacterales',
+      { Oxidase: '−' },
+      { ...opts, gateMode: 'strict' },
+      { gramReaction: 'positive', morphology: 'cocci', arrangement: 'cluster' }
+    )
+
+    expect(ranked.length).toBeGreaterThan(0)
+    expect(ranked.every((item) => item._excluded && item.pct === 0)).toBe(true)
+  })
+
+  it('normalizes non-excluded posterior probabilities across the candidate set', () => {
+    const ranked = calcProbabilityBayes(
+      'enterobacterales',
+      { Indole: '+', Lactose: '+', Citrate: '−', TSI: 'A/A' },
+      opts
+    )
+    const total = ranked
+      .filter((item) => !item._excluded)
+      .reduce((sum, item) => sum + (item.posteriorWithinCandidateSet ?? 0), 0)
+
+    expect(total).toBeCloseTo(100, 6)
+  })
+
+  it('low evidence coverage lowers fit and confidence instead of faking certainty', () => {
+    const ranked = calcProbabilityBayes(
+      'enterobacterales',
+      { ImaginaryTestOne: '+', ImaginaryTestTwo: '−', Indole: '+' },
+      opts
+    )
+
+    expect(ranked[0].evidenceCoverage).toBeLessThan(0.5)
+    expect(ranked[0].caseFitScore ?? 1).toBeLessThan(0.5)
+    expect(ranked[0]._confidence).toBe('very_low')
+  })
+})
+
+describe('MCM Bayesian engine — TSI categorical model', () => {
+  const posteriorFor = (ranked: ReturnType<typeof calcProbabilityBayes>, id: string) => {
+    const hit = ranked.find((item) => item.id === id)
+    expect(hit, `expected ${id} in ranked results`).toBeTruthy()
+    return hit?.posteriorWithinCandidateSet ?? hit?.pct ?? 0
+  }
+
+  const evidenceFor = (ranked: ReturnType<typeof calcProbabilityBayes>, id: string) => {
+    const hit = ranked.find((item) => item.id === id)
+    expect(hit, `expected ${id} in ranked results`).toBeTruthy()
+    return hit?._evidence.find((item) => item.test === 'TSI')
+  }
+
+  it('TSI K/A + H2S supports Proteus or Salmonella over E. coli and Shigella-like profiles', () => {
+    const ranked = calcProbabilityBayes('enterobacterales', { TSI: 'K/A H₂S' }, opts)
+
+    const h2sPositive = Math.max(
+      posteriorFor(ranked, 'proteus_mirabilis'),
+      posteriorFor(ranked, 'salmonella')
+    )
+
+    expect(h2sPositive).toBeGreaterThan(posteriorFor(ranked, 'e_coli'))
+    expect(h2sPositive).toBeGreaterThan(posteriorFor(ranked, 'shigella_sonnei'))
+  })
+
+  it('TSI A/A supports lactose or sucrose fermenters over non-lactose fermenters', () => {
+    const ranked = calcProbabilityBayes('enterobacterales', { TSI: 'A/A' }, opts)
+
+    expect(posteriorFor(ranked, 'e_coli')).toBeGreaterThan(posteriorFor(ranked, 'shigella_sonnei'))
+    expect(evidenceFor(ranked, 'e_coli')?.likelihood).toBeGreaterThan(
+      evidenceFor(ranked, 'shigella_sonnei')?.likelihood ?? 1
+    )
+  })
+
+  it('TSI K/A without H2S separates Shigella-like profiles from H2S-positive organisms', () => {
+    const ranked = calcProbabilityBayes('enterobacterales', { TSI: 'K/A' }, opts)
+
+    expect(posteriorFor(ranked, 'shigella_sonnei')).toBeGreaterThan(
+      posteriorFor(ranked, 'proteus_mirabilis')
+    )
+    expect(evidenceFor(ranked, 'shigella_sonnei')?.likelihood).toBeGreaterThan(
+      evidenceFor(ranked, 'proteus_mirabilis')?.likelihood ?? 1
+    )
+  })
+
+  it('unsupported TSI values are neutral and do not crash', () => {
+    const ranked = calcProbabilityBayes('enterobacterales', { TSI: 'purple/green' }, opts)
+
+    expect(ranked.length).toBeGreaterThan(0)
+    expect(evidenceFor(ranked, 'e_coli')?.likelihood).toBe(0.5)
+  })
+
+  it('normalizes probability output after TSI evidence', () => {
+    const ranked = calcProbabilityBayes('enterobacterales', { TSI: 'K/A H₂S' }, opts)
+    const total = ranked.reduce((sum, item) => sum + (item.posteriorWithinCandidateSet ?? 0), 0)
+
+    expect(total).toBeCloseTo(100, 6)
+  })
+})
+
 describe('MCM Bayesian engine — next best test recommendations', () => {
   it('recommends tests that split the uncertainty', () => {
     const group = 'enterobacterales'
@@ -373,5 +503,281 @@ describe('MCM Bayesian engine — next best test recommendations', () => {
 
     // Ensure we do not recommend tests already answered
     expect(recsPartial.some((r) => r.testLabel === 'Indole' || r.testId === 'Indole')).toBe(false)
+  })
+})
+
+describe('MCM Bayesian engine — diagnostic reasoning regressions', () => {
+  const findSpecies = (ranked: RankedSpecies[], id: string) => {
+    const hit = ranked.find((item) => item.id === id)
+    expect(hit, `expected ${id} in ranked candidates`).toBeTruthy()
+    return hit!
+  }
+
+  const topIds = (ranked: RankedSpecies[], count = 3) => ranked.slice(0, count).map((item) => item.id)
+
+  it('prioritizes the Gram-positive cocci cluster workflow before Staphylococcus ranking', () => {
+    const selection = selectSuiteForObservation(
+      { gramReaction: 'positive', morphology: 'cocci', arrangement: 'cluster' },
+      DEFAULT_SUITES,
+    )
+    expect(selection?.groupId).toBe('gpc_cluster')
+
+    const ranked = calcProbabilityBayes(
+      selection!.groupId,
+      { Catalase: '+', Coagulase: '+', DNase: '+', Mannitol: '+' },
+      opts,
+      { gramReaction: 'positive', morphology: 'cocci', arrangement: 'cluster' },
+    )
+
+    expect(ranked[0].id).toBe('s_aureus')
+    expect(ranked[0].caseFitScore ?? 0).toBeGreaterThan(0.4)
+    expect(ranked[0]._confidence).not.toBe('very_low')
+  })
+
+  it('prioritizes the Gram-negative rod workflow before Enterobacterales ranking', () => {
+    const selection = selectSuiteForObservation(
+      { specimen: 'urine', gramReaction: 'negative', morphology: 'bacilli', arrangement: 'single' },
+      DEFAULT_SUITES,
+    )
+    expect(selection?.groupId).toBe('enterobacterales')
+
+    const ranked = calcProbabilityBayes(
+      selection!.groupId,
+      { Oxidase: '−', Indole: '+', Citrate: '−', Urease: '−', Lactose: '+' },
+      opts,
+      { specimen: 'urine', gramReaction: 'negative', morphology: 'bacilli', arrangement: 'single' },
+    )
+
+    expect(ranked[0].id).toBe('e_coli')
+    expect(findSpecies(ranked, 'e_coli').posteriorWithinCandidateSet ?? 0).toBeGreaterThan(
+      findSpecies(ranked, 'klebsiella_pneumoniae').posteriorWithinCandidateSet ?? 0,
+    )
+  })
+
+  it('separates Staphylococcus and Streptococcus workflows from Gram arrangement and catalase evidence', () => {
+    const staphSelection = selectSuiteForObservation(
+      { gramReaction: 'positive', morphology: 'cocci', arrangement: 'cluster' },
+      DEFAULT_SUITES,
+    )
+    const strepSelection = selectSuiteForObservation(
+      { gramReaction: 'positive', morphology: 'cocci', arrangement: 'chain' },
+      DEFAULT_SUITES,
+    )
+
+    expect(staphSelection?.groupId).toBe('gpc_cluster')
+    expect(strepSelection?.groupId).toBe('gpc_chain')
+
+    const staphRanked = calcProbabilityBayes(
+      'gpc_cluster',
+      { Catalase: '+', Coagulase: '+', DNase: '+' },
+      opts,
+      { gramReaction: 'positive', morphology: 'cocci', arrangement: 'cluster' },
+    )
+    const strepRanked = calcProbabilityBayes(
+      'gpc_chain',
+      { Catalase: '−', Hemolysis: 'β', PYR: '+', Bacitracin: 'S' },
+      opts,
+      { gramReaction: 'positive', morphology: 'cocci', arrangement: 'chain' },
+    )
+
+    expect(staphRanked[0].id).toBe('s_aureus')
+    expect(strepRanked[0].id).toBe('s_pyogenes')
+    expect(staphRanked[0]._evidence.some((item) => item.test === 'Catalase' && item.direction === 'supportive')).toBe(true)
+    expect(strepRanked[0]._evidence.some((item) => item.test === 'Catalase' && item.direction === 'supportive')).toBe(true)
+  })
+
+  it('differentiates common Enterobacterales by ranked evidence rather than exact percentages', () => {
+    const ecoliRanked = calcProbabilityBayes(
+      'enterobacterales',
+      { Oxidase: '−', Indole: '+', Citrate: '−', Urease: '−', Motility: '+', Lactose: '+' },
+      opts,
+      { gramReaction: 'negative', morphology: 'bacilli' },
+    )
+    const klebsiellaRanked = calcProbabilityBayes(
+      'enterobacterales',
+      { Oxidase: '−', Indole: '−', VP: '+', Motility: '−', Urease: '+', Lactose: '+' },
+      opts,
+      { gramReaction: 'negative', morphology: 'bacilli' },
+    )
+
+    expect(ecoliRanked[0].id).toBe('e_coli')
+    expect(klebsiellaRanked[0].id).toBe('klebsiella_pneumoniae')
+    expect(findSpecies(ecoliRanked, 'e_coli').posteriorWithinCandidateSet ?? 0).toBeGreaterThan(
+      findSpecies(ecoliRanked, 'klebsiella_pneumoniae').posteriorWithinCandidateSet ?? 0,
+    )
+    expect(findSpecies(klebsiellaRanked, 'klebsiella_pneumoniae').posteriorWithinCandidateSet ?? 0).toBeGreaterThan(
+      findSpecies(klebsiellaRanked, 'e_coli').posteriorWithinCandidateSet ?? 0,
+    )
+  })
+
+  it('keeps Salmonella-like non-lactose H2S-positive profiles above E. coli-like profiles', () => {
+    const ranked = calcProbabilityBayes(
+      'enterobacterales',
+      { Oxidase: '−', TSI: 'K/A H₂S', H2S: '+', Indole: '−', Citrate: '+', Motility: '+', Lactose: '−', LDC: '+', VP: '−' },
+      opts,
+      { gramReaction: 'negative', morphology: 'bacilli' },
+    )
+
+    expect(topIds(ranked, 4)).toContain('salmonella')
+    expect(findSpecies(ranked, 'salmonella').posteriorWithinCandidateSet ?? 0).toBeGreaterThan(
+      findSpecies(ranked, 'e_coli').posteriorWithinCandidateSet ?? 0,
+    )
+    expect(findSpecies(ranked, 'salmonella')._evidence.some((item) => item.test === 'TSI' && item.direction === 'supportive')).toBe(true)
+  })
+
+  it('keeps E. coli-like lactose-fermenting indole-positive profiles above Salmonella-like profiles', () => {
+    const ranked = calcProbabilityBayes(
+      'enterobacterales',
+      { Oxidase: '−', TSI: 'A/A', Indole: '+', Citrate: '−', Urease: '−', Motility: '+', Lactose: '+' },
+      opts,
+      { gramReaction: 'negative', morphology: 'bacilli' },
+    )
+
+    expect(ranked[0].id).toBe('e_coli')
+    expect(findSpecies(ranked, 'e_coli').posteriorWithinCandidateSet ?? 0).toBeGreaterThan(
+      findSpecies(ranked, 'salmonella').posteriorWithinCandidateSet ?? 0,
+    )
+  })
+
+  it('keeps ambiguous biochemical evidence low-confidence while preserving plausible candidates', () => {
+    const ranked = calcProbabilityBayes(
+      'enterobacterales',
+      { Oxidase: '−', Indole: 'V', Citrate: 'V', Lactose: 'V' },
+      opts,
+      { gramReaction: 'negative', morphology: 'bacilli' },
+    )
+
+    expect(ranked.length).toBeGreaterThan(3)
+    expect(ranked[0]._confidence).not.toBe('high')
+    expect(ranked[0]._gap ?? 100).toBeLessThan(40)
+    expect(ranked[0]._evidence.some((item) => item.direction === 'neutral')).toBe(true)
+  })
+
+  it('penalizes contradictory biochemical evidence without pretending the profile is a clean match', () => {
+    const ranked = calcProbabilityBayes(
+      'enterobacterales',
+      { Oxidase: '+', Indole: '+', Lactose: '+', H2S: '+', Urease: '+' },
+      opts,
+      { gramReaction: 'negative', morphology: 'bacilli' },
+    )
+    const ecoli = findSpecies(ranked, 'e_coli')
+
+    expect(ranked[0].caseFitScore ?? 1).toBeLessThan(0.7)
+    expect(ranked[0]._confidence).not.toBe('high')
+    expect(ranked.some((item) => (item.contradictionCount ?? 0) > 0)).toBe(true)
+    expect(ecoli._evidence.some((item) => item.direction === 'conflicting')).toBe(true)
+  })
+
+  it('labels insufficient evidence as lower confidence even when priors produce a leader', () => {
+    const ranked = calcProbabilityBayes(
+      'enterobacterales',
+      { Indole: '+' },
+      opts,
+      { gramReaction: 'negative', morphology: 'bacilli' },
+    )
+
+    expect(ranked[0].id).toBe('e_coli')
+    expect(ranked[0]._confidence).not.toBe('high')
+    expect(ranked[0]._gap ?? 0).toBeLessThan(50)
+  })
+
+  it('tracks unknown or unsupported tests as missing evidence without changing the posterior direction', () => {
+    const baseline = calcProbabilityBayes('enterobacterales', { Indole: '+' }, opts)
+    const withUnsupported = calcProbabilityBayes(
+      'enterobacterales',
+      {
+        Indole: '+',
+        ImaginarySugar: 'sparkly',
+        ImaginaryEnzyme: '+',
+        ImaginaryBroth: '−',
+        ImaginaryDisk: 'S',
+        ImaginaryColor: 'blue',
+      },
+      opts,
+    )
+
+    expect(withUnsupported[0].id).toBe(baseline[0].id)
+    expect(withUnsupported[0].evidenceCoverage).toBeLessThan(baseline[0].evidenceCoverage)
+    expect(withUnsupported[0]._evidence.some((item) => item.test === 'ImaginarySugar' && item.source === 'missing')).toBe(true)
+    expect(withUnsupported[0]._confidence).toBe('very_low')
+  })
+
+  it('uses the active custom biochemical suite for canonical fallback evidence', () => {
+    const customSuite: TestSuite = {
+      id: 'custom_enterobacterales_minimal',
+      name: 'Custom Enterobacterales Minimal',
+      owner: 'user',
+      group: 'enterobacterales',
+      tests: [
+        { testId: 'oxidase', required: true, order: 1 },
+        { testId: 'indole', required: true, order: 2 },
+        { testId: 'lactose', required: true, order: 3 },
+      ],
+    }
+    const customSuites = buildSuitesMap(DEFAULT_SUITES, customSuite)
+    const ranked = calcProbabilityBayes(
+      'enterobacterales',
+      { Oxidase: '−', Indole: '+', Lactose: '+' },
+      { ...opts, suites: customSuites },
+      { gramReaction: 'negative', morphology: 'bacilli' },
+    )
+
+    expect(ranked[0].id).toBe('e_coli')
+    expect(ranked[0]._evidence).toHaveLength(3)
+    expect(ranked[0]._evidence.map((item) => item.test)).toEqual(['Oxidase', 'Indole', 'Lactose'])
+  })
+
+  it('recommends unanswered suite-relevant tests with positive information gain', () => {
+    const answers = { Indole: '+' }
+    const ranked = calcProbabilityBayes('enterobacterales', answers, opts)
+    const recs = calcNextBestTests('enterobacterales', answers, ranked, opts)
+    const suiteTestIds = new Set(ALL_SUITES.enterobacterales.tests.map((test) => test.id))
+
+    expect(recs.length).toBeGreaterThan(0)
+    expect(recs[0].entropyReduction).toBeGreaterThan(0)
+    expect(recs[0].practicalScore).toBeGreaterThan(recs[0].entropyReduction)
+    expect(recs.some((rec) => rec.testId === 'indole')).toBe(false)
+    expect(recs.slice(0, 5).some((rec) => suiteTestIds.has(rec.testId))).toBe(true)
+  })
+
+  it('calibrates confidence labels using evidence coverage, fit, and runner-up gap', () => {
+    const strong = calcProbabilityBayes(
+      'enterobacterales',
+      { Oxidase: '−', Indole: '+', Citrate: '−', Urease: '−', Motility: '+', Lactose: '+', TSI: 'A/A' },
+      opts,
+      { gramReaction: 'negative', morphology: 'bacilli' },
+    )
+    const sparse = calcProbabilityBayes(
+      'enterobacterales',
+      { Indole: '+' },
+      opts,
+      { gramReaction: 'negative', morphology: 'bacilli' },
+    )
+    const poorFit = calcProbabilityBayes(
+      'enterobacterales',
+      { Oxidase: '+', H2S: '+', Urease: '+', Lactose: '+' },
+      opts,
+      { gramReaction: 'positive', morphology: 'cocci', arrangement: 'cluster' },
+    )
+
+    expect(strong[0]._confidence).not.toBe('very_low')
+    expect(strong[0]._gap ?? 0).toBeGreaterThan(sparse[0]._gap ?? 100)
+    expect(sparse[0]._confidence).not.toBe('high')
+    expect(poorFit[0]._confidence).not.toBe('high')
+    expect(poorFit[0].caseFitScore ?? 1).toBeLessThan(strong[0].caseFitScore ?? 0)
+  })
+
+  it('keeps ruled-out organism evidence available for explanation in strict mode', () => {
+    const ranked = calcProbabilityBayes(
+      'gpc_cluster',
+      { Catalase: '−', Coagulase: '+' },
+      { ...opts, gateMode: 'strict' },
+      { gramReaction: 'positive', morphology: 'cocci', arrangement: 'cluster' },
+    )
+    const aureus = findSpecies(ranked, 's_aureus')
+
+    expect(aureus._excluded).toBe(true)
+    expect(aureus.pct).toBe(0)
+    expect(aureus._evidence.some((item) => item.test === 'Catalase' && item.direction === 'conflicting')).toBe(true)
   })
 })

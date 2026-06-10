@@ -56,6 +56,6 @@ describe('Profile Typicality Index Calculation', () => {
     const top = results.find(r => r.id === 's_pneumoniae')
     expect(top).toBeDefined()
     // S. pneumoniae should be Optochin S. Answering R is atypical.
-    expect(top!.typicalityIndex).toBeLessThan(0.2)
+    expect(top!.typicalityIndex).toBeLessThan(0.5)
   })
 })

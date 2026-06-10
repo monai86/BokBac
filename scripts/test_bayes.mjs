@@ -13,8 +13,8 @@ import { fileURLToPath } from "url";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "..");
 
-// --- Load MCM_DATA from js/mcm_data.js ---
-const mcmJs = fs.readFileSync(path.join(ROOT, "js/mcm_data.js"), "utf-8");
+// --- Load MCM_DATA from legacy/js/mcm_data.js ---
+const mcmJs = fs.readFileSync(path.join(ROOT, "legacy/js/mcm_data.js"), "utf-8");
 const mcmObjMatch = mcmJs.match(/const\s+MCM_DATA\s*=\s*(\{[\s\S]*?\});\s*\n/);
 if (!mcmObjMatch) throw new Error("Could not parse MCM_DATA");
 const MCM_DATA = JSON.parse(mcmObjMatch[1]);

@@ -71,16 +71,16 @@ export function IdentifyPage() {
   return (
     <div className="mx-auto max-w-6xl p-4 sm:p-6 lg:p-8 space-y-6">
       {/* Educational Header */}
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-white/10 pb-4">
+      <header className="glass-header flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-zinc-50 tracking-tight">
-            🧫 BokBac Microbial World
-          </h1>
-          <p className="mt-1 text-sm text-zinc-400">
-            Educational Bacterial Identification System · v4.1.0
+          <h2 style={{ fontSize: '20px', fontWeight: 800, color: '#fff', margin: 0 }}>
+            🧫 BokBac Diagnostic Engine
+          </h2>
+          <p style={{ fontSize: '13px', color: '#64748b', margin: '4px 0 0' }}>
+            Educational Bacterial Identification System · v4.0.0
           </p>
         </div>
-        <div className="text-right text-[10px] text-zinc-500 font-mono">
+        <div className="text-right text-[10px] text-zinc-500 font-mono shrink-0">
           <div>Posteriors & Coverage Split</div>
           <div>MCM 11th Edition calibrated</div>
         </div>
@@ -95,7 +95,7 @@ export function IdentifyPage() {
             {[
               { n: 1, l: 'Gram Stain / Morphology', icon: '🔬' },
               { n: 2, l: 'Biochemical Tests', icon: '⚗️' },
-              { n: 3, l: 'ผลการวินิจฉัย', icon: '📊' },
+              { n: 3, l: 'Probabilistic Review', icon: '📊' },
             ].map((s, idx, arr) => (
               <div key={s.n} className="flex items-center gap-2 shrink-0 snap-start">
                 <div
@@ -261,7 +261,7 @@ export function IdentifyPage() {
                 onClick={() => setStep(3)}
                 className="flex-1 py-3 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-zinc-100 font-bold transition shadow-lg shadow-violet-500/25"
               >
-                🔍 วิเคราะห์ผลและวินิจฉัยเชื้อ
+                🔍 Review probabilistic match
               </button>
             </div>
           )}
@@ -273,49 +273,68 @@ export function IdentifyPage() {
         <div className="space-y-6 animate-fade-in">
           <section className="space-y-3">
             <h2 className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
-              ขั้นตอนที่ 3: ผลการวินิจฉัยความน่าจะเป็นของสายพันธุ์ (Top 10)
+              ขั้นตอนที่ 3: Suggested probabilistic matches (Top 10)
             </h2>
             {top10.length === 0 ? (
               <div className="lg-surface p-6 text-center text-zinc-500">
-                กำลังประมวลผลการวินิจฉัย…
+                กำลังประมวลผลความน่าจะเป็น…
               </div>
             ) : (
               <>
                 {/* Warnings & Diagnostics Alerts */}
-                {(suitePower.rating === 'weak' || (answeredCount > 0 && answeredCount < minTests) || missingPrimaryAnswers.length > 0 || isAtypical) && (
-                  <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-4 space-y-2 text-xs leading-normal">
-                    <div className="flex items-center gap-2 text-amber-300 font-semibold mb-1">
-                      <span>⚠️</span>
-                      <span>ข้อแนะนำเพื่อความน่าเชื่อถือของการวินิจฉัย (Reliability Alerts)</span>
+                {(() => {
+                  const allExcluded = results.length > 0 && results.every(r => r._excluded)
+                  const topResult = results[0]
+                  const hasLowFit = topResult && topResult.caseFitScore !== undefined && topResult.caseFitScore < 0.2
+                  const hasWarnings = suitePower.rating === 'weak' || (answeredCount > 0 && answeredCount < minTests) || missingPrimaryAnswers.length > 0 || isAtypical || allExcluded || hasLowFit
+                  
+                  if (!hasWarnings) return null
+
+                  return (
+                    <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-4 space-y-2 text-xs leading-normal">
+                      <div className="flex items-center gap-2 text-amber-300 font-semibold mb-1">
+                        <span>⚠️</span>
+                        <span>Evidence quality warnings</span>
+                      </div>
+                      
+                      <div className="space-y-1.5 text-zinc-300 pl-4 list-none">
+                        {allExcluded && (
+                          <p className="text-rose-300">
+                            • <strong className="text-rose-400">All candidates ruled out:</strong> The entered findings conflict with every organism in this selected group. Recheck Gram stain, morphology, test reading, or candidate group selection.
+                          </p>
+                        )}
+                        {!allExcluded && hasLowFit && (
+                          <p className="text-orange-300">
+                            • <strong className="text-orange-400">Low case fit:</strong> The current top match does not fit the entered profile well. This can happen with atypical organisms, missing reference data, or misread lab reactions.
+                          </p>
+                        )}
+                        {suitePower.rating === 'weak' && (
+                          <p className="text-amber-200">
+                            • <strong className="text-amber-300">Weak teaching suite:</strong> The current suite lacks key biochemical tests for this group ({suitePower.score}/100). Add or answer more discriminating tests before treating the ranking as stable.
+                          </p>
+                        )}
+                        {answeredCount > 0 && answeredCount < minTests && (
+                          <p>
+                            • <strong className="text-amber-200">Insufficient evidence:</strong> Only {answeredCount} biochemical result{answeredCount === 1 ? '' : 's'} entered. This group usually needs at least {minTests} meaningful tests before a teaching match is dependable.
+                          </p>
+                        )}
+                        {missingPrimaryAnswers.length > 0 && (
+                          <p>
+                            • <strong className="text-amber-200">Missing core tests:</strong> Add results for <span className="text-amber-200 font-semibold">{missingPrimaryAnswers.map(p => {
+                              const def = lookupTestDefinition(p)
+                              return def?.label || p
+                            }).join(', ')}</span> to make the candidate ranking easier to justify.
+                          </p>
+                        )}
+                        {isAtypical && topSpecies && !allExcluded && (
+                          <p className="text-rose-300">
+                            • <strong className="text-rose-400">Atypical profile:</strong> The entered results differ from the common profile for <span className="italic font-semibold">{topSpecies.name}</span> (typicality {Math.round(typicality * 100)}%). Recheck lab technique and reaction interpretation.
+                          </p>
+                        )}
+                      </div>
                     </div>
-                    
-                    <div className="space-y-1.5 text-zinc-300 pl-4 list-none">
-                      {suitePower.rating === 'weak' && (
-                        <p className="text-amber-200">
-                          • <strong className="text-amber-300">ความจำเพาะของคลาสแล็บต่ำ:</strong> Test Suite ปัจจุบันขาดการทดสอบชีวเคมีหลักสำหรับกลุ่มเชื้อนี้ ({suitePower.score}/100) แนะนำให้ปรับแต่งคลาสแล็บเพิ่มเติม
-                        </p>
-                      )}
-                      {answeredCount > 0 && answeredCount < minTests && (
-                        <p>
-                          • <strong className="text-amber-200">จำนวนการทดสอบน้อยเกินไป:</strong> เพิ่งทดสอบไปเพียง {answeredCount} ชนิด แนะนำให้ตรวจผลเพิ่มเติมอย่างน้อย {minTests} ชนิด เพื่อความมั่นใจในการระบุสปีชีส์
-                        </p>
-                      )}
-                      {missingPrimaryAnswers.length > 0 && (
-                        <p>
-                          • <strong className="text-amber-200">ขาดการทดสอบยืนยันหลัก:</strong> แนะนำให้ทำการทดสอบและระบุผลของ <span className="text-amber-250 font-semibold">{missingPrimaryAnswers.map(p => {
-                            const def = lookupTestDefinition(p)
-                            return def?.label || p
-                          }).join(', ')}</span> เพิ่มเติมเพื่อยืนยันกลุ่มเชื้อ
-                        </p>
-                      )}
-                      {isAtypical && topSpecies && (
-                        <p className="text-rose-300">
-                          • <strong className="text-rose-400">โปรไฟล์ชีวเคมีผิดปกติ (Atypical Profile):</strong> ผลการทดสอบที่กรอกมีความแตกต่างจากรูปแบบทั่วไปของ <span className="italic font-semibold">{topSpecies.name}</span> อย่างมีนัยสำคัญ (Typicality Index = {Math.round(typicality * 100)}%) กรุณาตรวจสอบผลการทำแล็บหรือการอ่านปฏิกิริยาอีกครั้ง
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                )}
+                  )
+                })()}
 
                 <ResultExplanation results={results} answeredCount={answeredCount} />
                 

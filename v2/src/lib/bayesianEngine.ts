@@ -21,6 +21,8 @@ import {
 } from './testMatcher'
 import { lookupMcmTest, mcmLikelihood, PRIOR_MAP } from './mcmAdapter'
 import { lookupTestDefinition, BIOCHEMICAL_TEST_REGISTRY } from '../data/tests/biochemicalTestRegistry'
+import { TEST_CORRELATION_GROUPS } from './correlationConfig'
+import { categoricalLikelihood, OUTCOME_MODELS } from './outcomeModels'
 
 export interface BayesOptions {
   /** Library of all candidate species. */
@@ -29,16 +31,13 @@ export interface BayesOptions {
   mcmData: McmDataMap
   /** Test suite definitions, keyed by group id. */
   suites: SuitesMap
+  /** Mode for handling strict exclusions */
+  gateMode?: 'strict' | 'hybrid' | 'exploratory'
 }
 
 const EPS = 0.02 // smoothing — represents 2% noise floor for log-likelihood
 const STRONG_CONTRADICTION_LIKELIHOOD = 0.01
-
-const TEST_CORRELATION_GROUPS = [
-  ['mac_lactose', 'lactose', 'onpg', 'tsi'],
-  ['coagulase', 'dnase', 'msa'],
-  ['hemolysis', 'camp', 'pyr']
-]
+export const FALLBACK_WEIGHT = 0.7
 
 function getCorrelationWeight(ansKey: string, answeredCanonicalKeys: string[]): number {
   const cleanAns = ansKey.toLowerCase().replace(/[^a-z0-9]/g, '')
@@ -107,11 +106,12 @@ function determineConfidence(
   topPct: number,
   gap: number,
   nAnswered: number,
-  typicality: number
+  caseFitScore: number,
+  evidenceCoverage: number
 ): ConfidenceLevel {
-  if (typicality < 0.15) return 'very_low'
-  if (topPct >= 70 && gap >= 25 && nAnswered >= 3) return 'high'
-  if (topPct >= 50 || gap >= 10) return 'medium'
+  if (caseFitScore < 0.2 || evidenceCoverage < 0.2) return 'very_low'
+  if (caseFitScore >= 0.7 && topPct >= 70 && gap >= 25 && nAnswered >= 3) return 'high'
+  if (caseFitScore >= 0.4 && (topPct >= 50 || gap >= 10)) return 'medium'
   if (topPct < 25) return 'very_low'
   return 'low'
 }
@@ -133,6 +133,8 @@ interface IntermediateResult {
   evidence: TestEvidence[]
   evidenceCoverage: number
   typicalityIndex: number
+  contradictionCount: number
+  caseFitScore: number
 }
 
 /**
@@ -145,8 +147,10 @@ export function calcProbabilityBayes(
   opts: BayesOptions,
   initialObservation?: InitialObservation
 ): RankedSpecies[] {
-  const { library, mcmData, suites } = opts
-  const candidates = library.filter((b) => b.group === group)
+  const { library, mcmData, suites, gateMode = 'hybrid' } = opts
+  const candidates = gateMode === 'exploratory'
+    ? library
+    : library.filter((b) => b.group === group)
   const answerEntries = Object.entries(answers).filter(([, v]) => v != null && v !== '')
 
   const results: IntermediateResult[] = candidates.map((bug) => {
@@ -156,15 +160,28 @@ export function calcProbabilityBayes(
     let hardExcluded = false
     let keyMatch = 0
     let keyMismatch = 0
+    let contradictionCount = 0
+    let logLik = 0
     const evidence: TestEvidence[] = []
 
     // Step 1: Gram / morphology gate check
     if (initialObservation && !checkGateMatch(bug, initialObservation)) {
-      hardExcluded = true
+      if (gateMode === 'strict') {
+        hardExcluded = true
+      } else if (gateMode === 'hybrid') {
+        contradictionCount++
+        logLik -= 4.0 // Strong penalty for hybrid mode
+      } else {
+        logLik -= 1.0 // Minor penalty for exploratory mode
+      }
+    }
+
+    // Step 1.5: Cross-group penalty for exploratory mode
+    if (gateMode === 'exploratory' && bug.group !== group) {
+      logLik -= 3.0 // Prior penalty for searching outside target group
     }
 
     // Step 2: Compute log-likelihood
-    let logLik = 0
     let usedMcmTests = 0
     let answeredWithData = 0
     const processedCanonicalKeys: string[] = []
@@ -176,6 +193,7 @@ export function calcProbabilityBayes(
       const testDef = lookupTestDefinition(cleanKey) || lookupTestDefinition(lookupMcmTest(ansKey) || '')
       const mcmTestId = lookupMcmTest(ansKey)
       const meaning = testDef?.resultKind === 'susceptibility' ? testDef.susceptibilityMeaning : undefined
+      const categoricalModel = OUTCOME_MODELS[testDef?.id.toLowerCase() || cleanKey]
 
       const isKey = keyTestsForBug.some((kt) => {
         const kk = kt.t.toLowerCase().replace(/[^a-z0-9]/g, '')
@@ -202,9 +220,13 @@ export function calcProbabilityBayes(
       }
 
       const libraryHasData = bugBiochemRow && bugBiochemRow.r !== '—' && bugBiochemRow.r !== 'N/A'
+      const compositeMcmLikelihood = mcm && categoricalModel?.computeLikelihoodFromTraits
+        ? categoricalModel.computeLikelihoodFromTraits(mcm.tests, ans, group)
+        : null
+      const hasCompositeMcmData = compositeMcmLikelihood != null
 
       // Check missing data
-      if (!mcmHasData && !libraryHasData) {
+      if (!mcmHasData && !hasCompositeMcmData && !libraryHasData) {
         evidence.push({
           test: ansKey,
           answer: ans,
@@ -222,19 +244,32 @@ export function calcProbabilityBayes(
       const correlationWeight = getCorrelationWeight(ansKey, processedCanonicalKeys)
       processedCanonicalKeys.push(cleanKey)
 
-      // 2a. MCM-based likelihood
-      if (mcmHasData) {
-        const pct = mcm!.tests[mcmTestId!]
-        let lik = mcmLikelihood(pct, ans, meaning)
+      // 2a. MCM-based likelihood. TSI can be a composite estimate from related MCM traits.
+      if (mcmHasData || hasCompositeMcmData) {
+        const pct = mcmHasData ? mcm!.tests[mcmTestId!] : undefined
+        let lik = hasCompositeMcmData
+          ? compositeMcmLikelihood
+          : categoricalLikelihood(testDef?.id || cleanKey, pct, ans, group)
+        if (lik === null) {
+          lik = typeof pct === 'number' ? mcmLikelihood(pct, ans, meaning) : null
+        }
+        
         if (lik != null) {
           let smoothed = Math.max(EPS, Math.min(1 - EPS, lik))
           if (isHardExclusionTest && smoothed < 0.1) {
             smoothed = STRONG_CONTRADICTION_LIKELIHOOD
           }
+          if (smoothed <= 0.1 || smoothed === STRONG_CONTRADICTION_LIKELIHOOD) {
+            if (gateMode === 'strict' && isHardExclusionTest) {
+              hardExcluded = true
+            } else {
+              contradictionCount++
+            }
+          }
 
           // Typicality ratio tracking
-          const pVal = Math.max(0, Math.min(100, pct)) / 100
-          const maxP = Math.max(pVal, 1 - pVal)
+          const pVal = typeof pct === 'number' ? Math.max(0, Math.min(100, pct)) / 100 : smoothed
+          const maxP = hasCompositeMcmData ? 0.9 : Math.max(pVal, 1 - pVal)
           let smoothedMax = Math.max(EPS, Math.min(1 - EPS, maxP))
           if (isHardExclusionTest && smoothedMax < 0.1) {
             smoothedMax = STRONG_CONTRADICTION_LIKELIHOOD
@@ -250,11 +285,12 @@ export function calcProbabilityBayes(
             answer: ans,
             source: 'mcm',
             likelihood: smoothed,
-            expectedPct: pct,
+            expectedPct: typeof pct === 'number' ? pct : undefined,
             weight: correlationWeight,
             impact,
             direction: evidenceDirection(smoothed),
             isKey,
+            note: hasCompositeMcmData ? 'Composite estimate from glucose/lactose/sucrose/H2S/gas MCM traits' : undefined,
           })
           if (isKey) {
             if (smoothed > 0.5) keyMatch++
@@ -264,7 +300,7 @@ export function calcProbabilityBayes(
         }
       }
 
-      // 2b. Fallback: legacy LIBRARY +/-/V data at 70% weight
+      // 2b. Fallback: legacy LIBRARY +/-/V data at FALLBACK_WEIGHT
       if (libraryHasData) {
         const isMatch = testMatch(bugBiochemRow!.r, ans)
         let smoothed = 0.5
@@ -280,10 +316,18 @@ export function calcProbabilityBayes(
           smoothedMax = 0.5
         }
 
+        if (smoothed <= 0.1 || smoothed === STRONG_CONTRADICTION_LIKELIHOOD) {
+          if (gateMode === 'strict' && isHardExclusionTest) {
+            hardExcluded = true
+          } else {
+            contradictionCount++
+          }
+        }
+
         typicalityProd *= (smoothed / smoothedMax)
         typicalityCount++
 
-        const impact = Math.log(smoothed / 0.5) * 1.0 * correlationWeight
+        const impact = Math.log(smoothed / 0.5) * FALLBACK_WEIGHT * correlationWeight
         logLik += impact
         evidence.push({
           test: ansKey,
@@ -291,10 +335,11 @@ export function calcProbabilityBayes(
           source: 'library',
           likelihood: smoothed,
           expectedPct: isMatch === true ? 90 : isMatch === false ? 10 : 50,
-          weight: 1.0 * correlationWeight,
+          weight: FALLBACK_WEIGHT * correlationWeight,
           impact,
           direction: evidenceDirection(smoothed),
           isKey,
+          note: bugBiochemRow?.n,
         })
       }
     }
@@ -305,6 +350,8 @@ export function calcProbabilityBayes(
     const logPrior = Math.log(prior)
 
     const evidenceCoverage = answerEntries.length > 0 ? answeredWithData / answerEntries.length : 1.0
+    const geometricTypicality = typicalityCount > 0 ? Math.pow(typicalityProd, 1 / typicalityCount) : 1.0
+    const caseFitScore = Math.max(0, Math.min(1, evidenceCoverage * geometricTypicality * Math.pow(0.5, contradictionCount)))
 
     return {
       bug,
@@ -316,7 +363,9 @@ export function calcProbabilityBayes(
       mcmAvailable: !!mcm,
       evidence,
       evidenceCoverage,
-      typicalityIndex: typicalityCount > 0 ? typicalityProd : 1.0,
+      typicalityIndex: geometricTypicality,
+      contradictionCount,
+      caseFitScore,
     }
   })
 
@@ -325,19 +374,34 @@ export function calcProbabilityBayes(
   const weights = results.map((r) => (r.hardExcluded ? 0 : Math.exp(r.logPosterior - maxLp)))
   const totalW = weights.reduce((s, w) => s + w, 0) || 1
 
-  // Step 5: Final % (separate posterior from coverage factor)
+  // Step 4.5: Calculate coverage factor (based on number of tests answered vs suite size)
+  const requiredTestsCount = suites[group]?.tests?.filter((t: any) => {
+    if (t.required !== undefined) return t.required
+    return t.extra !== true
+  }).length || 0
+  const baseSize = requiredTestsCount > 0 ? requiredTestsCount : (suites[group]?.tests?.length || 8)
+  const SUITE_SIZE = Math.min(10, baseSize)
+  const logSuite = Math.log2(SUITE_SIZE + 1)
+  const nAnswered = answerEntries.length
+  const coverageFactor = nAnswered === 0 ? 0.50 : Math.min(
+    1.0,
+    0.50 + 0.50 * (Math.log2(nAnswered + 1) / (logSuite || 1))
+  )
+
+  // Step 5: Final % (separate posterior scaled by coverage factor)
   const ranked: RankedSpecies[] = results
     .map((r, i) => {
-      let pct: number
-      if (r.hardExcluded) {
-        pct = 0
-      } else {
-        const rawPct = (weights[i] / totalW) * 100
-        pct = Math.round(rawPct)
+      let rawPct = 0
+      if (!r.hardExcluded) {
+        rawPct = (weights[i] / totalW) * 100
       }
+      const pct = Math.round(rawPct * coverageFactor)
       return {
         ...r.bug,
         pct: Math.max(0, Math.min(100, pct)),
+        posteriorWithinCandidateSet: rawPct,
+        caseFitScore: r.caseFitScore,
+        contradictionCount: r.contradictionCount,
         evidenceCoverage: r.evidenceCoverage,
         typicalityIndex: r.typicalityIndex,
         _keyMatch: r.keyMatch,
@@ -346,6 +410,7 @@ export function calcProbabilityBayes(
         _mcm: r.mcmAvailable,
         _usedMcmTests: r.usedMcmTests,
         _evidence: r.evidence,
+        logPosterior: r.logPosterior,
       } as RankedSpecies
     })
     .sort((a, b) => {
@@ -355,12 +420,11 @@ export function calcProbabilityBayes(
     })
 
   // Step 6: Confidence label on top result
-  const nAnswered = answerEntries.length
   if (ranked.length > 0) {
     const top = ranked[0]
     const second = ranked.find((r, i) => i > 0 && !r._excluded) ?? { pct: 0 }
     const gap = top.pct - second.pct
-    top._confidence = determineConfidence(top.pct, gap, nAnswered, top.typicalityIndex ?? 1.0)
+    top._confidence = determineConfidence(top.pct, gap, nAnswered, top.caseFitScore ?? 0, top.evidenceCoverage)
     top._gap = gap
   }
 
@@ -407,17 +471,17 @@ export function calcNextBestTests(
   if (!suite) return []
 
   // 1. Get candidate species that are not hard-excluded and have non-zero probability
-  const candidates = currentResults.filter((r) => !r._excluded && r.pct > 0)
+  const candidates = currentResults.filter((r) => !r._excluded && (r.posteriorWithinCandidateSet ?? r.pct) > 0)
   if (candidates.length <= 1) return []
 
-  // Sum of pct of non-excluded candidates
-  const sumPct = candidates.reduce((s, c) => s + c.pct, 0)
+  // Sum of unrounded probabilities
+  const sumPct = candidates.reduce((s, c) => s + (c.posteriorWithinCandidateSet ?? c.pct), 0)
   if (sumPct === 0) return []
 
   // Normalize candidate probabilities to sum to 1
   const candProbs = candidates.map((c) => ({
     c,
-    p: c.pct / sumPct,
+    p: (c.posteriorWithinCandidateSet ?? c.pct) / sumPct,
   }))
 
   // Current entropy H(C)
@@ -443,39 +507,77 @@ export function calcNextBestTests(
 
   // 3. For each unanswered test, calculate expected remaining entropy H(C | T)
   for (const test of unansweredTests) {
-    let pTestPos = 0
-    const testProps = candProbs.map((cp) => {
-      const pct = getBugTestPositivity(cp.c, test.id, opts)
-      const pPos = pct / 100
-      pTestPos += cp.p * pPos
-      return { cp, pPos }
-    })
+    let expectedEntropy = 0;
+    const model = OUTCOME_MODELS[test.id.toLowerCase()];
 
-    const pTestNeg = 1 - pTestPos
+    if (model) {
+      // Categorical multi-outcome entropy
+      let totalP = 0;
+      const outcomeEntropies: { pOutcome: number, entropy: number }[] = [];
 
-    if (pTestPos < 0.001 || pTestPos > 0.999) {
-      continue
-    }
+      for (const outcome of model.outcomes) {
+        let pOutcomeTotal = 0;
+        const testProps = candProbs.map((cp) => {
+          const pct = getBugTestPositivity(cp.c, test.id, opts);
+          const pCondOutcome = categoricalLikelihood(test.id, pct, outcome, group) ?? 0.5;
+          pOutcomeTotal += cp.p * pCondOutcome;
+          return { cp, pCondOutcome };
+        });
 
-    // Compute H(C | T = +)
-    let entropyPos = 0
-    for (const tp of testProps) {
-      const pCondPos = (tp.cp.p * tp.pPos) / pTestPos
-      if (pCondPos > 0) {
-        entropyPos -= pCondPos * Math.log2(pCondPos)
+        if (pOutcomeTotal > 0.001) {
+          let entropyOutcome = 0;
+          for (const tp of testProps) {
+            const pCond = (tp.cp.p * tp.pCondOutcome) / pOutcomeTotal;
+            if (pCond > 0) entropyOutcome -= pCond * Math.log2(pCond);
+          }
+          outcomeEntropies.push({ pOutcome: pOutcomeTotal, entropy: entropyOutcome });
+          totalP += pOutcomeTotal;
+        }
       }
-    }
 
-    // Compute H(C | T = -)
-    let entropyNeg = 0
-    for (const tp of testProps) {
-      const pCondNeg = (tp.cp.p * (1 - tp.pPos)) / pTestNeg
-      if (pCondNeg > 0) {
-        entropyNeg -= pCondNeg * Math.log2(pCondNeg)
+      // Normalize if outcomes don't sum to exactly 1.0
+      if (totalP > 0) {
+        for (const oe of outcomeEntropies) {
+          expectedEntropy += (oe.pOutcome / totalP) * oe.entropy;
+        }
       }
+    } else {
+      // Binary outcome entropy
+      let pTestPos = 0
+      const testProps = candProbs.map((cp) => {
+        const pct = getBugTestPositivity(cp.c, test.id, opts)
+        const pPos = pct / 100
+        pTestPos += cp.p * pPos
+        return { cp, pPos }
+      })
+
+      const pTestNeg = 1 - pTestPos
+
+      if (pTestPos < 0.001 || pTestPos > 0.999) {
+        continue
+      }
+
+      // Compute H(C | T = +)
+      let entropyPos = 0
+      for (const tp of testProps) {
+        const pCondPos = (tp.cp.p * tp.pPos) / pTestPos
+        if (pCondPos > 0) {
+          entropyPos -= pCondPos * Math.log2(pCondPos)
+        }
+      }
+
+      // Compute H(C | T = -)
+      let entropyNeg = 0
+      for (const tp of testProps) {
+        const pCondNeg = (tp.cp.p * (1 - tp.pPos)) / pTestNeg
+        if (pCondNeg > 0) {
+          entropyNeg -= pCondNeg * Math.log2(pCondNeg)
+        }
+      }
+
+      expectedEntropy = pTestPos * entropyPos + pTestNeg * entropyNeg
     }
 
-    const expectedEntropy = pTestPos * entropyPos + pTestNeg * entropyNeg
     const infoGain = currentEntropy - expectedEntropy
     const entropyReduction = currentEntropy > 0 ? (infoGain / currentEntropy) * 100 : 0
 

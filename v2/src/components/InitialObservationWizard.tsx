@@ -1,6 +1,10 @@
 import { useIdentifyStore } from '@/store/identifyStore'
 import { suggestOrganismGroups } from '@/lib/gramStain/groupSuggestion'
-import type { SpecimenType } from '@/lib/types'
+import type { InitialObservation, SpecimenType } from '@/lib/types'
+
+type GramReaction = InitialObservation['gramReaction']
+type Morphology = InitialObservation['morphology']
+type Arrangement = NonNullable<InitialObservation['arrangement']>
 
 const SPECIMENS: Array<{ value: SpecimenType; label: string; emoji: string }> = [
   { value: 'unknown', label: 'ไม่ระบุ', emoji: '❓' },
@@ -15,14 +19,14 @@ const SPECIMENS: Array<{ value: SpecimenType; label: string; emoji: string }> = 
   { value: 'ear', label: 'หู (Ear)', emoji: '👂' },
 ]
 
-const GRAM_REACTIONS = [
+const GRAM_REACTIONS: Array<{ value: GramReaction; label: string; color: string }> = [
   { value: 'positive', label: 'Gram Positive (+)', color: 'border-violet-400 bg-violet-500/10 text-violet-200' },
   { value: 'negative', label: 'Gram Negative (−)', color: 'border-rose-400 bg-rose-500/10 text-rose-200' },
   { value: 'variable', label: 'Gram Variable', color: 'border-amber-400 bg-amber-500/10 text-amber-200' },
   { value: 'unknown', label: 'Unknown / ไม่ระบุ', color: 'border-zinc-500 bg-zinc-500/10 text-zinc-300' },
 ]
 
-const MORPHOLOGY_OPTIONS = [
+const MORPHOLOGY_OPTIONS: Array<{ value: Morphology; label: string; emoji: string }> = [
   { value: 'cocci', label: 'Cocci (กลม)', emoji: '🟣' },
   { value: 'bacilli', label: 'Bacilli (แท่ง)', emoji: '➖' },
   { value: 'coccobacilli', label: 'Coccobacilli (กลมปนแท่ง)', emoji: '🫘' },
@@ -31,7 +35,7 @@ const MORPHOLOGY_OPTIONS = [
   { value: 'unknown', label: 'Unknown / ไม่ระบุ', emoji: '❓' },
 ]
 
-const ARRANGEMENT_OPTIONS = [
+const ARRANGEMENT_OPTIONS: Array<{ value: Arrangement; label: string }> = [
   { value: 'unknown', label: 'ไม่ระบุ' },
   { value: 'single', label: 'Single (เดี่ยว)' },
   { value: 'pairs', label: 'Pairs (คู่)' },
@@ -51,6 +55,7 @@ export function InitialObservationWizard() {
   const resetInitialObservation = useIdentifyStore((s) => s.resetInitialObservation)
   const currentGroup = useIdentifyStore((s) => s.group)
   const setGroup = useIdentifyStore((s) => s.setGroup)
+  const suiteSelectionReason = useIdentifyStore((s) => s.suiteSelectionReason)
 
   const suggestions = suggestOrganismGroups(initialObservation)
 
@@ -69,7 +74,7 @@ export function InitialObservationWizard() {
               <span>🔬</span> ตัวช่วยวิเคราะห์ผลย้อมสไลด์ (Gram Stain & Morphology Wizard)
             </h2>
             <p className="text-xs text-zinc-400">
-              ระบุลักษณะเบื้องต้นเพื่อค้นหากลุ่มแบคทีเรียที่สอดคล้อง
+              ระบุลักษณะเบื้องต้นเพื่อค้นหากลุ่มแบคทีเรียที่สอดคล้อง สิ่งส่งตรวจช่วยจัดลำดับคำแนะนำเท่านั้น ไม่เพิ่มความมั่นใจของผลจำแนกขั้นสุดท้าย
             </p>
           </div>
           <button
@@ -116,7 +121,7 @@ export function InitialObservationWizard() {
                 <button
                   type="button"
                   key={g.value}
-                  onClick={() => updateObs({ gramReaction: g.value as any })}
+                  onClick={() => updateObs({ gramReaction: g.value })}
                   className={`w-full rounded-lg border px-3 py-2 text-left text-xs font-medium transition ${
                     initialObservation.gramReaction === g.value
                       ? `${g.color} ring-2 ring-violet-500/35 border-transparent`
@@ -139,7 +144,7 @@ export function InitialObservationWizard() {
                 <button
                   type="button"
                   key={morph.value}
-                  onClick={() => updateObs({ morphology: morph.value as any })}
+                  onClick={() => updateObs({ morphology: morph.value })}
                   className={`flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-left text-xs transition ${
                     initialObservation.morphology === morph.value
                       ? 'border-violet-400 bg-violet-500/15 text-violet-100'
@@ -157,7 +162,7 @@ export function InitialObservationWizard() {
               <span className="text-[10px] text-zinc-500 font-semibold uppercase">การเรียงตัว (Arrangement)</span>
               <select
                 value={initialObservation.arrangement || 'unknown'}
-                onChange={(e) => updateObs({ arrangement: e.target.value as any })}
+                onChange={(e) => updateObs({ arrangement: e.target.value as Arrangement })}
                 className="w-full rounded-lg border border-white/10 bg-zinc-950 p-2 text-xs text-zinc-300 focus:border-violet-500 focus:outline-none focus:ring-1 focus:ring-violet-500"
               >
                 {ARRANGEMENT_OPTIONS.map((arr) => (
@@ -175,8 +180,18 @@ export function InitialObservationWizard() {
           <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-400 mb-2">
             💡 กลุ่มเชื้อที่แนะนำตามลักษณะทางจุลชีววิทยา:
           </h3>
-          <div className="grid gap-2 sm:grid-cols-2 md:grid-cols-3">
-            {suggestions.map((sug) => {
+          {suiteSelectionReason && (
+            <div className="mb-3 rounded-lg border border-violet-500/20 bg-violet-500/10 px-3 py-2 text-[11px] text-violet-200">
+              เลือก suite อัตโนมัติ: {suiteSelectionReason}
+            </div>
+          )}
+          {suggestions.length === 0 ? (
+            <div className="rounded-lg border border-dashed border-white/10 bg-white/[0.02] px-3 py-4 text-center text-xs text-zinc-500">
+              กรุณาระบุ Gram reaction และ morphology เพิ่มเติมก่อนเลือกกลุ่มเชื้อ
+            </div>
+          ) : (
+            <div className="grid gap-2 sm:grid-cols-2 md:grid-cols-3">
+              {suggestions.map((sug) => {
               const isActive = currentGroup === sug.groupId
               return (
                 <div
@@ -202,6 +217,11 @@ export function InitialObservationWizard() {
                     <p className="text-[10px] text-zinc-400 leading-normal mb-3">
                       {sug.reason}
                     </p>
+                    {sug.confidence === 'contextual' && (
+                      <p className="mb-3 text-[10px] text-amber-300/80">
+                        บริบทจากสิ่งส่งตรวจเท่านั้น ต้องใช้ Gram stain และผลทดสอบยืนยัน
+                      </p>
+                    )}
                   </div>
                   <button
                     type="button"
@@ -219,8 +239,9 @@ export function InitialObservationWizard() {
                   </button>
                 </div>
               )
-            })}
-          </div>
+              })}
+            </div>
+          )}
         </div>
       </div>
     </div>

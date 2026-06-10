@@ -9,6 +9,7 @@ export interface BiochemicalTestDefinition {
   mcmKey?: string;
   category?: string;
   susceptibilityMeaning?: SusceptibilityMeaning;
+  hardExclusion?: boolean;
   // Practical metrics for recommendation
   estimatedTime?: string; // display string
   timePenalty?: number; // 0 = fast (<30m), 1 = medium (1-4h), 2 = slow (18-24h)
@@ -25,6 +26,7 @@ export const BIOCHEMICAL_TEST_REGISTRY: BiochemicalTestDefinition[] = [
     options: ['+', '−'],
     mcmKey: 'oxidase',
     category: 'respiratory',
+    hardExclusion: true,
     estimatedTime: '1 min',
     timePenalty: 0,
     costLevel: 'low',
@@ -37,6 +39,7 @@ export const BIOCHEMICAL_TEST_REGISTRY: BiochemicalTestDefinition[] = [
     options: ['+', '−'],
     mcmKey: 'catalase',
     category: 'respiratory',
+    hardExclusion: true,
     estimatedTime: '1 min',
     timePenalty: 0,
     costLevel: 'low',
@@ -49,10 +52,23 @@ export const BIOCHEMICAL_TEST_REGISTRY: BiochemicalTestDefinition[] = [
     options: ['+', '−'],
     mcmKey: 'coagulase',
     category: 'staph',
+    hardExclusion: true,
     estimatedTime: '4 hrs',
     timePenalty: 1,
     costLevel: 'medium',
     curriculumPriority: 5,
+  },
+  {
+    id: 'dnase',
+    label: 'DNase',
+    resultKind: 'binary',
+    options: ['+', '−'],
+    mcmKey: 'dnase',
+    category: 'general',
+    estimatedTime: '18-24 hrs',
+    timePenalty: 2,
+    costLevel: 'low',
+    curriculumPriority: 3,
   },
   {
     id: 'hemolysis',
@@ -61,6 +77,7 @@ export const BIOCHEMICAL_TEST_REGISTRY: BiochemicalTestDefinition[] = [
     options: ['β (complete)', 'α (partial/green)', 'γ (none)'],
     mcmKey: 'hemolysis',
     category: 'general',
+    hardExclusion: true,
     estimatedTime: '18-24 hrs',
     timePenalty: 2,
     costLevel: 'medium',
@@ -319,7 +336,7 @@ export const BIOCHEMICAL_TEST_REGISTRY: BiochemicalTestDefinition[] = [
     id: 'tsi',
     label: 'TSI Slant/Butt',
     resultKind: 'categorical',
-    options: ['A/A (gas+)', 'A/A (gas−)', 'K/A', 'K/A H₂S', 'K/AG H₂S', 'K/K', 'K/N'],
+    options: ['A/A', 'A/A (gas+)', 'A/A (gas−)', 'K/A', 'K/A (gas+)', 'K/A H₂S', 'K/AG H₂S', 'K/K', 'K/N', 'K/NC'],
     mcmKey: undefined,
     category: 'tsi',
     estimatedTime: '18-24 hrs',
@@ -431,6 +448,18 @@ export const BIOCHEMICAL_TEST_REGISTRY: BiochemicalTestDefinition[] = [
     resultKind: 'binary',
     options: ['+', '−'],
     mcmKey: 'arabinose',
+    category: 'carbohydrate',
+    estimatedTime: '18-24 hrs',
+    timePenalty: 2,
+    costLevel: 'low',
+    curriculumPriority: 3,
+  },
+  {
+    id: 'adonitol',
+    label: 'Adonitol',
+    resultKind: 'binary',
+    options: ['+', '−'],
+    mcmKey: 'adonitol',
     category: 'carbohydrate',
     estimatedTime: '18-24 hrs',
     timePenalty: 2,

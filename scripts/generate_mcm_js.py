@@ -19,7 +19,8 @@ from datetime import datetime
 
 PARSED = Path("scripts/mcm_extract/parsed/mcm_master.json")
 PRIORS = Path("scripts/mcm_extract/parsed/library_priors.json")
-OUT = Path("js/mcm_data.js")
+OUT_LEGACY = Path("legacy/js/mcm_data.js")
+OUT_TS = Path("v2/src/data/mcmData.ts")
 
 # MCM species → LIBRARY id (manual curated mapping)
 SPECIES_TO_LIBRARY_ID = {
@@ -284,9 +285,36 @@ def main():
         f"if (typeof window !== 'undefined') window.MCM_DATA = MCM_DATA;",
     ]
     
-    OUT.write_text("\n".join(js_lines), encoding="utf-8")
-    print(f"\n✅ Generated {OUT}")
-    print(f"   {len(mcm_data)} species, file size: {OUT.stat().st_size / 1024:.1f} KB")
+    # Generate TS file
+    ts_lines = [
+        f"// src/data/mcmData.ts — Auto-generated from MCM 11th edition extraction",
+        f"// Generated: {datetime.now().isoformat()}",
+        f"// Source: Manual of Clinical Microbiology, 11th Edition (2015)",
+        f"// DO NOT EDIT MANUALLY — re-run scripts/generate_mcm_js.py instead",
+        f"",
+        f"// % positivity scale:",
+        f"//   numerical: actual % from MCM ch.37 Table 1 (E.coli/Shigella/Salmonella)",
+        f"//   symbolic:  + (≥90%) → 95; V (11-89%) → 50; − (≤10%) → 5",
+        f"",
+        f"// Prevalence scale (clinical isolation frequency from MCM ch.38 Table 1):",
+        f"//   4 = ++++ frequent  (most common)",
+        f"//   3 = +++ occasional",
+        f"//   2 = ++ rare",
+        f"//   1 = + very rare",
+        f"//   0 = − not isolated from humans",
+        f"",
+        f"export const MCM_DATA = " + json.dumps(mcm_data, ensure_ascii=False, indent=2) + ";",
+    ]
+    
+    OUT_LEGACY.parent.mkdir(parents=True, exist_ok=True)
+    OUT_LEGACY.write_text("\n".join(js_lines), encoding="utf-8")
+    print(f"\n✅ Generated {OUT_LEGACY}")
+    print(f"   {len(mcm_data)} species, file size: {OUT_LEGACY.stat().st_size / 1024:.1f} KB")
+    
+    OUT_TS.parent.mkdir(parents=True, exist_ok=True)
+    OUT_TS.write_text("\n".join(ts_lines), encoding="utf-8")
+    print(f"✅ Generated {OUT_TS}")
+    print(f"   {len(mcm_data)} species, file size: {OUT_TS.stat().st_size / 1024:.1f} KB")
     
     # Show E. coli sample
     if "e_coli" in mcm_data:

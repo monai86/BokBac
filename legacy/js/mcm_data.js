@@ -1,5 +1,5 @@
 // js/mcm_data.js — Auto-generated from MCM 11th edition extraction
-// Generated: 2026-04-26T23:10:39.013004
+// Generated: 2026-06-10T16:52:49.583147
 // Source: Manual of Clinical Microbiology, 11th Edition (2015)
 // DO NOT EDIT MANUALLY — re-run scripts/generate_mcm_js.py instead
 

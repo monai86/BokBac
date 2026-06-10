@@ -1,0 +1,1532 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BokBac — Project Deep Dive & Plan Review</title>
+<meta name="description" content="Comprehensive presentation of BokBac Microbial World project architecture and plan review">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-deep: #0a0a0f;
+    --bg-card: rgba(255,255,255,0.04);
+    --bg-card-hover: rgba(255,255,255,0.07);
+    --glass: rgba(255,255,255,0.06);
+    --glass-border: rgba(255,255,255,0.08);
+    --accent-cyan: #06d6a0;
+    --accent-blue: #4cc9f0;
+    --accent-purple: #7b2ff7;
+    --accent-pink: #f72585;
+    --accent-amber: #fbbf24;
+    --accent-red: #ef4444;
+    --accent-emerald: #10b981;
+    --text-primary: #f0f0f5;
+    --text-secondary: #a0a0b8;
+    --text-muted: #6b6b80;
+    --font-sans: 'Inter', 'Noto Sans Thai', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    height: 100%;
+    overflow: hidden;
+    background: var(--bg-deep);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Slide Container ── */
+  .deck {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 60px 80px;
+    opacity: 0;
+    transform: translateX(60px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    pointer-events: none;
+    overflow-y: auto;
+  }
+
+  .slide.active {
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: all;
+  }
+
+  .slide.prev {
+    opacity: 0;
+    transform: translateX(-60px);
+  }
+
+  /* ── Background Effects ── */
+  .bg-orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(120px);
+    opacity: 0.15;
+    pointer-events: none;
+    z-index: 0;
+    animation: float 20s ease-in-out infinite;
+  }
+  .bg-orb.o1 { width: 600px; height: 600px; background: var(--accent-purple); top: -10%; left: -5%; }
+  .bg-orb.o2 { width: 500px; height: 500px; background: var(--accent-cyan); bottom: -10%; right: -5%; animation-delay: -7s; }
+  .bg-orb.o3 { width: 400px; height: 400px; background: var(--accent-pink); top: 50%; left: 50%; animation-delay: -14s; }
+
+  @keyframes float {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(30px, -20px) scale(1.05); }
+    66% { transform: translate(-20px, 15px) scale(0.95); }
+  }
+
+  /* ── Typography ── */
+  .slide-number {
+    position: absolute;
+    top: 28px;
+    right: 40px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+    z-index: 10;
+  }
+
+  .slide-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    padding: 4px 14px;
+    border-radius: 100px;
+    margin-bottom: 16px;
+  }
+  .tag-overview { background: rgba(6,214,160,0.15); color: var(--accent-cyan); }
+  .tag-arch { background: rgba(76,201,240,0.15); color: var(--accent-blue); }
+  .tag-engine { background: rgba(123,47,247,0.15); color: var(--accent-purple); }
+  .tag-data { background: rgba(251,191,36,0.15); color: var(--accent-amber); }
+  .tag-ux { background: rgba(247,37,133,0.15); color: var(--accent-pink); }
+  .tag-review { background: rgba(239,68,68,0.15); color: var(--accent-red); }
+  .tag-plan { background: rgba(16,185,129,0.15); color: var(--accent-emerald); }
+
+  h1 {
+    font-size: clamp(32px, 4vw, 56px);
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin-bottom: 20px;
+  }
+
+  h1 .gradient-text {
+    background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue), var(--accent-purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  h2 {
+    font-size: clamp(24px, 3vw, 40px);
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 16px;
+    letter-spacing: -0.01em;
+  }
+
+  h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: var(--text-primary);
+  }
+
+  .subtitle {
+    font-size: clamp(16px, 1.8vw, 22px);
+    color: var(--text-secondary);
+    line-height: 1.6;
+    max-width: 800px;
+    margin-bottom: 32px;
+  }
+
+  p { line-height: 1.65; color: var(--text-secondary); }
+
+  /* ── Cards & Panels ── */
+  .glass-card {
+    background: var(--bg-card);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    padding: 24px;
+    backdrop-filter: blur(12px);
+    transition: background 0.3s, border-color 0.3s, transform 0.3s;
+  }
+  .glass-card:hover {
+    background: var(--bg-card-hover);
+    border-color: rgba(255,255,255,0.12);
+    transform: translateY(-2px);
+  }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+  .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 16px; }
+
+  .stat-value {
+    font-size: 36px;
+    font-weight: 800;
+    font-family: var(--font-mono);
+    letter-spacing: -0.02em;
+  }
+  .stat-label {
+    font-size: 12px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 4px;
+  }
+
+  /* ── Tables ── */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  .data-table th {
+    text-align: left;
+    padding: 10px 14px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--glass-border);
+    font-weight: 600;
+  }
+  .data-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    color: var(--text-secondary);
+  }
+  .data-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+  /* ── Badges & Pills ── */
+  .badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 100px;
+    letter-spacing: 0.5px;
+  }
+  .badge-green { background: rgba(16,185,129,0.15); color: #34d399; }
+  .badge-red { background: rgba(239,68,68,0.15); color: #f87171; }
+  .badge-amber { background: rgba(251,191,36,0.15); color: #fbbf24; }
+  .badge-blue { background: rgba(76,201,240,0.15); color: #67e8f9; }
+  .badge-purple { background: rgba(123,47,247,0.15); color: #a78bfa; }
+
+  /* ── Flow Diagram ── */
+  .flow-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin: 16px 0;
+  }
+  .flow-step {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--bg-card);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 12px 18px;
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .flow-step .step-num {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .flow-arrow {
+    color: var(--text-muted);
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  /* ── Issue Cards ── */
+  .issue-card {
+    border-left: 3px solid;
+    padding-left: 16px;
+  }
+  .issue-critical { border-color: var(--accent-red); }
+  .issue-warning { border-color: var(--accent-amber); }
+  .issue-info { border-color: var(--accent-blue); }
+
+  .issue-title {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .issue-desc {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  /* ── Code Block ── */
+  .code-block {
+    background: rgba(0,0,0,0.4);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 10px;
+    padding: 16px 20px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    line-height: 1.7;
+    overflow-x: auto;
+    color: #c9d1d9;
+  }
+  .code-keyword { color: #ff7b72; }
+  .code-type { color: #79c0ff; }
+  .code-string { color: #a5d6ff; }
+  .code-comment { color: #6b7b8d; font-style: italic; }
+  .code-num { color: #ffa657; }
+
+  /* ── Compare Columns ── */
+  .compare-wrap {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  .compare-col { position: relative; }
+  .compare-col h3 { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
+
+  /* ── Check/Cross Indicators ── */
+  .check { color: var(--accent-emerald); }
+  .cross { color: var(--accent-red); }
+  .warn { color: var(--accent-amber); }
+
+  .status-list { list-style: none; font-size: 14px; }
+  .status-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+  .status-list li .icon { flex-shrink: 0; font-size: 16px; margin-top: 1px; }
+
+  /* ── Progress Bar ── */
+  .progress-bar {
+    height: 8px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 100px;
+    overflow: hidden;
+    margin-top: 8px;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 100px;
+    transition: width 1s ease;
+  }
+
+  /* ── Navigation ── */
+  .nav-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 56px;
+    background: rgba(10,10,15,0.85);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid var(--glass-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 32px;
+    z-index: 100;
+  }
+
+  .nav-progress {
+    flex: 1;
+    max-width: 300px;
+    height: 3px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 100px;
+    overflow: hidden;
+  }
+  .nav-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));
+    border-radius: 100px;
+    transition: width 0.4s ease;
+  }
+
+  .nav-btns { display: flex; gap: 8px; }
+  .nav-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    border: 1px solid var(--glass-border);
+    background: var(--bg-card);
+    color: var(--text-secondary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    transition: all 0.2s;
+  }
+  .nav-btn:hover { background: var(--bg-card-hover); color: var(--text-primary); }
+  .nav-btn:disabled { opacity: 0.3; cursor: default; }
+
+  .nav-info {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+  }
+
+  /* ── Slide Title Bar ── */
+  .slide-header {
+    position: absolute;
+    top: 28px;
+    left: 40px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    z-index: 10;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 900px) {
+    .slide { padding: 50px 28px 80px; }
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    .compare-wrap { grid-template-columns: 1fr; }
+    .flow-container { flex-direction: column; align-items: stretch; }
+    .flow-arrow { display: none; }
+    h1 { font-size: 28px; }
+  }
+
+  /* ── Scrollbar ── */
+  .slide::-webkit-scrollbar { width: 4px; }
+  .slide::-webkit-scrollbar-track { background: transparent; }
+  .slide::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 100px; }
+
+  /* ── Animations ── */
+  .fade-up {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  .slide.active .fade-up { opacity: 1; transform: translateY(0); }
+  .slide.active .fade-up:nth-child(2) { transition-delay: 0.1s; }
+  .slide.active .fade-up:nth-child(3) { transition-delay: 0.2s; }
+  .slide.active .fade-up:nth-child(4) { transition-delay: 0.3s; }
+  .slide.active .fade-up:nth-child(5) { transition-delay: 0.4s; }
+
+  /* ── Roadmap Timeline ── */
+  .timeline { position: relative; padding-left: 28px; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 8px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(180deg, var(--accent-cyan), var(--accent-purple), var(--accent-pink));
+    border-radius: 2px;
+  }
+  .timeline-item {
+    position: relative;
+    padding: 12px 0 20px;
+  }
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -24px;
+    top: 16px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid var(--accent-cyan);
+    background: var(--bg-deep);
+  }
+  .timeline-item:nth-child(2)::before { border-color: var(--accent-blue); }
+  .timeline-item:nth-child(3)::before { border-color: var(--accent-purple); }
+  .timeline-item:nth-child(4)::before { border-color: var(--accent-pink); }
+  .timeline-item:nth-child(5)::before { border-color: var(--accent-amber); }
+  .timeline-item:nth-child(6)::before { border-color: var(--accent-emerald); }
+
+  .tl-title {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .tl-desc {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  .small-text { font-size: 13px; }
+  .mt-12 { margin-top: 12px; }
+  .mt-16 { margin-top: 16px; }
+  .mt-20 { margin-top: 20px; }
+  .mt-24 { margin-top: 24px; }
+  .mb-8 { margin-bottom: 8px; }
+  .mb-12 { margin-bottom: 12px; }
+  .mb-16 { margin-bottom: 16px; }
+  .gap-12 { gap: 12px; }
+
+  .flex-center { display: flex; align-items: center; justify-content: center; }
+  .text-center { text-align: center; }
+</style>
+</head>
+<body>
+
+<div class="bg-orb o1"></div>
+<div class="bg-orb o2"></div>
+<div class="bg-orb o3"></div>
+
+<div class="deck" id="deck">
+
+<!-- ━━━━━━━━━━━━━ SLIDE 1: TITLE ━━━━━━━━━━━━━ -->
+<section class="slide active" data-slide="0">
+  <div class="fade-up text-center" style="max-width:900px;margin:0 auto;">
+    <span class="slide-tag tag-overview">Project Deep Dive & Plan Review</span>
+    <h1 style="font-size:clamp(40px,5vw,64px);">
+      <span class="gradient-text">BokBac</span><br>Microbial World
+    </h1>
+    <p class="subtitle" style="margin:0 auto 40px;max-width:650px;">
+      AI-Assisted, Human-Guided Bacterial Identification<br>
+      <span style="color:var(--text-muted)">สไลด์นำเสนอเชิงลึก — สถาปัตยกรรม ∙ ข้อค้นพบ ∙ แผนพัฒนา</span>
+    </p>
+    <div class="grid-4" style="max-width:700px;margin:0 auto;">
+      <div class="glass-card text-center">
+        <div class="stat-value" style="color:var(--accent-cyan)">157</div>
+        <div class="stat-label">Species</div>
+      </div>
+      <div class="glass-card text-center">
+        <div class="stat-value" style="color:var(--accent-blue)">93</div>
+        <div class="stat-label">MCM Data</div>
+      </div>
+      <div class="glass-card text-center">
+        <div class="stat-value" style="color:var(--accent-purple)">50/50</div>
+        <div class="stat-label">Scenarios</div>
+      </div>
+      <div class="glass-card text-center">
+        <div class="stat-value" style="color:var(--accent-emerald)">v4.0</div>
+        <div class="stat-label">Version</div>
+      </div>
+    </div>
+    <p style="margin-top:40px;font-size:13px;color:var(--text-muted)">กด ← → หรือคลิกปุ่มด้านล่างเพื่อเปลี่ยนสไลด์</p>
+  </div>
+  <span class="slide-number">01 / 16</span>
+</section>
+
+<!-- ━━━━━━━━━━━━━ SLIDE 2: WHAT IS BOKBAC ━━━━━━━━━━━━━ -->
+<section class="slide" data-slide="1">
+  <span class="slide-tag tag-overview">ภาพรวมโครงการ</span>
+  <h2 class="fade-up">BokBac คืออะไร?</h2>
+  <p class="subtitle fade-up">ระบบช่วยระบุเชื้อแบคทีเรียทางคลินิก สำหรับนักเทคนิคการแพทย์และนักศึกษา</p>
+
+  <div class="grid-2 fade-up">
+    <div class="glass-card">
+      <h3>🎯 เป้าหมาย</h3>
+      <ul class="status-list">
+        <li><span class="icon">🔬</span>ช่วยวินิจฉัยเชื้อแบคทีเรียจากผลทดสอบทางชีวเคมี</li>
+        <li><span class="icon">📚</span>ใช้เป็นเครื่องมือการเรียนการสอนจุลชีววิทยาคลินิก</li>
+        <li><span class="icon">🧮</span>ใช้ Naive Bayesian Probability Engine คำนวณความน่าจะเป็น</li>
+        <li><span class="icon">📖</span>อ้างอิง Manual of Clinical Microbiology, 11th Ed. (2015)</li>
+      </ul>
+    </div>
+    <div class="glass-card">
+      <h3>🌟 คุณลักษณะเด่น</h3>
+      <ul class="status-list">
+        <li><span class="icon check">✓</span>Bilingual ไทย/อังกฤษ</li>
+        <li><span class="icon check">✓</span>3-Step Workflow: Gram → Biochem → Results</li>
+        <li><span class="icon check">✓</span>Next Best Test แนะนำการทดสอบถัดไปด้วย entropy</li>
+        <li><span class="icon check">✓</span>157 species, 8 bacterial groups, 46 biochemical tests</li>
+        <li><span class="icon check">✓</span>Saved Cases + Custom Test Suites</li>
+        <li><span class="icon check">✓</span>ผลอธิบายได้ — Evidence trace ทุก test</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="glass-card mt-20 fade-up" style="border-left:3px solid var(--accent-cyan);">
+    <p style="font-size:14px;color:var(--text-secondary)">
+      <strong style="color:var(--accent-cyan)">แนวคิดหลัก:</strong>
+      AI-Assisted, Human-Guided — ระบบ<em>ช่วย</em>คิด ไม่ใช่คิดแทน ผู้ใช้ยังต้องตัดสินใจเอง ระบบอธิบายเหตุผลและแสดงหลักฐานประกอบทุกขั้นตอน
+    </p>
+  </div>
+  <span class="slide-number">02 / 16</span>
+</section>
+
+<!-- ━━━━━━━━━━━━━ SLIDE 3: DUAL ARCHITECTURE ━━━━━━━━━━━━━ -->
+<section class="slide" data-slide="2">
+  <span class="slide-tag tag-arch">สถาปัตยกรรม</span>
+  <h2 class="fade-up">สองเวอร์ชันคู่ขนาน</h2>
+  <p class="subtitle fade-up">Legacy v3.x + Modern v4.x — กำลังย้ายไปสู่สถาปัตยกรรมใหม่</p>
+
+  <div class="compare-wrap fade-up">
+    <div class="glass-card compare-col">
+      <h3><span class="badge badge-amber">Legacy</span> v3.1.1</h3>
+      <table class="data-table">
+        <tr><td style="color:var(--text-muted);width:100px">Framework</td><td>React 18 + Babel (CDN)</td></tr>
+        <tr><td style="color:var(--text-muted)">Location</td><td>Root: index.html</td></tr>
+        <tr><td style="color:var(--text-muted)">Styling</td><td>CSS + Liquid Glass</td></tr>
+        <tr><td style="color:var(--text-muted)">State</td><td>React Hooks (inline)</td></tr>
+        <tr><td style="color:var(--text-muted)">File size</td><td>~449 KB single file</td></tr>
+        <tr><td style="color:var(--text-muted)">Testing</td><td>50 scenarios (Node MJS)</td></tr>
+        <tr><td style="color:var(--text-muted)">Type safety</td><td>❌ None</td></tr>
+      </table>
+    </div>
+    <div class="glass-card compare-col" style="border-color:rgba(6,214,160,0.2)">
+      <h3><span class="badge badge-green">Modern</span> v4.0.0</h3>
+      <table class="data-table">
+        <tr><td style="color:var(--text-muted);width:100px">Framework</td><td>Vite 6 + React 19 + TypeScript 5.7</td></tr>
+        <tr><td style="color:var(--text-muted)">Location</td><td>v2/ directory</td></tr>
+        <tr><td style="color:var(--text-muted)">Styling</td><td>Tailwind CSS 3 + Liquid Glass</td></tr>
+        <tr><td style="color:var(--text-muted)">State</td><td>Zustand 5</td></tr>
+        <tr><td style="color:var(--text-muted)">Routing</td><td>React Router v7</td></tr>
+        <tr><td style="color:var(--text-muted)">Testing</td><td>Vitest 3 + Playwright E2E</td></tr>
+        <tr><td style="color:var(--text-muted)">Type safety</td><td>✅ Full TypeScript</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="glass-card mt-20 fade-up" style="border-left:3px solid var(--accent-amber)">
+    <p class="small-text" style="color:var(--text-secondary)">
+      <strong style="color:var(--accent-amber)">⚠️ สิ่งที่แพลนชี้:</strong>
+      ทั้งสองเวอร์ชันยังทำงานคู่ขนาน Legacy มี coverage factor ที่ v4 ไม่มี และมี hard exclusion list ที่ต่างกัน (legacy: 3 tests, modern: 4 tests) ทำให้ผลลัพธ์อาจไม่ตรงกัน
+    </p>
+  </div>
+  <span class="slide-number">03 / 16</span>
+</section>
+
+<!-- ━━━━━━━━━━━━━ SLIDE 4: TECH STACK MODERN ━━━━━━━━━━━━━ -->
+<section class="slide" data-slide="3">
+  <span class="slide-tag tag-arch">เทคโนโลยี v4</span>
+  <h2 class="fade-up">Tech Stack — Modern App</h2>
+
+  <div class="grid-3 fade-up">
+    <div class="glass-card">
+      <h3>⚡ Build & Runtime</h3>
+      <ul class="status-list small-text">
+        <li><span class="icon">📦</span>Vite 6 — Sub-second HMR</li>
+        <li><span class="icon">⚛️</span>React 19.2 — Latest concurrent</li>
+        <li><span class="icon">🔷</span>TypeScript 5.7 — Full type safety</li>
+        <li><span class="icon">🗂️</span>React Router v7</li>
+      </ul>
+    </div>
+    <div class="glass-card">
+      <h3>🎨 UI & State</h3>
+      <ul class="status-list small-text">
+        <li><span class="icon">💨</span>Tailwind CSS v3 — Utility-first</li>
+        <li><span class="icon">✨</span>Liquid Glass Design System</li>
+        <li><span class="icon">🐻</span>Zustand 5 — 1.5KB store</li>
+        <li><span class="icon">💾</span>localStorage persistence</li>
+      </ul>
+    </div>
+    <div class="glass-card">
+      <h3>🧪 Testing & Deploy</h3>
+      <ul class="status-list small-text">
+        <li><span class="icon">✅</span>Vitest 3 — Unit tests</li>
+        <li><span class="icon">🎭</span>Playwright — E2E (not in CI)</li>
+        <li><span class="icon">☁️</span>Cloudflare Pages</li>
+        <li><span class="icon">🔄</span>GitHub Actions CI</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="fade-up mt-24">
+    <h3 class="mb-12">📁 โครงสร้างไฟล์หลัก (v2/src/)</h3>
+    <div class="grid-4">
+      <div class="glass-card" style="padding:16px">
+        <div style="font-size:12px;color:var(--accent-cyan);font-weight:600;margin-bottom:8px">components/ (11)</div>
+        <div class="small-text" style="color:var(--text-muted);line-height:1.8">
+          InitialObservationWizard<br>TestSuiteManager<br>ResultExplanation<br>SavedCasesPanel<br>NextBestTestPanel<br>TestSelector<br>SpeciesCard<br>ConfidenceBadge
+        </div>
+      </div>
+      <div class="glass-card" style="padding:16px">
+        <div style="font-size:12px;color:var(--accent-blue);font-weight:600;margin-bottom:8px">pages/ (6)</div>
+        <div class="small-text" style="color:var(--text-muted);line-height:1.8">
+          IdentifyPage (18.8KB)<br>TestsReferencePage<br>SpecimenPage<br>LibraryPage<br>SpeciesDetailPage<br>AboutPage
+        </div>
+      </div>
+      <div class="glass-card" style="padding:16px">
+        <div style="font-size:12px;color:var(--accent-purple);font-weight:600;margin-bottom:8px">lib/ (10)</div>
+        <div class="small-text" style="color:var(--text-muted);line-height:1.8">
+          bayesianEngine (514 lines)<br>mcmAdapter<br>testMatcher<br>dataLoader<br>types (14 types)<br>gramStain/groupSuggestion
+        </div>
+      </div>
+      <div class="glass-card" style="padding:16px">
+        <div style="font-size:12px;color:var(--accent-amber);font-weight:600;margin-bottom:8px">data/ (5)</div>
+        <div class="small-text" style="color:var(--text-muted);line-height:1.8">
+          bacteriaLibrary (244KB)<br>mcmData (61KB)<br>defaultSuites (7 suites)<br>biochemTestRegistry (46)<br>essentialTests
+        </div>
+      </div>
+    </div>
+  </div>
+  <span class="slide-number">04 / 16</span>
+</section>
+
+<!-- ━━━━━━━━━━━━━ SLIDE 5: USER WORKFLOW ━━━━━━━━━━━━━ -->
+<section class="slide" data-slide="4">
+  <span class="slide-tag tag-ux">Workflow</span>
+  <h2 class="fade-up">User Journey — 3 ขั้นตอน</h2>
+  <p class="subtitle fade-up">การเดินทางของผู้ใช้ ตั้งแต่ดู Gram stain จนถึงผลวินิจฉัย</p>
+
+  <div class="flow-container fade-up">
+    <div class="flow-step">
+      <span class="step-num" style="background:rgba(6,214,160,0.2);color:var(--accent-cyan)">1</span>
+      <div>
+        <div style="font-weight:600;font-size:14px">Initial Observation</div>
+        <div style="font-size:11px;color:var(--text-muted)">Specimen · Gram · Morphology · Arrangement</div>
+      </div>
+    </div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step">
+      <span class="step-num" style="background:rgba(123,47,247,0.2);color:var(--accent-purple)">⚙</span>
+      <div>
+        <div style="font-weight:600;font-size:14px;color:var(--accent-blue)">Auto-suggest Group</div>
+        <div style="font-size:11px;color:var(--text-muted)">Wizard แนะนำกลุ่มเชื้อ</div>
+      </div>
+    </div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step">
+      <span class="step-num" style="background:rgba(76,201,240,0.2);color:var(--accent-blue)">2</span>
+      <div>
+        <div style="font-weight:600;font-size:14px">Biochemical Tests</div>
+        <div style="font-size:11px;color:var(--text-muted)">กรอกผลทดสอบตาม Active Suite</div>
+      </div>
+    </div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step">
+      <span class="step-num" style="background:rgba(247,37,133,0.2);color:var(--accent-pink)">3</span>
+      <div>
+        <div style="font-weight:600;font-size:14px">AI-Ranked Results</div>
+        <div style="font-size:11px;color:var(--text-muted)">Posterior % · Confidence · Evidence</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2 mt-20 fade-up">
+    <div class="glass-card">
+      <h3>🧫 Step 1 — Gram Stain Wizard</h3>
+      <ul class="status-list small-text">
+        <li><span class="icon check">✓</span>เลือก specimen type (10 ชนิด: blood, urine, CSF...)</li>
+        <li><span class="icon check">✓</span>เลือก gram reaction (positive/negative/variable)</li>
+        <li><span class="icon check">✓</span>เลือก morphology (cocci/bacilli/coccobacilli...)</li>
+        <li><span class="icon check">✓</span>เลือก arrangement (clusters/chains/pairs...)</li>
+        <li><span class="icon warn">⚠</span>Specimen ถูกเก็บแต่ไม่เข้า scoring จริง</li>
+      </ul>
+    </div>
+    <div class="glass-card">
+      <h3>📊 Step 3 — ผลลัพธ์</h3>
+      <ul class="status-list small-text">
+        <li><span class="icon check">✓</span>Species cards แสดง posterior %</li>
+        <li><span class="icon check">✓</span>Confidence badge (HIGH/MED/LOW)</li>
+        <li><span class="icon check">✓</span>Evidence breakdown ต่อ test</li>
+        <li><span class="icon check">✓</span>Runner-up comparison</li>
+        <li><span class="icon check">✓</span>Next Best Test recommendation</li>
+        <li><span class="icon check">✓</span>Reliability warnings</li>
+      </ul>
+    </div>
+  </div>
+  <span class="slide-number">05 / 16</span>
+</section>
+
+<!-- ━━━━━━━━━━━━━ SLIDE 6: BAYESIAN ENGINE ━━━━━━━━━━━━━ -->
+<section class="slide" data-slide="5">
+  <span class="slide-tag tag-engine">Bayesian Engine</span>
+  <h2 class="fade-up">Naive Bayes Engine — 7 ขั้นตอน</h2>
+  <p class="subtitle fade-up">แกนหลักของ BokBac: คำนวณความน่าจะเป็นจากข้อมูล MCM</p>
+
+  <div class="grid-2 fade-up" style="gap:16px">
+    <div>
+      <div class="glass-card mb-12" style="padding:16px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+          <span class="badge badge-red">Step 1</span><strong style="font-size:14px">Hard Exclusion</strong>
+        </div>
+        <p class="small-text">oxidase / catalase / coagulase / hemolysis mismatch → ตัดทิ้งทันที (0%)</p>
+      </div>
+      <div class="glass-card mb-12" style="padding:16px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+          <span class="badge badge-purple">Step 2</span><strong style="font-size:14px">Log-Likelihood</strong>
+        </div>
+        <p class="small-text">คำนวณ log-likelihood จาก MCM % positivity ต่อ test ทุกตัว สะสมใน log space</p>
+      </div>
+      <div class="glass-card mb-12" style="padding:16px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+          <span class="badge badge-blue">Step 3</span><strong style="font-size:14px">Fallback</strong>
+        </div>
+        <p class="small-text">Species ไม่มี MCM data → ใช้ LIBRARY +/-/V → 90/50/10% ที่น้ำหนัก ×0.7</p>
+      </div>
+      <div class="glass-card" style="padding:16px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+          <span class="badge badge-amber">Step 4</span><strong style="font-size:14px">Prevalence Priors</strong>
+        </div>
+        <p class="small-text">++++→1.0 &nbsp; +++→0.40 &nbsp; ++→0.20 &nbsp; +→0.10 &nbsp; 0→0.05</p>
+      </div>
+    </div>
+    <div>
+      <div class="glass-card mb-12" style="padding:16px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+          <span class="badge badge-green">Step 5</span><strong style="font-size:14px">Softmax Normalization</strong>
+        </div>
+        <p class="small-text">แปลง log posteriors เป็นความน่าจะเป็นที่รวมเป็น 100% ด้วย softmax</p>
+      </div>
+      <div class="glass-card mb-12" style="padding:16px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+          <span class="badge badge-amber">Step 6</span><strong style="font-size:14px">Coverage Scaling</strong>
+        </div>
+        <p class="small-text" style="color:var(--accent-amber)">⚠️ Legacy ใช้จริง (×coverageFactor) แต่ v4 เก็บแยกไม่ได้คูณเข้า posterior</p>
+      </div>
+      <div class="glass-card mb-12" style="padding:16px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+          <span class="badge badge-green">Step 7</span><strong style="font-size:14px">Confidence Label</strong>
+        </div>
+        <p class="small-text">HIGH / MEDIUM / LOW / UNCERTAIN — ดูจาก posterior %, gap, #answers, typicality</p>
+      </div>
+      <div class="glass-card" style="padding:16px;border-left:3px solid var(--accent-cyan)">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+          <span class="badge badge-blue">Bonus</span><strong style="font-size:14px">Next Best Test</strong>
+        </div>
+        <p class="small-text">Shannon Entropy Information Gain — แนะนำ test ที่ลด uncertainty มากที่สุด</p>
+      </div>
+    </div>
+  </div>
+  <span class="slide-number">06 / 16</span>
+</section>
+
+<!-- ━━━━━━━━━━━━━ SLIDE 7: DATA COVERAGE ━━━━━━━━━━━━━ -->
+<section class="slide" data-slide="6">
+  <span class="slide-tag tag-data">ข้อมูล</span>
+  <h2 class="fade-up">Data Coverage & Validation</h2>
+  <p class="subtitle fade-up">ฐานข้อมูล 157 species, 93 MCM entries, 8 bacterial groups</p>
+
+  <div class="grid-3 fade-up">
+    <div class="glass-card text-center">
+      <div class="stat-value" style="color:var(--accent-cyan)">93</div>
+      <div class="stat-label">MCM Full Data</div>
+      <div class="progress-bar mt-12"><div class="progress-fill" style="width:59%;background:var(--accent-cyan)"></div></div>
+      <p class="small-text mt-12" style="color:var(--text-muted)">% positivity จาก MCM 11th Ed. จริง</p>
+    </div>
+    <div class="glass-card text-center">
+      <div class="stat-value" style="color:var(--accent-amber)">64</div>
+      <div class="stat-label">Prevalence-Only</div>
+      <div class="progress-bar mt-12"><div class="progress-fill" style="width:41%;background:var(--accent-amber)"></div></div>
+      <p class="small-text mt-12" style="color:var(--text-muted)">มีแค่ prior, ไม่มี test data → library fallback</p>
+    </div>
+    <div class="glass-card text-center">
+      <div class="stat-value" style="color:var(--accent-emerald)">100%</div>
+      <div class="stat-label">Scenario Pass</div>
+      <div class="progress-bar mt-12"><div class="progress-fill" style="width:100%;background:var(--accent-emerald)"></div></div>
+      <p class="small-text mt-12" style="color:var(--text-muted)">50/50 textbook + 33/33 DK concordance</p>
+    </div>
+  </div>
+
+  <div class="fade-up mt-24">
+    <h3 class="mb-12">🦠 8 Bacterial Groups</h3>
+    <table class="data-table">
+      <thead>
+        <tr><th>Group</th><th>ตัวอย่าง Species</th><th>Required Tests</th><th>Suite Size</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><span class="badge badge-green">GPC Cluster</span></td><td>S. aureus, S. epidermidis, Micrococcus</td><td>4</td><td>11</td></tr>
+        <tr><td><span class="badge badge-green">GPC Chain</span></td><td>S. pyogenes, S. pneumoniae, Enterococcus</td><td>6</td><td>17</td></tr>
+        <tr><td><span class="badge badge-blue">Enterobacterales</span></td><td>E. coli, Klebsiella, Salmonella, Shigella</td><td>9</td><td>19</td></tr>
+        <tr><td><span class="badge badge-blue">NFB</span></td><td>P. aeruginosa, Acinetobacter</td><td>6</td><td>19</td></tr>
+        <tr><td><span class="badge badge-blue">Vibrio</span></td><td>V. cholerae, V. parahaemolyticus</td><td>6</td><td>16</td></tr>
+        <tr><td><span class="badge badge-purple">GPB</span></td><td>Bacillus, Listeria, Corynebacterium</td><td>5</td><td>9</td></tr>
+        <tr><td><span class="badge badge-purple">GN Coccobacilli</span></td><td>Neisseria, Haemophilus, Moraxella</td><td>5</td><td>7</td></tr>
+        <tr><td><span class="badge badge-amber">Yersinia group</span></td><td>Y. enterocolitica, Y. pestis</td><td>-</td><td>-</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <span class="slide-number">07 / 16</span>
+</section>
+
+<!-- ━━━━━━━━━━━━━ SLIDE 8: DATA PIPELINE ━━━━━━━━━━━━━ -->
+<section class="slide" data-slide="7">
+  <span class="slide-tag tag-data">Data Pipeline</span>
+  <h2 class="fade-up">ขั้นตอนการสกัดข้อมูล</h2>
+  <p class="subtitle fade-up">จาก MCM textbook → Parsed JSON → TypeScript data → Bayesian Engine</p>
+
+  <div class="flow-container fade-up" style="margin-bottom:24px">
+    <div class="flow-step">
+      <span class="step-num" style="background:rgba(251,191,36,0.2);color:var(--accent-amber)">📖</span>
+      MCM 11th Ed. Tables
+    </div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step">
+      <span class="step-num" style="background:rgba(123,47,247,0.2);color:var(--accent-purple)">🐍</span>
+      parse_mcm_*.py
+    </div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step">
+      <span class="step-num" style="background:rgba(76,201,240,0.2);color:var(--accent-blue)">📄</span>
+      Parsed JSON
+    </div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step">
+      <span class="step-num" style="background:rgba(6,214,160,0.2);color:var(--accent-cyan)">⚙️</span>
+      generate_mcm_js.py
+    </div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step">
+      <span class="step-num" style="background:rgba(16,185,129,0.2);color:var(--accent-emerald)">📊</span>
+      mcmData.ts (61KB)
+    </div>
+  </div>
+
+  <div class="grid-2 fade-up">
+    <div class="glass-card">
+      <h3>🧬 ข้อมูล MCM Entry</h3>
+      <div class="code-block">
+<span class="code-comment">// ตัวอย่าง: E. coli</span>
+{
+  <span class="code-string">"name"</span>: <span class="code-string">"Escherichia coli"</span>,
+  <span class="code-string">"prevalence_score"</span>: <span class="code-num">4</span>,  <span class="code-comment">// ++++ → prior 1.0</span>
+  <span class="code-string">"tests"</span>: {
+    <span class="code-string">"indole"</span>: <span class="code-num">98</span>,     <span class="code-comment">// 98% positive</span>
+    <span class="code-string">"citrate"</span>: <span class="code-num">1</span>,     <span class="code-comment">// 1% positive</span>
+    <span class="code-string">"urease"</span>: <span class="code-num">1</span>,      <span class="code-comment">// 1% positive</span>
+    <span class="code-string">"h2s"</span>: <span class="code-num">1</span>,         <span class="code-comment">// 1% positive</span>
+    <span class="code-string">"vp"</span>: <span class="code-num">0</span>           <span class="code-comment">// 0% positive</span>
+  },
+  <span class="code-string">"source"</span>: <span class="code-string">"mcm"</span>
+}
+      </div>
+    </div>
+    <div class="glass-card">
+      <h3>📝 Biochemical Test Registry</h3>
+      <div class="code-block">
+{
+  <span class="code-string">"id"</span>: <span class="code-string">"indole"</span>,
+  <span class="code-string">"label"</span>: <span class="code-string">"Indole"</span>,
+  <span class="code-string">"resultKind"</span>: <span class="code-string">"binary"</span>,
+  <span class="code-string">"options"</span>: [<span class="code-string">"+"</span>, <span class="code-string">"-"</span>],
+  <span class="code-string">"category"</span>: <span class="code-string">"imvic"</span>,
+  <span class="code-string">"estimatedTime"</span>: <span class="code-num">24</span>,  <span class="code-comment">// hours</span>
+  <span class="code-string">"costLevel"</span>: <span class="code-num">1</span>,
+  <span class="code-string">"curriculumPriority"</span>: <span class="code-num">1</span>
+}
+      </div>
+      <p class="small-text mt-12" style="color:var(--text-muted)">
+        <strong>46 tests</strong> — binary, susceptibility, categorical, numeric<br>
+        <span style="color:var(--accent-amber)">⚠️ Engine รองรับจริงแค่ binary + susceptibility</span>
+      </p>
+    </div>
+  </div>
+  <span class="slide-number">08 / 16</span>
+</section>
+
+<!-- ━━━━━━━━━━━━━ SLIDE 9: ENGINE OUTPUT METRICS ━━━━━━━━━━━━━ -->
+<section class="slide" data-slide="8">
+  <span class="slide-tag tag-engine">Engine Output</span>
+  <h2 class="fade-up">Metrics ที่ Engine สร้าง</h2>
+  <p class="subtitle fade-up">Engine แยก concept ออกเป็นหลายมิติ แต่ UI ยังเล่าไม่ครบ</p>
+
+  <div class="grid-2 fade-up">
+    <div>
+      <h3 class="mb-12">📊 RankedSpecies Output</h3>
+      <table class="data-table">
+        <thead><tr><th>Metric</th><th>ความหมาย</th><th>แสดง UI?</th></tr></thead>
+        <tbody>
+          <tr><td><strong>pct</strong></td><td>Posterior % (softmax)</td><td><span class="check">✓ ตัวใหญ่ที่สุด</span></td></tr>
+          <tr><td><strong>_confidence</strong></td><td>HIGH/MED/LOW/UNCERTAIN</td><td><span class="warn">⚠ เฉพาะอันดับ 1</span></td></tr>
+          <tr><td><strong>_gap</strong></td><td>ช่องว่างกับ runner-up (pp)</td><td><span class="check">✓ ใน explanation</span></td></tr>
+          <tr><td><strong>evidenceCoverage</strong></td><td>สัดส่วน test ที่มี ref data</td><td><span class="warn">⚠ text-[9px] เล็กมาก</span></td></tr>
+          <tr><td><strong>typicalityIndex</strong></td><td>Case-fit 0..1</td><td><span class="warn">⚠ ซ่อนใน explanation</span></td></tr>
+          <tr><td><strong>_evidence[]</strong></td><td>Per-test evidence trace</td><td><span class="check">✓ ใน explanation</span></td></tr>
+          <tr><td><strong>_usedMcmTests</strong></td><td>จำนวน MCM tests ที่ใช้</td><td><span class="check">✓ MCM badge</span></td></tr>
+          <tr><td><strong>_keyMatch</strong></td><td>Key test match/mismatch</td><td><span class="check">✓</span></td></tr>
+          <tr><td><strong>_excluded</strong></td><td>ถูก hard-exclude?</td><td><span class="check">✓</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <div class="glass-card" style="border-left:3px solid var(--accent-pink);margin-bottom:16px">
+        <h3 style="color:var(--accent-pink)">🎯 ปัญหาที่แพลนชี้</h3>
+        <p class="small-text" style="color:var(--text-secondary);line-height:1.7">
+          ผู้ใช้เห็น <strong>"70%"</strong> ตัวใหญ่ แล้วตีความเป็น "ความมั่นใจทางคลินิก"
+          <br><br>ทั้งที่ engine ตั้งใจแยก:
+        </p>
+        <ul class="status-list small-text" style="margin-top:8px">
+          <li><span class="icon">📊</span><strong>Posterior</strong> — ความน่าจะเป็นภายใน candidate set</li>
+          <li><span class="icon">🎯</span><strong>Confidence</strong> — ความชัดเจนของอันดับ</li>
+          <li><span class="icon">🧬</span><strong>Case-fit</strong> — ผล match กับ typical profile?</li>
+          <li><span class="icon">📋</span><strong>Coverage</strong> — มี ref data รองรับกี่ %?</li>
+        </ul>
+      </div>
+      <div class="glass-card" style="border-left:3px solid var(--accent-emerald)">
+        <h3 style="color:var(--accent-emerald)">✅ สิ่งที่ดี</h3>
+        <p class="small-text" style="color:var(--text-secondary)">
+          Engine <em>แยก concept ไว้ถูกแล้ว</em> ในโค้ด — ปัญหาคือ UI ไม่ได้เล่าออกมาครบ แก้ที่ UI layer ได้โดยไม่ต้องแก้ engine
+        </p>
+      </div>
+    </div>
+  </div>
+  <span class="slide-number">09 / 16</span>
+</section>
+
+<!-- ━━━━━━━━━━━━━ SLIDE 10: PLAN OVERVIEW ━━━━━━━━━━━━━ -->
+<section class="slide" data-slide="9">
+  <span class="slide-tag tag-review">BokBac-Plan.md</span>
+  <h2 class="fade-up">แพลนวิจารณ์พูดอะไร?</h2>
+  <p class="subtitle fade-up">สรุปบทวิจารณ์ 454 บรรทัด — จุดแข็ง 3 ข้อ, จุดอ่อน 7 ข้อ</p>
+
+  <div class="grid-2 fade-up">
+    <div class="glass-card" style="border-top:3px solid var(--accent-emerald)">
+      <h3 style="color:var(--accent-emerald)">✅ จุดแข็งที่แพลนยอมรับ</h3>
+      <ul class="status-list">
+        <li><span class="icon check">✓</span><strong>Bayesian core ที่มีโครง</strong> — log-likelihood, prior, softmax, explainability metadata</li>
+        <li><span class="icon check">✓</span><strong>Explainability ดี</strong> — evidence trace, confidence, coverage, typicality แยกกัน</li>
+        <li><span class="icon check">✓</span><strong>Workflow เชิง step-by-step</strong> — wizard, saved cases, next-best test, custom suites</li>
+        <li><span class="icon check">✓</span><strong>Data pipeline reproducible</strong> — parsed JSON + scripts committed</li>
+        <li><span class="icon check">✓</span><strong>Validation pass</strong> — 50/50 scenarios, DK concordance 33/33</li>
+        <li><span class="icon check">✓</span><strong>CI มี</strong> — GitHub Actions แยก v3/v4</li>
+      </ul>
+    </div>
+    <div class="glass-card" style="border-top:3px solid var(--accent-red)">
+      <h3 style="color:var(--accent-red)">❌ จุดอ่อนที่ตรวจพบ</h3>
+      <ul class="status-list">
+        <li><span class="icon cross">✗</span><strong>Suite source-of-truth ซ้อนกัน</strong> — UI อ่านจาก legacy, engine ใช้ active suite</li>
+        <li><span class="icon cross">✗</span><strong>Group hard pre-filter</strong> — เลือกกลุ่มผิด = เชื้อจริงหายไป 100%</li>
+        <li><span class="icon cross">✗</span><strong>Specimen ไม่เข้า scoring</strong> — เก็บแต่ไม่ใช้</li>
+        <li><span class="icon cross">✗</span><strong>Multi-outcome ไม่ทำงานจริง</strong> — categorical/numeric ถูก fallback</li>
+        <li><span class="icon cross">✗</span><strong>Coverage scaling หาย</strong> — legacy มี, v4 ไม่ได้ใช้</li>
+        <li><span class="icon cross">✗</span><strong>ไม่มี calibration</strong> — % ยังไม่ผ่าน post-hoc calibration</li>
+        <li><span class="icon cross">✗</span><strong>Saved case ไม่มี provenance</strong> — audit ไม่ได้</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="glass-card mt-20 fade-up" style="border-left:3px solid var(--accent-purple)">
+    <p style="font-size:15px;color:var(--text-primary);font-weight:600">
+      💬 คำตัดสินของแพลน:
+    </p>
+    <p style="font-size:14px;color:var(--text-secondary);margin-top:8px;line-height:1.7;font-style:italic">
+      "BokBac ไม่ได้ขาดวิสัยทัศน์ มันขาดการบังคับให้ทุกชั้นของระบบพูดภาษาเดียวกัน ถ้าคุณแก้ data contract ให้ตรงก่อน แล้วค่อยแก้ engine กับ calibration ทุกอย่างที่เหลือจะถูกลงมาครึ่งหนึ่งเอง"
+    </p>
+  </div>
+  <span class="slide-number">10 / 16</span>
+</section>
+
+<!-- ━━━━━━━━━━━━━ SLIDE 11: CRITICAL ISSUES DEEP DIVE ━━━━━━━━━━━━━ -->
+<section class="slide" data-slide="10">
+  <span class="slide-tag tag-review">ปัญหาหลัก</span>
+  <h2 class="fade-up">3 ปัญหาวิกฤตที่ต้องแก้ก่อน</h2>
+
+  <div class="fade-up" style="display:flex;flex-direction:column;gap:20px">
+    <div class="glass-card issue-card issue-critical">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+        <span class="badge badge-red">P0 — DATA INTEGRITY</span>
+        <span class="issue-title">Suite Source-of-Truth ซ้อนกัน</span>
+      </div>
+      <div class="grid-2" style="gap:16px">
+        <div>
+          <p class="issue-desc">
+            <strong>TestSelector</strong> อ่าน suite จาก <code style="color:var(--accent-amber)">ALL_SUITES[group]</code> (legacy data)
+            <br>แต่ <strong>Engine</strong> ใช้ active suite จาก <code style="color:var(--accent-cyan)">defaultSuites + customSuites</code> (store)
+          </p>
+          <p class="issue-desc mt-12">
+            → ผู้ใช้กรอกผล test ชุดหนึ่ง แต่ engine คำนวณจาก <em>อีกชุดหนึ่ง</em>
+            <br>→ Custom suite "ไม่ทำงานจริง" ในเชิง rendering
+          </p>
+        </div>
+        <div class="code-block" style="font-size:12px">
+<span class="code-comment">// TestSelector.tsx L2, L35</span>
+<span class="code-keyword">import</span> { ALL_SUITES } <span class="code-keyword">from</span> <span class="code-string">'@/lib/dataLoader'</span>
+<span class="code-keyword">const</span> suite = ALL_SUITES[group] <span class="code-comment">// ← legacy!</span>
+
+<span class="code-comment">// identifyStore.ts L228-277</span>
+<span class="code-comment">// recompute() uses DEFAULT_SUITES ← different!</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="glass-card issue-card issue-critical">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+        <span class="badge badge-red">P0 — ENGINE</span>
+        <span class="issue-title">Group Hard Pre-filter — เชื้อจริงหายได้</span>
+      </div>
+      <p class="issue-desc">
+        Engine ใช้ <code style="color:var(--accent-amber)">library.filter(b => b.group === group)</code> ตัดเชื้อนอก group ออกก่อนคำนวณ
+        <br>→ ถ้าผู้ใช้เลือกกลุ่มผิด (เช่น GPC แทน Entero) เชื้อที่ถูกต้องจะ<strong>ไม่ปรากฏเลย</strong> ไม่ใช่แค่ถูกลดคะแนน
+        <br>→ เหมาะกับ teaching mode แต่ไม่เหมาะกับ clinical troubleshooting
+      </p>
+    </div>
+
+    <div class="glass-card issue-card issue-warning">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+        <span class="badge badge-amber">P1 — BEHAVIOR DRIFT</span>
+        <span class="issue-title">Coverage Scaling หายระหว่าง Legacy → v4</span>
+      </div>
+      <div class="grid-2" style="gap:16px">
+        <div>
+          <p class="issue-desc"><strong>Legacy (v3):</strong></p>
+          <div class="code-block" style="font-size:12px;margin-top:6px">
+pct = rawPct × <span class="code-num">coverageFactor</span>
+<span class="code-comment">// ลดคะแนนเมื่อ test น้อย</span>
+          </div>
+        </div>
+        <div>
+          <p class="issue-desc"><strong>Modern (v4):</strong></p>
+          <div class="code-block" style="font-size:12px;margin-top:6px">
+pct = rawPct  <span class="code-comment">// ไม่คูณ coverage</span>
+evidenceCoverage = <span class="code-num">stored_separately</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <span class="slide-number">11 / 16</span>
+</section>
+
+<!-- ━━━━━━━━━━━━━ SLIDE 12: MORE ISSUES ━━━━━━━━━━━━━ -->
+<section class="slide" data-slide="11">
+  <span class="slide-tag tag-review">ปัญหาเพิ่มเติม</span>
+  <h2 class="fade-up">ปัญหาเชิงสถิติและ UX ที่ยังเปิดอยู่</h2>
+
+  <div class="grid-2 fade-up" style="gap:16px">
+    <div class="glass-card issue-card issue-warning" style="margin-bottom:16px">
+      <div class="issue-title" style="color:var(--accent-amber)">⚠️ Multi-Outcome ไม่ทำงานจริง</div>
+      <p class="issue-desc">
+        Registry ประกาศ <code>categorical</code>, <code>numeric</code> ใน schema
+        แต่ <code>mcmLikelihood()</code> รองรับจริงแค่ +/-/V/S/R
+        <br><br>
+        ผลกระทบ: TSI (K/A, A/A), hemolysis (α/β/γ), urease rapid (++) → ถูก fallback เป็น ~0.5 ทั้งหมด
+      </p>
+    </div>
+
+    <div class="glass-card issue-card issue-warning" style="margin-bottom:16px">
+      <div class="issue-title" style="color:var(--accent-amber)">⚠️ Naive Bayes ไม่มี Correlation</div>
+      <p class="issue-desc">
+        Engine สะสม <code>logLik += log(likelihood)</code> ทีละ test โดย assume independence
+        <br><br>
+        ผลกระทบ: IMViC, sugar panels, growth conditions ที่ correlate กัน → double-count evidence → ทำให้ posterior สูงเกินจริง
+      </p>
+    </div>
+
+    <div class="glass-card issue-card issue-info" style="margin-bottom:16px">
+      <div class="issue-title" style="color:var(--accent-blue)">ℹ️ ไม่มี Post-hoc Calibration</div>
+      <p class="issue-desc">
+        % ที่แสดงเป็น raw softmax posterior ยังไม่ผ่าน temperature scaling, isotonic regression หรือ Dirichlet calibration
+        <br><br>
+        ผลกระทบ: "70%" อาจไม่ได้หมายความว่ามีโอกาสถูก 70% จริง — อาจ overconfident หรือ underconfident
+      </p>
+    </div>
+
+    <div class="glass-card issue-card issue-info" style="margin-bottom:16px">
+      <div class="issue-title" style="color:var(--accent-blue)">ℹ️ Specimen ไม่เข้า Scoring</div>
+      <p class="issue-desc">
+        Wizard เก็บ specimen type (blood, urine, CSF...) แต่ <code>checkGateMatch()</code> ใช้แค่ gram + morphology
+        <br><br>
+        ผลกระทบ: specimen เป็น "workflow ornament" ทั้งที่ในจุลชีววิทยาจริง specimen มีผลต่อ pretest probability
+      </p>
+    </div>
+
+    <div class="glass-card issue-card issue-info" style="margin-bottom:16px">
+      <div class="issue-title" style="color:var(--accent-blue)">ℹ️ Saved Case ไม่มี Provenance</div>
+      <p class="issue-desc">
+        เก็บแค่ id, answers, topSpecies, topPct — ไม่มี engine version, suite snapshot, posterior vector
+        <br><br>
+        ผลกระทบ: เคสเก่า replay ได้แต่ audit ไม่ได้ — ถ้า engine เปลี่ยน ไม่มีทางรู้ว่าผลเปลี่ยน
+      </p>
+    </div>
+
+    <div class="glass-card issue-card issue-warning" style="margin-bottom:16px">
+      <div class="issue-title" style="color:var(--accent-amber)">⚠️ CI ไม่ครบ</div>
+      <p class="issue-desc">
+        CI มีแค่ <code>npm run test</code> + <code>npm run build</code>
+        <br>
+        ❌ ไม่มี <code>lint</code> ❌ ไม่มี explicit <code>typecheck</code> ❌ ไม่มี <code>e2e</code>
+        <br><br>
+        ผลกระทบ: refactor engine แล้วอาจมี type error / lint issue ที่ CI ไม่จับ
+      </p>
+    </div>
+  </div>
+  <span class="slide-number">12 / 16</span>
+</section>
+
+<!-- ━━━━━━━━━━━━━ SLIDE 13: PLAN VS REALITY ━━━━━━━━━━━━━ -->
+<section class="slide" data-slide="12">
+  <span class="slide-tag tag-review">Plan Validation</span>
+  <h2 class="fade-up">แพลน vs โค้ดจริง — ตรวจสอบทุกข้อ</h2>
+  <p class="subtitle fade-up">ข้อกล่าวอ้างหลักทุกข้อใน BokBac-Plan.md ถูกตรวจสอบกับ codebase จริง</p>
+
+  <div class="fade-up" style="overflow-x:auto">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>ข้อกล่าวอ้างของแพลน</th>
+          <th style="text-align:center">ผลตรวจ</th>
+          <th>หลักฐานในโค้ด</th>
+          <th style="text-align:center">ระดับ</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>TestSelector ใช้ ALL_SUITES legacy</td>
+          <td class="text-center"><span class="check" style="font-size:18px">✓</span></td>
+          <td style="font-family:var(--font-mono);font-size:12px">TestSelector.tsx L2, L35</td>
+          <td class="text-center"><span class="badge badge-red">P0</span></td>
+        </tr>
+        <tr>
+          <td>Engine hard pre-filter group</td>
+          <td class="text-center"><span class="check" style="font-size:18px">✓</span></td>
+          <td style="font-family:var(--font-mono);font-size:12px">bayesianEngine.ts L149</td>
+          <td class="text-center"><span class="badge badge-red">P0</span></td>
+        </tr>
+        <tr>
+          <td>Specimen ไม่เข้า scoring</td>
+          <td class="text-center"><span class="check" style="font-size:18px">✓</span></td>
+          <td style="font-family:var(--font-mono);font-size:12px">bayesianEngine.ts L81-104</td>
+          <td class="text-center"><span class="badge badge-amber">P1</span></td>
+        </tr>
+        <tr>
+          <td>mcmLikelihood รองรับแค่ +/-/V/S/R</td>
+          <td class="text-center"><span class="check" style="font-size:18px">✓</span></td>
+          <td style="font-family:var(--font-mono);font-size:12px">mcmAdapter.ts L112-137</td>
+          <td class="text-center"><span class="badge badge-amber">P1</span></td>
+        </tr>
+        <tr>
+          <td>Coverage scaling หายใน v4</td>
+          <td class="text-center"><span class="check" style="font-size:18px">✓</span></td>
+          <td style="font-family:var(--font-mono);font-size:12px">bayesianEngine.ts L307-345 vs test_bayes.mjs L490-497</td>
+          <td class="text-center"><span class="badge badge-amber">P1</span></td>
+        </tr>
+        <tr>
+          <td>Hard exclusion เป็น hardcoded list</td>
+          <td class="text-center"><span class="check" style="font-size:18px">✓</span></td>
+          <td style="font-family:var(--font-mono);font-size:12px">testMatcher.ts L200</td>
+          <td class="text-center"><span class="badge badge-blue">P2</span></td>
+        </tr>
+        <tr>
+          <td>Saved case ไม่มี provenance</td>
+          <td class="text-center"><span class="check" style="font-size:18px">✓</span></td>
+          <td style="font-family:var(--font-mono);font-size:12px">identifyStore.ts L156-173</td>
+          <td class="text-center"><span class="badge badge-blue">P2</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="grid-3 mt-24 fade-up">
+    <div class="glass-card text-center">
+      <div class="stat-value" style="color:var(--accent-emerald)">7/7</div>
+      <div class="stat-label">ข้อกล่าวอ้างถูกต้อง</div>
+    </div>
+    <div class="glass-card text-center">
+      <div class="stat-value" style="color:var(--accent-red)">2</div>
+      <div class="stat-label">ปัญหา P0 (Critical)</div>
+    </div>
+    <div class="glass-card text-center">
+      <div class="stat-value" style="color:var(--accent-amber)">3</div>
+      <div class="stat-label">ปัญหา P1 (High)</div>
+    </div>
+  </div>
+
+  <div class="glass-card mt-20 fade-up" style="border-left:3px solid var(--accent-emerald)">
+    <p class="small-text" style="color:var(--text-secondary)">
+      <strong style="color:var(--accent-emerald)">สรุป:</strong>
+      แพลนมีความน่าเชื่อถือสูงมาก ทุก line reference ตรงกับโค้ดจริง การวิเคราะห์ครอบคลุมทั้ง engine, UI, workflow, data และ CI
+    </p>
+  </div>
+  <span class="slide-number">13 / 16</span>
+</section>
+
+<!-- ━━━━━━━━━━━━━ SLIDE 14: ROADMAP ━━━━━━━━━━━━━ -->
+<section class="slide" data-slide="13">
+  <span class="slide-tag tag-plan">Roadmap</span>
+  <h2 class="fade-up">แผนพัฒนาที่แพลนเสนอ — 6 เฟส</h2>
+
+  <div class="grid-2 fade-up">
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="tl-title" style="color:var(--accent-cyan)">🏗️ Foundation — ลบ source-of-truth ซ้อนกัน</div>
+        <div class="tl-desc">
+          เปลี่ยน answer schema เป็น testId-based, ทำ active suite เป็น source เดียว, renderer อ่านจาก registry outcome schema
+        </div>
+        <div style="display:flex;gap:6px;margin-top:8px">
+          <span class="badge badge-red">Effort: สูง</span>
+          <span class="badge badge-red">Risk: สูง</span>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="tl-title" style="color:var(--accent-blue)">⚙️ Engine Correctness — ทำ posterior ให้ตรง</div>
+        <div class="tl-desc">
+          เพิ่ม categorical likelihoods, gate modes (strict/soft/exploratory), soft penalties, raw posterior export
+        </div>
+        <div style="display:flex;gap:6px;margin-top:8px">
+          <span class="badge badge-red">Effort: สูง</span>
+          <span class="badge badge-red">Risk: สูง</span>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="tl-title" style="color:var(--accent-purple)">📐 Validation & Calibration</div>
+        <div class="tl-desc">
+          สร้าง calibration dataset, ECE/Brier/slope, temperature scaling per group, versioned calibration artifact
+        </div>
+        <div style="display:flex;gap:6px;margin-top:8px">
+          <span class="badge badge-amber">Effort: กลาง-สูง</span>
+          <span class="badge badge-red">Risk: สูง</span>
+        </div>
+      </div>
+    </div>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="tl-title" style="color:var(--accent-pink)">🎨 UX Safety — ทำให้ตีความถูก</div>
+        <div class="tl-desc">
+          แยก Posterior/Confidence/Case-fit/Coverage ให้เห็นชัด, elevate warnings, ปรับ next-best UI
+        </div>
+        <div style="display:flex;gap:6px;margin-top:8px">
+          <span class="badge badge-amber">Effort: กลาง</span>
+          <span class="badge badge-amber">Risk: กลาง</span>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="tl-title" style="color:var(--accent-amber)">📋 Provenance & Audit</div>
+        <div class="tl-desc">
+          Versioned registry/suite snapshot, provenance IDs, saved-case manifest, import/export schema version
+        </div>
+        <div style="display:flex;gap:6px;margin-top:8px">
+          <span class="badge badge-amber">Effort: กลาง</span>
+          <span class="badge badge-amber">Risk: กลาง</span>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="tl-title" style="color:var(--accent-emerald)">🔒 Repro & CI</div>
+        <div class="tl-desc">
+          เพิ่ม lint/typecheck/e2e ใน CI, legacy-v2 parity checks, snapshot tests, fixture datasets
+        </div>
+        <div style="display:flex;gap:6px;margin-top:8px">
+          <span class="badge badge-amber">Effort: กลาง</span>
+          <span class="badge badge-amber">Risk: กลาง</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <span class="slide-number">14 / 16</span>
+</section>
+
+<!-- ━━━━━━━━━━━━━ SLIDE 15: GATE MODES & FUTURE ━━━━━━━━━━━━━ -->
+<section class="slide" data-slide="14">
+  <span class="slide-tag tag-plan">Future State</span>
+  <h2 class="fade-up">วิสัยทัศน์อนาคต — Gate Modes & Data Model</h2>
+  <p class="subtitle fade-up">แพลนเสนอ 3 โหมดการทำงาน + data model ใหม่ 8 entities</p>
+
+  <div class="grid-3 fade-up">
+    <div class="glass-card" style="border-top:3px solid var(--accent-emerald)">
+      <h3>🎓 strictTeaching</h3>
+      <ul class="status-list small-text">
+        <li><span class="icon">🔒</span>ปิดข้ามกลุ่ม</li>
+        <li><span class="icon">⛔</span>Hard exclusion เต็ม</li>
+        <li><span class="icon">📋</span>ต้องครบ required tests ก่อนสรุป</li>
+        <li><span class="icon">🎯</span>เหมาะกับชั้นเรียน / practical exam</li>
+      </ul>
+    </div>
+    <div class="glass-card" style="border-top:3px solid var(--accent-blue)">
+      <h3>🏥 softClinical</h3>
+      <ul class="status-list small-text">
+        <li><span class="icon">🔓</span>ปิดข้ามกลุ่มโดย default แต่เปิดได้</li>
+        <li><span class="icon">⚠️</span>Hard exclusion → strong penalty บางรายการ</li>
+        <li><span class="icon">💡</span>เตือนแต่ไม่ block</li>
+        <li><span class="icon">🎯</span>เหมาะกับ routine case ตาม SOP</li>
+      </ul>
+    </div>
+    <div class="glass-card" style="border-top:3px solid var(--accent-amber)">
+      <h3>🔍 exploratory</h3>
+      <ul class="status-list small-text">
+        <li><span class="icon">🌍</span>เปิดข้ามกลุ่ม</li>
+        <li><span class="icon">📉</span>ลดเป็น penalty + flag</li>
+        <li><span class="icon">🆓</span>ไม่ block</li>
+        <li><span class="icon">🎯</span>เหมาะกับ profile แปลก / troubleshooting</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="fade-up mt-24">
+    <h3 class="mb-12">🗂️ Data Model ที่แพลนเสนอ</h3>
+    <div class="grid-4" style="gap:12px">
+      <div class="glass-card" style="padding:14px">
+        <div style="font-size:12px;color:var(--accent-cyan);font-weight:600">test_registry</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:4px">test_id, label_th/en, result_kind, widget, mcm_key, safety_notes</div>
+      </div>
+      <div class="glass-card" style="padding:14px">
+        <div style="font-size:12px;color:var(--accent-blue);font-weight:600">test_outcomes</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:4px">outcome_id, test_id, canonical_value, sign_class, entropy_group</div>
+      </div>
+      <div class="glass-card" style="padding:14px">
+        <div style="font-size:12px;color:var(--accent-purple);font-weight:600">suite + suite_item</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:4px">versioned artifact, required_level, weight_override</div>
+      </div>
+      <div class="glass-card" style="padding:14px">
+        <div style="font-size:12px;color:var(--accent-pink);font-weight:600">provenance_source</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:4px">source_type, citation, chapter, table, parse_confidence</div>
+      </div>
+      <div class="glass-card" style="padding:14px">
+        <div style="font-size:12px;color:var(--accent-amber);font-weight:600">species_test_stat</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:4px">outcome-aware p_observation, source_id, evidence_grade</div>
+      </div>
+      <div class="glass-card" style="padding:14px">
+        <div style="font-size:12px;color:var(--accent-emerald);font-weight:600">correlation_matrix</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:4px">test_a, test_b, rho, method — แก้ double counting</div>
+      </div>
+      <div class="glass-card" style="padding:14px">
+        <div style="font-size:12px;color:var(--accent-red);font-weight:600">case_snapshot</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:4px">engine_version, registry_version, posterior_json — audit trail</div>
+      </div>
+      <div class="glass-card" style="padding:14px">
+        <div style="font-size:12px;color:var(--text-secondary);font-weight:600">calibration_artifact</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:4px">temperature, ECE, Brier, per-group, versioned</div>
+      </div>
+    </div>
+  </div>
+  <span class="slide-number">15 / 16</span>
+</section>
+
+<!-- ━━━━━━━━━━━━━ SLIDE 16: CONCLUSION ━━━━━━━━━━━━━ -->
+<section class="slide" data-slide="15">
+  <span class="slide-tag tag-plan">สรุป</span>
+  <h2 class="fade-up">สรุป & คำแนะนำ</h2>
+
+  <div class="grid-2 fade-up">
+    <div>
+      <div class="glass-card mb-16" style="border-top:3px solid var(--accent-emerald)">
+        <h3 style="color:var(--accent-emerald)">✅ BokBac ทำได้ดีอะไรบ้าง</h3>
+        <ul class="status-list small-text">
+          <li><span class="icon check">✓</span>Bayesian core architecture ถูกทิศ</li>
+          <li><span class="icon check">✓</span>Explainability metadata ครบ</li>
+          <li><span class="icon check">✓</span>157 species, 93 MCM, 50/50 pass</li>
+          <li><span class="icon check">✓</span>Modern tech stack (Vite+React+TS)</li>
+          <li><span class="icon check">✓</span>Next Best Test with entropy</li>
+          <li><span class="icon check">✓</span>Reproducible data pipeline</li>
+          <li><span class="icon check">✓</span>Bilingual Thai/English</li>
+        </ul>
+      </div>
+      <div class="glass-card" style="border-top:3px solid var(--accent-red)">
+        <h3 style="color:var(--accent-red)">❌ อะไรที่ต้องแก้</h3>
+        <ul class="status-list small-text">
+          <li><span class="icon cross">✗</span>Suite source-of-truth ซ้อนกัน (P0)</li>
+          <li><span class="icon cross">✗</span>Group hard pre-filter (P0)</li>
+          <li><span class="icon cross">✗</span>Coverage scaling drift (P1)</li>
+          <li><span class="icon cross">✗</span>Multi-outcome gap (P1)</li>
+          <li><span class="icon cross">✗</span>ไม่มี calibration (P1)</li>
+          <li><span class="icon cross">✗</span>UI ให้ % กลบทุก metric (P2)</li>
+          <li><span class="icon cross">✗</span>Saved case ไม่มี provenance (P2)</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="glass-card mb-16" style="border-left:3px solid var(--accent-purple);padding:28px">
+        <h3 style="color:var(--accent-purple);margin-bottom:14px">📋 แพลนนี้ดีมั้ย?</h3>
+        <div style="font-size:48px;font-weight:900;color:var(--accent-emerald);margin-bottom:12px">★★★★★</div>
+        <p class="small-text" style="color:var(--text-secondary);line-height:1.7">
+          <strong>ดีมาก — ระดับ professional audit</strong>
+          <br><br>
+          ทุก line reference ตรงกับโค้ดจริง ∙ ครอบคลุมทุกมิติ ∙ จัดลำดับเฟสถูก ∙ มี dev prompts พร้อมใช้ ∙ อ้างอิงวิชาการเหมาะสม
+        </p>
+      </div>
+      <div class="glass-card" style="border-left:3px solid var(--accent-cyan);padding:28px">
+        <h3 style="color:var(--accent-cyan);margin-bottom:14px">🚀 เริ่มจากอะไรก่อน?</h3>
+        <ul class="status-list small-text">
+          <li><span class="icon" style="color:var(--accent-cyan);font-weight:bold">1</span><strong>แก้ Suite source-of-truth</strong> — 1 PR, impact สูงสุด, risk ต่ำ</li>
+          <li><span class="icon" style="color:var(--accent-blue);font-weight:bold">2</span><strong>เพิ่ม lint + typecheck ใน CI</strong> — safety net ก่อน refactor</li>
+          <li><span class="icon" style="color:var(--accent-purple);font-weight:bold">3</span><strong>Migrate answers เป็น testId-based</strong></li>
+          <li><span class="icon" style="color:var(--accent-pink);font-weight:bold">4</span><strong>เพิ่ม categorical likelihood</strong></li>
+          <li><span class="icon" style="color:var(--accent-amber);font-weight:bold">5</span><strong>Calibration pipeline</strong></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="glass-card mt-20 fade-up text-center" style="background:linear-gradient(135deg,rgba(6,214,160,0.08),rgba(123,47,247,0.08));border-color:rgba(6,214,160,0.15);padding:28px">
+    <p style="font-size:18px;font-weight:600;color:var(--text-primary);margin-bottom:8px">
+      "BokBac ไม่ได้ขาดวิสัยทัศน์ — มันขาดการบังคับให้ทุกชั้นของระบบพูดภาษาเดียวกัน"
+    </p>
+    <p style="font-size:13px;color:var(--text-muted)">— BokBac-Plan.md</p>
+  </div>
+  <span class="slide-number">16 / 16</span>
+</section>
+
+</div><!-- /deck -->
+
+<!-- ── Navigation Bar ── -->
+<nav class="nav-bar">
+  <div class="nav-info" id="navInfo">01 / 16</div>
+  <div class="nav-progress">
+    <div class="nav-progress-fill" id="progressFill" style="width:6.25%"></div>
+  </div>
+  <div class="nav-btns">
+    <button class="nav-btn" id="prevBtn" onclick="prev()" disabled>←</button>
+    <button class="nav-btn" id="nextBtn" onclick="next()">→</button>
+  </div>
+</nav>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let current = 0;
+
+  function goTo(n) {
+    if (n < 0 || n >= total) return;
+    slides[current].classList.remove('active');
+    slides[current].classList.add(n > current ? 'prev' : '');
+    current = n;
+    slides.forEach((s, i) => {
+      s.classList.remove('active', 'prev');
+      if (i === current) s.classList.add('active');
+      else if (i < current) s.classList.add('prev');
+    });
+    document.getElementById('navInfo').textContent =
+      String(current + 1).padStart(2, '0') + ' / ' + String(total).padStart(2, '0');
+    document.getElementById('progressFill').style.width =
+      ((current + 1) / total * 100) + '%';
+    document.getElementById('prevBtn').disabled = current === 0;
+    document.getElementById('nextBtn').disabled = current === total - 1;
+  }
+
+  function next() { goTo(current + 1); }
+  function prev() { goTo(current - 1); }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
+    if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+    if (e.key === 'End') { e.preventDefault(); goTo(total - 1); }
+  });
+
+  // Touch support
+  let touchStartX = 0;
+  document.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; });
+  document.addEventListener('touchend', e => {
+    const diff = e.changedTouches[0].screenX - touchStartX;
+    if (Math.abs(diff) > 50) {
+      if (diff < 0) next(); else prev();
+    }
+  });
+</script>
+</body>
+</html>

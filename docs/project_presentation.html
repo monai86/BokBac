@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BOK BAC - Project Presentation & Technical Audit</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Sarabun:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-primary: #080b11;
+      --bg-secondary: #0f1422;
+      --glass-bg: rgba(15, 20, 35, 0.45);
+      --glass-border: rgba(255, 255, 255, 0.08);
+      --glass-border-glow: rgba(139, 92, 246, 0.15);
+      
+      --accent-purple: #8b5cf6;
+      --accent-purple-glow: rgba(139, 92, 246, 0.4);
+      --accent-blue: #3b82f6;
+      --accent-blue-glow: rgba(59, 130, 246, 0.4);
+      --accent-emerald: #10b981;
+      --accent-emerald-glow: rgba(16, 185, 129, 0.4);
+      --accent-rose: #f43f5e;
+      
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --text-dark: #6b7280;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Sarabun', 'Outfit', sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      overflow: hidden;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(139, 92, 246, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.08) 0%, transparent 40%);
+    }
+
+    /* Presentation Header */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.25rem 2.5rem;
+      background: rgba(8, 11, 17, 0.8);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--glass-border);
+      z-index: 100;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .brand-logo {
+      width: 28px;
+      height: 28px;
+      background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+      border-radius: 6px;
+      box-shadow: 0 0 12px var(--accent-purple-glow);
+    }
+
+    .brand-title {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 1.25rem;
+      letter-spacing: 0.05em;
+      background: linear-gradient(to right, #ffffff, #c084fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .meta-info {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+    }
+
+    .badge-v4 {
+      background: rgba(139, 92, 246, 0.15);
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      color: #c084fc;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600;
+      font-size: 0.75rem;
+    }
+
+    /* Slide Layout */
+    .deck-container {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .slide {
+      position: absolute;
+      width: 90%;
+      height: 85%;
+      max-width: 1300px;
+      max-height: 800px;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(20px) scale(0.98);
+      transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 2.5rem;
+      background: var(--glass-bg);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      box-shadow: 
+        0 10px 30px rgba(0, 0, 0, 0.5),
+        0 0 2px rgba(255, 255, 255, 0.1) inset;
+    }
+
+    .slide.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0) scale(1);
+      z-index: 10;
+    }
+
+    .slide-header {
+      margin-bottom: 2rem;
+      border-left: 4px solid var(--accent-purple);
+      padding-left: 1rem;
+    }
+
+    .slide-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #ffffff;
+      line-height: 1.2;
+    }
+
+    .slide-subtitle {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+
+    .slide-content {
+      flex: 1;
+      overflow-y: auto;
+      padding-right: 0.5rem;
+    }
+
+    /* Custom Scrollbar for slide content */
+    .slide-content::-webkit-scrollbar {
+      width: 6px;
+    }
+    .slide-content::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 3px;
+    }
+    .slide-content::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 3px;
+    }
+
+    /* Layout Helpers & Grids */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+
+    /* Visual Components */
+    .card-glass {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      padding: 1.5rem;
+      transition: all 0.3s ease;
+    }
+
+    .card-glass:hover {
+      background: rgba(255, 255, 255, 0.04);
+      border-color: rgba(139, 92, 246, 0.2);
+      transform: translateY(-2px);
+    }
+
+    .card-glass.alert-danger {
+      border-left: 4px solid var(--accent-rose);
+      background: rgba(244, 63, 94, 0.03);
+    }
+
+    .card-glass.alert-warning {
+      border-left: 4px solid #f59e0b;
+      background: rgba(245, 158, 11, 0.03);
+    }
+
+    .card-glass.alert-success {
+      border-left: 4px solid var(--accent-emerald);
+      background: rgba(16, 185, 129, 0.03);
+    }
+
+    .section-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #c084fc;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 0.5rem;
+      font-size: 0.88rem;
+    }
+
+    th, td {
+      padding: 0.75rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    th {
+      background: rgba(255, 255, 255, 0.03);
+      color: #ffffff;
+      font-weight: 600;
+    }
+
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.01);
+    }
+
+    .status-pill {
+      display: inline-block;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .status-pill.confirmed {
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    .status-pill.warning {
+      background: rgba(245, 158, 11, 0.15);
+      color: #fbbf24;
+      border: 1px solid rgba(245, 158, 11, 0.2);
+    }
+
+    /* Code Blocks */
+    pre {
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      padding: 1rem;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.8rem;
+      overflow-x: auto;
+      color: #a78bfa;
+    }
+
+    code {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85em;
+      background: rgba(255, 255, 255, 0.06);
+      padding: 0.15rem 0.3rem;
+      border-radius: 4px;
+      color: #c084fc;
+    }
+
+    /* Highlights */
+    .highlight-purple { color: #c084fc; }
+    .highlight-blue { color: #60a5fa; }
+    .highlight-emerald { color: #34d399; }
+    .highlight-rose { color: #f43f5e; }
+
+    /* Footer & Navigation Controls */
+    footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2.5rem;
+      background: rgba(8, 11, 17, 0.9);
+      border-top: 1px solid var(--glass-border);
+      z-index: 100;
+    }
+
+    .slide-progress {
+      display: flex;
+      gap: 0.4rem;
+      align-items: center;
+    }
+
+    .progress-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.15);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .progress-dot.active {
+      background: var(--accent-purple);
+      box-shadow: 0 0 8px var(--accent-purple-glow);
+      width: 24px;
+      border-radius: 4px;
+    }
+
+    .nav-buttons {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    .btn-nav {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-main);
+      padding: 0.5rem 1.25rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 0.88rem;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-nav:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(139, 92, 246, 0.3);
+    }
+
+    .btn-nav:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    .keyboard-hint {
+      font-size: 0.75rem;
+      color: var(--text-dark);
+      margin-left: 1rem;
+    }
+
+    /* Slide Specific Styling */
+    .title-slide {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .title-slide h1 {
+      font-size: 3.5rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 1rem;
+      background: linear-gradient(to right, #ffffff, #a78bfa, #60a5fa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1.1;
+    }
+
+    .title-slide p {
+      font-size: 1.25rem;
+      color: var(--text-muted);
+      max-width: 700px;
+      margin-bottom: 2.5rem;
+    }
+
+    .badge-container {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .slide-badge {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 0.4rem 1rem;
+      border-radius: 50px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-family: 'Outfit', sans-serif;
+    }
+
+    /* Architecture Visualizer styling */
+    .arch-flow {
+      display: grid;
+      grid-template-columns: 1fr 40px 1.2fr 40px 1fr;
+      align-items: center;
+      margin: 1.5rem 0;
+    }
+
+    .arch-node {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+      padding: 1.25rem;
+      text-align: center;
+      position: relative;
+    }
+
+    .arch-node.highlighted {
+      border-color: rgba(139, 92, 246, 0.4);
+      background: rgba(139, 92, 246, 0.03);
+      box-shadow: 0 0 15px rgba(139, 92, 246, 0.05);
+    }
+
+    .arch-node h4 {
+      font-size: 0.95rem;
+      color: #ffffff;
+      margin-bottom: 0.4rem;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .arch-node p {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    .arch-arrow {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: var(--accent-purple);
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+
+    /* Bullet point details */
+    ul.details-list {
+      list-style-type: none;
+    }
+
+    ul.details-list li {
+      position: relative;
+      padding-left: 1.5rem;
+      margin-bottom: 0.65rem;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      color: var(--text-main);
+    }
+
+    ul.details-list li::before {
+      content: "✦";
+      position: absolute;
+      left: 0;
+      color: var(--accent-purple);
+    }
+
+    ul.details-list li.warn::before {
+      content: "⚠️";
+      color: #fbbf24;
+    }
+
+    ul.details-list li.err::before {
+      content: "❌";
+      color: var(--accent-rose);
+    }
+
+    ul.details-list li.check::before {
+      content: "✓";
+      color: var(--accent-emerald);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">
+      <div class="brand-logo"></div>
+      <div class="brand-title">BOK BAC</div>
+    </div>
+    <div class="meta-info">
+      <div>Microbial World Audit & Presentation</div>
+      <div class="badge-v4">v4.0.0 (Modern)</div>
+    </div>
+  </header>
+
+  <div class="deck-container">
+
+    <!-- Slide 1: Cover -->
+    <div class="slide title-slide active" id="slide-1">
+      <div class="badge-container">
+        <span class="slide-badge">TECHNICAL AUDIT & PRESENTATION</span>
+        <span class="slide-badge highlight-purple">BOK BAC-PLAN.MD COMPARISON</span>
+      </div>
+      <h1>Microbial World</h1>
+      <p>รายงานสไลด์เจาะลึกสถาปัตยกรรมและผลการประเมินรหัสซอร์สโค้ด (Codebase Audit) เปรียบเทียบกับแผนปรับปรุงระบบวินิจฉัยแบคทีเรียทางคลินิกเวอร์ชัน v4.x</p>
+      
+      <div class="grid-3" style="width: 100%; max-width: 900px; margin-top: 1rem;">
+        <div class="card-glass" style="text-align: center;">
+          <h3 class="highlight-purple" style="font-family:'Outfit'; font-size: 1.5rem; margin-bottom: 0.25rem;">157 Species</h3>
+          <p style="font-size: 0.8rem; color: var(--text-muted);">ในระบบห้องปฏิบัติการ (93 species อิงตามข้อมูล MCM % Positivity)</p>
+        </div>
+        <div class="card-glass" style="text-align: center;">
+          <h3 class="highlight-blue" style="font-family:'Outfit'; font-size: 1.5rem; margin-bottom: 0.25rem;">Naive Bayes</h3>
+          <p style="font-size: 0.8rem; color: var(--text-muted);">ความน่าจะเป็นสะสมแบบ Log-Likelihood & Prevalence Priors</p>
+        </div>
+        <div class="card-glass" style="text-align: center;">
+          <h3 class="highlight-emerald" style="font-family:'Outfit'; font-size: 1.5rem; margin-bottom: 0.25rem;">Audit Verified</h3>
+          <p style="font-size: 0.8rem; color: var(--text-muted);">ตรวจสอบและยืนยันทางเทคนิคแล้ว 7 ประเด็นหลักตรงตามเอกสารประเมิน</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 2: Project Architecture -->
+    <div class="slide" id="slide-2">
+      <div class="slide-header">
+        <h2 class="slide-title">1. สถาปัตยกรรมโปรเจกต์ (Project Architecture)</h2>
+        <div class="slide-subtitle">การเปรียบเทียบเวอร์ชันและทิศทางการไหลของข้อมูลทางคลินิก</div>
+      </div>
+      <div class="slide-content">
+        <div class="grid-2">
+          <div>
+            <div class="section-title">โครงสร้างแบบสองแกน (Dual-Track Stack)</div>
+            <ul class="details-list" style="margin-bottom: 1.5rem;">
+              <li><strong>Legacy Track (v3.x) [Root]:</strong> ใช้ HTML และ React (ผ่าน CDN/Babel Standalone) ในไฟล์เดียว เหมาะสำหรับสภาพแวดล้อมที่ไม่มีเครื่องมือ Build</li>
+              <li><strong>Modern Track (v4.x) [v2/]:</strong> เขียนใหม่หมดโดยใช้ Vite 6 + React 19 + TypeScript 5.7 มีระบบประมวลผลและการจัดการสถานะผ่าน Zustand</li>
+              <li><strong>Data Pipeline:</strong> ข้อมูลดิบอ้างอิงจาก Manual of Clinical Microbiology (MCM) ถูกกรองและแปลงเป็น JSON ผ่านสคริปต์ Python เพื่อนำเข้าไปใช้งานในแอปพลิเคชัน</li>
+            </ul>
+            
+            <div class="section-title">โมดูลหลัก (Core Modules) ใน v2</div>
+            <ul class="details-list">
+              <li><code>bayesianEngine.ts</code>: คลาสคำนวณหลักในการประมวลผลความน่าจะเป็นแบบ Naive Bayes</li>
+              <li><code>identifyStore.ts</code>: ตัวจัดการ state ส่วนกลางของ Zustand เก็บสถานะการทดสอบและเคสที่บันทึก</li>
+              <li><code>mcmAdapter.ts</code>: ตัวแปลงการตีความจากสัญลักษณ์ (+, -, V, S, R) ไปเป็นตัวเลขความน่าจะเป็น (Probability)</li>
+            </ul>
+          </div>
+          
+          <div>
+            <div class="section-title">การไหลของข้อมูล (Clinical Data Flow)</div>
+            
+            <div class="arch-flow">
+              <div class="arch-node highlighted">
+                <h4>1. Inputs</h4>
+                <p>Gram / Morphology / Arrangement & Biochemical answers</p>
+              </div>
+              <div class="arch-arrow">→</div>
+              <div class="arch-node highlighted">
+                <h4>2. Processing</h4>
+                <p><code>calcProbabilityBayes()</code> + Gate + Likelihood Mapping</p>
+              </div>
+              <div class="arch-arrow">→</div>
+              <div class="arch-node highlighted">
+                <h4>3. Outputs</h4>
+                <p>Posterior % / Coverage / Typicality / Next Best Test</p>
+              </div>
+            </div>
+
+            <div class="card-glass" style="margin-top: 1rem;">
+              <strong class="highlight-purple">ข้อสังเกต:</strong> ปัจจุบันมีความเหลื่อมล้ำของรหัสเวอร์ชันในโค้ด โดยในหน้าจอ <code>IdentifyPage.tsx</code> มีการระบุเวอร์ชันแบบ Hardcode เป็น <code>v4.1.0</code> แต่ใน <code>package.json</code> และ <code>v2/README.md</code> ถูกตั้งไว้ที่ <code>v4.0.0</code>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 3: Technical Claims Validation -->
+    <div class="slide" id="slide-3">
+      <div class="slide-header">
+        <h2 class="slide-title">2. ผลการตรวจสอบโค้ดเทียบกับข้อวิจารณ์ในแผนงาน</h2>
+        <div class="slide-subtitle">การวิเคราะห์และตรวจสอบซอร์สโค้ดแบบบรรทัดต่อบรรทัด (Code Audit Validation)</div>
+      </div>
+      <div class="slide-content">
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 35%;">ประเด็นวิจารณ์จากแผนงาน (BokBac-Plan.md)</th>
+              <th style="width: 15%;">สถานะการตรวจ</th>
+              <th style="width: 50%;">หลักฐานเชิงโค้ดและผลกระทบ (Code Evidence & Impact)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>1. Suite Source-of-Truth Divergence</strong><br>สลับชุดทดสอบแล้วค่าไม่สลับตาม</td>
+              <td><span class="status-pill confirmed">ยืนยันแล้ว</span></td>
+              <td><code>TestSelector.tsx</code> อ่านจาก <code>ALL_SUITES</code> (legacy) แต่ตัวคำนวณใน <code>identifyStore.recompute()</code> สร้างขึ้นเองจาก <code>DEFAULT_SUITES</code> ทำให้ custom suite ใช้งานไม่ได้จริง</td>
+            </tr>
+            <tr>
+              <td><strong>2. Hard Group Pre-filtering</strong><br>กรองเฉพาะกลุ่มแบบเบ็ดเสร็จ</td>
+              <td><span class="status-pill confirmed">ยืนยันแล้ว</span></td>
+              <td><code>bayesianEngine.ts</code> บรรทัดที่ 149 กรองเชื้อด้วยคำสั่ง <code>library.filter((b) => b.group === group)</code> ทำให้ไม่แสดงผลลัพธ์ของเชื้อที่อาจอยู่นอกกลุ่มแม้จะมี biochemical profile ตรงกัน</td>
+            </tr>
+            <tr>
+              <td><strong>3. Specimen Ignored in Gate Mode</strong><br>ชนิดสิ่งส่งตรวจไม่ถูกใช้กรอง</td>
+              <td><span class="status-pill confirmed">ยืนยันแล้ว</span></td>
+              <td>ฟังก์ชัน <code>checkGateMatch</code> (L81-104) ใช้ตรวจสอบเฉพาะคุณสมบัติ <code>gramReaction</code> และ <code>morphology</code> โดยไม่มีการวิเคราะห์ <code>specimen</code> แม้จะมีข้อมูลให้กรอกก็ตาม</td>
+            </tr>
+            <tr>
+              <td><strong>4. Multi-outcome & Susceptibility Gap</strong><br>ไม่รองรับค่าผลลัพธ์หลายรูปแบบ</td>
+              <td><span class="status-pill confirmed">ยืนยันแล้ว</span></td>
+              <td>ฟังก์ชัน <code>mcmLikelihood</code> (L112-138) รองรับเฉพาะการตรวจแบบ binary (+, -, V) และการตอบสนอง S/R แต่ไม่รองรับผลลัพธ์เชิงปริมาณ (เช่น K/A H₂S, alpha-hemolysis) โดยจะจัดเป็นค่า fallback 0.5</td>
+            </tr>
+            <tr>
+              <td><strong>5. Coverage Scaling Omission</strong><br>การสเกลความครอบคลุมหายไป</td>
+              <td><span class="status-pill confirmed">ยืนยันแล้ว</span></td>
+              <td>ในขณะที่ v3 มีการนำ <code>coverageFactor</code> มาคูณสเกลเปอร์เซ็นต์ความน่าจะเป็น แต่ใน v2 ตัวแปรนี้ถูกเก็บและแสดงแยกเท่านั้นโดยไม่ได้นำไปคูณในสูตรคำนวณ posterior จริง</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Slide 4: Technical Claims Validation Continued -->
+    <div class="slide" id="slide-4">
+      <div class="slide-header">
+        <h2 class="slide-title">2. ผลการตรวจสอบโค้ดฯ (ต่อ) และประเด็นที่เหลือ</h2>
+        <div class="slide-subtitle">การยืนยันข้อบกพร่องของระบบความปลอดภัยและการจัดเก็บประวัติข้อมูล</div>
+      </div>
+      <div class="slide-content">
+        <div class="grid-2">
+          <div>
+            <table>
+              <thead>
+                <tr>
+                  <th style="width: 40%;">ประเด็นวิจารณ์</th>
+                  <th style="width: 20%;">สถานะ</th>
+                  <th style="width: 40%;">รายละเอียดเชิงเทคนิค</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>6. Hardcoded Exclusions List</strong><br>รายการยกเว้นผลลัพธ์แบบถาวร</td>
+                  <td><span class="status-pill confirmed">ยืนยันแล้ว</span></td>
+                  <td>ตัวแปร <code>HARD_EXCLUSION_TESTS</code> ใน <code>testMatcher.ts</code> บรรทัดที่ 200 กำหนดการตัดสิทธิ์ทันทีสำหรับ 4 การทดสอบหลัก (hemolysis, coagulase, oxidase, catalase) โดยไม่มีสลับโหมด</td>
+                </tr>
+                <tr>
+                  <td><strong>7. No Provenance in Saved Case</strong><br>เคสที่บันทึกขาดการลงรุ่นข้อมูล</td>
+                  <td><span class="status-pill confirmed">ยืนยันแล้ว</span></td>
+                  <td>โครงสร้างข้อมูล <code>SavedCase</code> ใน store (L156-173) บันทึกเฉพาะอินพุตกับผลลัพธ์สุดท้าย แต่ไม่ได้ระบุ <code>engineVersion</code> หรือ <code>suiteSnapshot</code> ทำให้ไม่สามารถตรวจสอบย้อนหลังได้หากอัปเดตระบบ</td>
+                </tr>
+              </tbody>
+            </table>
+            
+            <div class="card-glass alert-danger" style="margin-top: 1.5rem;">
+              <h4 class="highlight-rose" style="margin-bottom: 0.25rem;">ข้อผิดพลาดสำคัญ (P0 Bug)</h4>
+              <p style="font-size: 0.8rem; line-height: 1.4;">ความเหลื่อมล้ำในการอ้างอิงข้อมูลของ suite (ข้อที่ 1) คือบั๊กสำคัญที่ทำให้ผู้ใช้งานไม่สามารถเพิ่มหรือลบรายการตรวจสอบในแบบทดสอบได้อย่างอิสระ เนื่องจากหน้าจอเลือกการทดสอบไม่ได้ใช้ชุดทดสอบเดียวกับตัวคำนวณ</p>
+            </div>
+          </div>
+          
+          <div>
+            <div class="section-title">ตัวอย่างรหัสต้นตอของปัญหา (Suite Divergence Bug)</div>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem;">ในไฟล์ <code>v2/src/components/TestSelector.tsx</code>:</p>
+            <pre style="margin-bottom: 1rem;">
+import { ALL_SUITES } from '@/lib/dataLoader' // L2: อิมพอร์ตข้อมูลคงที่แบบดั้งเดิม
+
+export function TestSelector() {
+  const group = useIdentifyStore((s) => s.group)
+  // ...
+  const suite = ALL_SUITES[group] // L35: โหลดรายการตรวจจาก ALL_SUITES
+  // บั๊ก! ค่า suite นี้ไม่เปลี่ยนตามชุดทดสอบที่อยู่ใน identifyStore
+            </pre>
+            
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem;">ในไฟล์ <code>v2/src/store/identifyStore.ts</code>:</p>
+            <pre>
+// บรรทัด 228-232: คำนวณใหม่โดยสร้างข้อมูลขึ้นใหม่จาก DEFAULT_SUITES
+// ทำให้ Engine และหน้าจอ UI เลือกชุดทดสอบมองข้อมูลแยกแหล่งกัน!
+const suitesMap = defaultSuites.reduce(...)
+const results = calcProbabilityBayes(group, answers, {
+  library: bacteriaLibrary, mcmData, suites: suitesMap
+}, ...)
+            </pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 5: Deep Dive: Bayesian Engine Algorithm -->
+    <div class="slide" id="slide-5">
+      <div class="slide-header">
+        <h2 class="slide-title">3. เจาะลึกอัลกอริทึมเอนจิ้นเบส์ (Bayesian Engine Inside)</h2>
+        <div class="slide-subtitle">วิเคราะห์หลักการคำนวณและข้อจำกัดเชิงสถิติทางคณิตศาสตร์</div>
+      </div>
+      <div class="slide-content">
+        <div class="grid-2">
+          <div>
+            <div class="section-title">Naive Bayesian Step-by-Step</div>
+            <ul class="details-list" style="margin-bottom: 1.25rem;">
+              <li><strong>Smoothing (การเกลี่ยค่า):</strong> ใช้ค่าคงที่ <code>EPS = 0.02</code> เพื่อป้องกันความน่าจะเป็นเป็น 0 หรือ 100% (ป้องกันข้อยกเว้นการหารด้วยศูนย์ในระบบคอมพิวเตอร์)</li>
+              <li><strong>Prior Odds:</strong> คำนวณจากระดับความชุกของแบคทีเรีย (Prevalence) อ้างอิงตามระดับคะแนน 1-4 (+ ถึง ++++) แปลงเป็นค่าน้ำหนักสถิติตั้งแต่ 0.05 ถึง 1.0</li>
+              <li><strong>Correlation Weights (การกำจัดผลซ้ำ):</strong> ป้องกันการบิดเบือนของคะแนนสถิติเมื่อมีการทดสอบที่มีความเกี่ยวข้องกันในเชิงสรีรวิทยา (เช่น MacConkey Lactose และ TSI Lactose) โดยปรับลดน้ำหนักลงเหลือ 0.5</li>
+            </ul>
+
+            <div class="card-glass alert-warning">
+              <h4 style="color:#fbbf24; margin-bottom: 0.25rem;">จุดอ่อนทางความแม่นยำ (Correlation Correction)</h4>
+              <p style="font-size: 0.8rem; line-height: 1.4;">ฟังก์ชันลดน้ำหนักการตรวจซ้ำซ้อนในปัจจุบันยังเป็นแบบ Hardcoded (ใช้ชื่อการทดสอบย่อย) ซึ่งไม่ครอบคลุมหากมีการปรับตั้งชื่อการทดสอบใหม่ หรือนำชุดข้อมูลอื่นมาใช้แทน</p>
+            </div>
+          </div>
+          
+          <div>
+            <div class="section-title">สูตรการคิดค่า Typicality Index</div>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.75rem;">Typicality Index (Case-fit) จะระบุว่าเชื้อตัวอย่างที่ได้ในเคสนี้ มีความเหมือนกับสายพันธุ์มาตรฐานที่ระบุไว้ในตำราเพียงใด โดยไม่ขึ้นกับว่ามีเชื้อใกล้เคียงตัวอื่นเบียดแซงหรือไม่:</p>
+            
+            <pre style="margin-bottom: 1rem; color: #34d399;">
+typicalityProd *= (smoothedLikelihood / smoothedMaxLikelihood)
+// ค่าอัตราส่วนระหว่างผลการตรวจจริง ต่อค่าผลการตรวจสูงสุดที่เป็นไปได้ของเชื้อตัวนั้น
+            </pre>
+            
+            <div class="section-title">ปัญหาความเสี่ยงของ Gate Check</div>
+            <ul class="details-list">
+              <li class="warn">หากผู้ใช้ย้อมสีแกรมหรือตรวจรูปร่างแบคทีเรียตัวเริ่มต้นผิดพลาด (เช่น ย้อม Gram-positive cocci ผิดเป็น Gram-negative bacilli) อัลกอริทึมจะตัดสิทธิ์การแสดงผลลัพธ์ของแบคทีเรียที่แท้จริงออกเป็น 0% ทันทีโดยไม่มีคำแจ้งเตือนหรือให้คำแนะนำที่ยืดหยุ่น</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 6: UX/UI Analysis & Calibration -->
+    <div class="slide" id="slide-6">
+      <div class="slide-header">
+        <h2 class="slide-title">4. การประเมินด้านการออกแบบ (UX/UI & Calibration)</h2>
+        <div class="slide-subtitle">การวิเคราะห์พฤติกรรมการตัดสินใจของผู้เรียนเมื่อมองสถิติ</div>
+      </div>
+      <div class="slide-content">
+        <div class="grid-2">
+          <div>
+            <div class="section-title">ปัญหาความเชื่อมั่นลวงตา (The % Illusion)</div>
+            <ul class="details-list" style="margin-bottom: 1.5rem;">
+              <li class="warn"><strong>Posterior % คือค่าสัมพันธ์:</strong> ตัวเลข % ที่แสดงบนการ์ดเชื้อคือค่าที่เกิดจากการนำผลสถิติของแคนดิเดตทุกตัวในกลุ่มมาหารเฉลี่ยรวมกัน (Softmax Normalization)</li>
+              <li class="warn"><strong>ความเข้าใจผิด:</strong> หากใส่ข้อมูลการตรวจเพียง 1-2 อย่าง แล้วได้ค่า 98% ผู้เรียนอาจคิดว่าตรวจเชื้อเสร็จสิ้นแล้วและมีความถูกต้องสูง ทั้งที่จริงๆ เป็นเพราะตัวเปรียบเทียบในกลุ่มนั้นมีน้อย และข้อมูลยังไม่สมบูรณ์เพียงพอ</li>
+              <li class="warn"><strong>ตัวชี้วัดถูกฝัง:</strong> ค่าความครอบคลุมของการตรวจ (Evidence Coverage) และความตรงตามธรรมชาติของเชื้อ (Typicality) ถูกแสดงเป็นตัวหนังสือขนาดเล็กหรือซ่อนอยู่ด้านในแผงคำอธิบายเชิงลึก ทำให้อาจถูกละเลย</li>
+            </ul>
+          </div>
+          
+          <div>
+            <div class="section-title">การ์ดเชื้อแบคทีเรียรูปแบบใหม่ (Proposed Tri-Metric Species Card)</div>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.75rem;">การปรับโครงสร้าง UI เพื่อบังคับแสดงค่าประเมินความปลอดภัยตามมาตรฐาน CDS (Clinical Decision Support) ทางคลินิก:</p>
+            
+            <div class="card-glass" style="border: 1px solid rgba(139,92,246,0.3); background: rgba(139,92,246,0.02);">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                <div>
+                  <strong style="color: white; font-size: 1.1rem;">S. aureus</strong>
+                  <div style="font-size: 0.75rem; color: var(--text-muted);">Staphylococcus aureus</div>
+                </div>
+                <!-- 3 Metric badges -->
+                <div style="display: flex; gap: 0.5rem;">
+                  <div style="text-align: center; background: rgba(16, 185, 129, 0.15); border: 1px solid var(--accent-emerald); padding: 0.2rem 0.5rem; border-radius: 4px;">
+                    <div style="font-size: 0.65rem; color: var(--text-muted);">Posterior</div>
+                    <div style="font-weight: bold; color: var(--accent-emerald); font-size: 0.9rem;">95%</div>
+                  </div>
+                  <div style="text-align: center; background: rgba(59, 130, 246, 0.15); border: 1px solid var(--accent-blue); padding: 0.2rem 0.5rem; border-radius: 4px;">
+                    <div style="font-size: 0.65rem; color: var(--text-muted);">Typicality</div>
+                    <div style="font-weight: bold; color: var(--accent-blue); font-size: 0.9rem;">0.89</div>
+                  </div>
+                  <div style="text-align: center; background: rgba(245, 158, 11, 0.15); border: 1px solid #f59e0b; padding: 0.2rem 0.5rem; border-radius: 4px;">
+                    <div style="font-size: 0.65rem; color: var(--text-muted);">Coverage</div>
+                    <div style="font-weight: bold; color: #f59e0b; font-size: 0.9rem;">45%</div>
+                  </div>
+                </div>
+              </div>
+              <div style="font-size: 0.75rem; color: #f59e0b; background: rgba(245, 158, 11, 0.1); padding: 0.35rem 0.5rem; border-radius: 4px; display: flex; align-items: center; gap: 0.25rem;">
+                ⚠️ คำเตือน: ความครอบคลุมของหลักฐานการตรวจต่ำเกินไป (ตอบ 2/11 การทดสอบ)
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 7: Roadmap and Recommendations -->
+    <div class="slide" id="slide-7">
+      <div class="slide-header">
+        <h2 class="slide-title">5. แผนดำเนินงานและลำดับความสำคัญ (Execution Roadmap)</h2>
+        <div class="slide-subtitle">การวางแผนแบ่งงานปรับปรุงระบบเพื่อให้ใช้งานและขยายตัวได้ยั่งยืน</div>
+      </div>
+      <div class="slide-content">
+        <div class="grid-2">
+          <div>
+            <div class="section-title">การจัดลำดับความสำคัญ (Phased Roadmap)</div>
+            
+            <div class="card-glass alert-success" style="margin-bottom: 1rem;">
+              <h4 class="highlight-emerald" style="font-size: 0.95rem; margin-bottom: 0.25rem;">เฟส 1: แก้ไขฐานรากและขจัดบั๊ก P0 ( Foundation & Suite Fix )</h4>
+              <p style="font-size: 0.8rem; line-height: 1.45;">แก้ไขให้ <code>TestSelector</code> ดึงชุดทดสอบจาก active suite ใน identifyStore เท่านั้น ทำการเปลี่ยน keys ของแบบทดสอบในระบบจาก label เป็น <code>testId</code> และตั้งค่าระบบการย้ายถ่ายข้อมูล (Migration) สำหรับ saved cases เดิม</p>
+            </div>
+            
+            <div class="card-glass" style="margin-bottom: 1rem; border-left: 4px solid var(--accent-purple);">
+              <h4 class="highlight-purple" style="font-size: 0.95rem; margin-bottom: 0.25rem;">เฟส 2: ปรับปรุงเอนจิ้นคำนวณ ( Engine & Calibration )</h4>
+              <p style="font-size: 0.8rem; line-height: 1.45;">ดึงระบบ <code>coverageFactor</code> กลับมาร่วมคำนวณในสูตร เปอร์เซ็นต์จริง (Calibrated Posteriors) เพิ่มระบบค่าน้ำหนักผลลัพธ์แบบยืดหยุ่น (Soft Exclusions) และสร้างฟังก์ชันการตีความผล Susceptibility แยกตามแบคทีเรีย</p>
+            </div>
+          </div>
+          
+          <div>
+            <div class="card-glass" style="margin-bottom: 1rem; border-left: 4px solid var(--accent-blue);">
+              <h4 class="highlight-blue" style="font-size: 0.95rem; margin-bottom: 0.25rem;">เฟส 3: ปรับโครงสร้างส่วนเชื่อมต่อผู้ใช้งาน ( UX & Decoupling )</h4>
+              <p style="font-size: 0.8rem; line-height: 1.45;">ปรับปรุงการแสดงผล SpeciesCard ให้มีแถบ Metric ครบทั้ง 3 แบบ (Posterior, Typicality, Coverage) และยกระดับคำเตือนแบบปรับพฤติกรรมเมื่อผู้ใช้เลือกกลุ่มทดสอบไม่สอดคล้องกับคุณลักษณะแบคทีเรีย</p>
+            </div>
+            
+            <div class="card-glass" style="border-left: 4px solid var(--text-dark);">
+              <h4 style="color: var(--text-main); font-size: 0.95rem; margin-bottom: 0.25rem;">เฟส 4-5: ความย้อนหลังและขั้นตอนอัตโนมัติ ( Audit & CI )</h4>
+              <p style="font-size: 0.8rem; line-height: 1.45;">ขยายคุณสมบัติบันทึกข้อมูล (SavedCase Schema) ให้บันทึกเวอร์ชันและสถานะคงตัวของระบบ ณ ขณะนั้น และปรับปรุงขั้นตอน GitHub Actions (CI) ให้รันการทดสอบ Typecheck / Linter ร่วมด้วย</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 8: Verdict & Action Plan -->
+    <div class="slide" id="slide-8">
+      <div class="slide-header">
+        <h2 class="slide-title">สรุปและข้อเสนอแนะในการพัฒนา (Verdict & Recommendations)</h2>
+        <div class="slide-subtitle">แนวทางปฏิบัติสำหรับทีมพัฒนาและผู้ดูแลหลักของโปรเจกต์</div>
+      </div>
+      <div class="slide-content">
+        <div class="grid-2">
+          <div>
+            <div class="section-title">คำตัดสินทางวิศวกรรมซอฟต์แวร์ (Technical Verdict)</div>
+            <p style="font-size: 0.9rem; line-height: 1.5; color: var(--text-main); margin-bottom: 1rem;">
+              เอกสารปรับปรุงระบบ <code>BokBac-Plan.md</code> มีการวิเคราะห์เชิงรหัสที่<strong>ยอดเยี่ยม ตรงจุด และน่าเชื่อถือสูงมาก</strong> ปัญหาทั้งหมดได้รับการยืนยันเชิงโค้ดแล้ว
+            </p>
+            <p style="font-size: 0.9rem; line-height: 1.5; color: var(--text-muted); margin-bottom: 1rem;">
+              อย่างไรก็ตาม แผนงานยังมีความประเมินกรอบเวลาที่มองโลกในแง่ดีเกินไป (เช่น 14 วันสำหรับการรื้อโครงสร้างพื้นฐาน) และขาดทิศทางย่อยในการปล่อยของ (Incremental PRs) ซึ่งอาจทำให้การพัฒนามีโอกาสล่าช้าและเกิดบั๊กขึ้นใหม่โดยไม่มีระบบตรวจสอบที่ดี
+            </p>
+
+            <div class="card-glass alert-success">
+              <strong style="color: #34d399;">ข้อแนะนำหลัก:</strong> ควรกำหนดให้การเขียนระบบทดสอบย่อย (Unit tests) และขั้นตอนตรวจสอบความเข้ากันได้ของข้อมูลนำหน้าทุกการเปลี่ยนแปลงเกี่ยวกับตัวคำนวณเบส์
+            </div>
+          </div>
+          
+          <div>
+            <div class="section-title">สิ่งที่เริ่มทำได้ทันที (Immediate Action Items)</div>
+            <ul class="details-list">
+              <li class="check"><strong>P0 Action Item:</strong> เข้าแก้ไข <code>v2/src/components/TestSelector.tsx</code> บรรทัดที่ 2 และ 35 เปลี่ยนการเรียกใช้ <code>ALL_SUITES</code> มาเป็นดึงข้อมูลผ่าน store <code>activeSuite</code> แทนเพื่อแก้บั๊กที่ผู้ใช้ไม่สามารถแก้ไขชุดทดสอบได้</li>
+              <li class="check"><strong>P1 Action Item:</strong> เพิ่มขั้นตอน <code>npm run test</code> และเช็กความถูกต้องเชิงสัญกรณ์ (TypeScript Compile Check) เข้าไปในไฟล์ CI workflow (<code>.github/workflows/ci.yml</code>) เพื่อความปลอดภัย</li>
+              <li class="check"><strong>P2 Action Item:</strong> เพิ่มฟิลด์ <code>engineVersion</code> และ <code>dataVersion</code> เข้าไปใน <code>SavedCase</code> ของ LocalStorage เพื่อความมั่นใจในความทนทานของเคสประวัติที่เซฟเก็บไว้</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    <div class="slide-progress" id="progress-container">
+      <!-- Dots will be populated by JS -->
+    </div>
+    
+    <div style="display: flex; align-items: center;">
+      <span class="keyboard-hint">ใช้ปุ่มลูกศร ← / → หรือปุ่ม Spacebar ในการเปลี่ยนหน้า</span>
+      <div class="nav-buttons" style="margin-left: 1.5rem;">
+        <button class="btn-nav" id="btn-prev" disabled>
+          <span>←</span> ย้อนกลับ
+        </button>
+        <button class="btn-nav" id="btn-next">
+          ถัดไป <span>→</span>
+        </button>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    const prevBtn = document.getElementById('btn-prev');
+    const nextBtn = document.getElementById('btn-next');
+    const progressContainer = document.getElementById('progress-container');
+    let currentSlide = 0;
+
+    // Create progress dots
+    slides.forEach((_, index) => {
+      const dot = document.createElement('div');
+      dot.classList.add('progress-dot');
+      if (index === 0) dot.classList.add('active');
+      dot.addEventListener('click', () => goToSlide(index));
+      progressContainer.appendChild(dot);
+    });
+
+    const dots = document.querySelectorAll('.progress-dot');
+
+    function updateControls() {
+      prevBtn.disabled = currentSlide === 0;
+      nextBtn.disabled = currentSlide === slides.length - 1;
+      
+      dots.forEach((dot, index) => {
+        if (index === currentSlide) {
+          dot.classList.add('active');
+        } else {
+          dot.classList.remove('active');
+        }
+      });
+    }
+
+    function goToSlide(index) {
+      if (index < 0 || index >= slides.length) return;
+      slides[currentSlide].classList.remove('active');
+      currentSlide = index;
+      slides[currentSlide].classList.add('active');
+      updateControls();
+    }
+
+    function nextSlide() {
+      goToSlide(currentSlide + 1);
+    }
+
+    function prevSlide() {
+      goToSlide(currentSlide - 1);
+    }
+
+    // Event Listeners
+    prevBtn.addEventListener('click', prevSlide);
+    nextBtn.addEventListener('click', nextSlide);
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') {
+        nextSlide();
+        e.preventDefault();
+      } else if (e.key === 'ArrowLeft' || e.key === 'Backspace') {
+        prevSlide();
+        e.preventDefault();
+      }
+    });
+  </script>
+</body>
+</html>

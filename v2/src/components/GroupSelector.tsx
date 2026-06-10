@@ -1,5 +1,5 @@
 import { useIdentifyStore } from '@/store/identifyStore'
-import { ALL_SUITES } from '@/lib/dataLoader'
+import { getGroupNames } from '@/lib/suiteCatalog'
 
 const GROUP_LABELS: Record<string, string> = {
   enterobacterales: 'Enterobacterales (GNR oxidase−)',
@@ -14,7 +14,8 @@ const GROUP_LABELS: Record<string, string> = {
 export function GroupSelector() {
   const group = useIdentifyStore((s) => s.group)
   const setGroup = useIdentifyStore((s) => s.setGroup)
-  const groups = Object.keys(ALL_SUITES)
+  const defaultSuites = useIdentifyStore((s) => s.defaultSuites)
+  const groups = getGroupNames(defaultSuites)
 
   return (
     <div className="flex flex-wrap gap-2">

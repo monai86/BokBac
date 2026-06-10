@@ -35,7 +35,7 @@ export const DEFAULT_SUITES: TestSuite[] = [
     trigger: {
       gramReaction: 'positive',
       morphology: 'cocci',
-      arrangement: 'chain',
+      arrangement: ['chain', 'pairs', 'diplococci'],
     },
     tests: [
       { testId: 'catalase', required: true, order: 1 },
@@ -95,6 +95,10 @@ export const DEFAULT_SUITES: TestSuite[] = [
     description: 'ชุดการทดสอบสำหรับแบคทีเรียแกรมลบรูปแท่งที่ไม่ ferment น้ำตาล (NFB)',
     owner: 'system',
     group: 'nfb',
+    trigger: {
+      gramReaction: 'negative',
+      morphology: 'bacilli',
+    },
     tests: [
       { testId: 'oxidase', required: true, order: 1 },
       { testId: 'tsi', required: true, order: 2 },
@@ -123,6 +127,11 @@ export const DEFAULT_SUITES: TestSuite[] = [
     description: 'ชุดการทดสอบสำหรับแบคทีเรียกลุ่ม Vibrionaceae / Aeromonas',
     owner: 'system',
     group: 'vibrio',
+    trigger: {
+      gramReaction: 'negative',
+      morphology: ['curved_rod', 'bacilli'],
+      specimen: 'stool',
+    },
     tests: [
       { testId: 'oxidase', required: true, order: 1 },
       { testId: 'hemolysis', required: true, order: 2 },
@@ -148,6 +157,10 @@ export const DEFAULT_SUITES: TestSuite[] = [
     description: 'ชุดการทดสอบสำหรับแบคทีเรียแกรมบวกรูปแท่ง (GPB)',
     owner: 'system',
     group: 'gpb',
+    trigger: {
+      gramReaction: 'positive',
+      morphology: ['bacilli', 'coccobacilli', 'branching_filament'],
+    },
     tests: [
       { testId: 'catalase', required: true, order: 1 },
       { testId: 'motility', required: true, order: 2 },
@@ -166,6 +179,11 @@ export const DEFAULT_SUITES: TestSuite[] = [
     description: 'ชุดการทดสอบสำหรับแบคทีเรียแกรมลบขนาดสั้นทรงกลมปนแท่ง / Diplococci',
     owner: 'system',
     group: 'gn_coccobacilli',
+    trigger: {
+      gramReaction: 'negative',
+      morphology: ['cocci', 'coccobacilli'],
+      arrangement: ['diplococci', 'pairs'],
+    },
     tests: [
       { testId: 'oxidase', required: true, order: 1 },
       { testId: 'glucose', required: true, order: 2 },

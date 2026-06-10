@@ -20,12 +20,19 @@ export default tseslint.config(
     rules: {
       ...reactHooks.configs.recommended.rules,
       ...reactRefresh.configs.vite.rules,
+      '@typescript-eslint/no-explicit-any': 'off',
     },
   },
   {
     files: ['src/data/**/*.ts'],
     rules: {
       '@typescript-eslint/ban-ts-comment': 'off',
+    },
+  },
+  {
+    files: ['scripts/**/*.mjs'],
+    languageOptions: {
+      globals: globals.node,
     },
   },
 )

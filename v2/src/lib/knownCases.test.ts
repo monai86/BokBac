@@ -85,6 +85,7 @@ const CASE_BANK: CaseProfile[] = [
       Motility: '+',
       Lactose: '−',
       LDC: '+',
+      VP: '−',
     },
     expectedTopId: 'salmonella',
   },

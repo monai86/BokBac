@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useIdentifyStore } from '@/store/identifyStore'
-import { ALL_SUITES } from '@/lib/dataLoader'
+import { getActiveSuite } from '@/lib/suiteCatalog'
 import type { SavedCase } from '@/lib/types'
 
 function formatSavedDate(value: string) {
@@ -28,7 +28,7 @@ function matchesCase(item: SavedCase, query: string) {
     item.title,
     item.topSpecies,
     item.group,
-    ALL_SUITES[item.group]?.name,
+    item.suiteName,
     ...item.tags,
     ...Object.keys(item.answers),
   ]
@@ -36,14 +36,23 @@ function matchesCase(item: SavedCase, query: string) {
     .some((value) => String(value).toLowerCase().includes(q))
 }
 
+interface MissingSuiteWarning {
+  caseTitle: string
+  missingSuite: string
+  fallbackSuite: string
+}
+
 export function SavedCasesPanel() {
   const [query, setQuery] = useState('')
+  const [missingSuiteWarning, setMissingSuiteWarning] = useState<MissingSuiteWarning | null>(null)
   const answers = useIdentifyStore((s) => s.answers)
   const savedCases = useIdentifyStore((s) => s.savedCases)
   const saveCurrentCase = useIdentifyStore((s) => s.saveCurrentCase)
   const updateCase = useIdentifyStore((s) => s.updateCase)
   const loadCase = useIdentifyStore((s) => s.loadCase)
   const deleteCase = useIdentifyStore((s) => s.deleteCase)
+  const defaultSuites = useIdentifyStore((s) => s.defaultSuites)
+  const customSuites = useIdentifyStore((s) => s.customSuites)
   const answeredCount = Object.keys(answers).length
   const filteredCases = savedCases.filter((item) => matchesCase(item, query))
   const exportPayload = JSON.stringify(filteredCases, null, 2)
@@ -92,6 +101,33 @@ export function SavedCasesPanel() {
           </a>
         </div>
 
+        {missingSuiteWarning && (
+          <div
+            role="alert"
+            className="mb-3 rounded-lg border border-amber-500/25 bg-amber-500/10 px-3 py-2 text-xs text-amber-100"
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <p className="font-semibold text-amber-200">
+                  Saved case suite is no longer available
+                </p>
+                <p className="mt-1 leading-relaxed text-amber-100/85">
+                  “{missingSuiteWarning.caseTitle}” referenced {missingSuiteWarning.missingSuite}, which no longer exists.
+                  BokBac loaded the case using {missingSuiteWarning.fallbackSuite} instead. Results may not be perfectly reproducible.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setMissingSuiteWarning(null)}
+                aria-label="Dismiss missing suite warning"
+                className="shrink-0 rounded-md border border-amber-400/20 px-2 py-1 text-[10px] font-medium text-amber-100 transition hover:border-amber-300/40 hover:bg-amber-400/10"
+              >
+                Dismiss
+              </button>
+            </div>
+          </div>
+        )}
+
         {savedCases.length === 0 ? (
           <p className="text-sm text-zinc-500">
             No saved cases yet.
@@ -102,7 +138,12 @@ export function SavedCasesPanel() {
           </p>
         ) : (
           <div className="grid gap-2 md:grid-cols-2">
-            {filteredCases.map((item) => (
+            {filteredCases.map((item) => {
+              const suiteName =
+                item.suiteName ||
+                getActiveSuite(defaultSuites, customSuites, item.suiteId || '', item.group)?.name ||
+                item.group
+              return (
               <article
                 key={item.id}
                 className="rounded-lg border border-white/5 bg-white/[0.03] p-3"
@@ -123,7 +164,7 @@ export function SavedCasesPanel() {
                       {typeof item.topPct === 'number' ? ` · ${item.topPct}%` : ''}
                     </p>
                     <p className="mt-0.5 text-xs text-zinc-500">
-                      {ALL_SUITES[item.group]?.name || item.group} · {Object.keys(item.answers).length} answers
+                      {suiteName} · {Object.keys(item.answers).length} answers
                     </p>
                     <p className="mt-0.5 text-xs text-zinc-600">
                       {formatSavedDate(item.createdAt)}
@@ -142,11 +183,24 @@ export function SavedCasesPanel() {
                   <div className="flex shrink-0 gap-1">
                     <button
                       type="button"
-                      onClick={() => loadCase(item.id)}
+                      onClick={() => {
+                        const allSuites = [...defaultSuites, ...customSuites]
+                        if (item.suiteId && !allSuites.some(s => s.id === item.suiteId)) {
+                          const fallback = allSuites.find(s => s.group === item.group)
+                          setMissingSuiteWarning({
+                            caseTitle: item.title || item.topSpecies || item.id,
+                            missingSuite: item.suiteName || item.suiteId,
+                            fallbackSuite: fallback?.name || 'the current/default suite',
+                          })
+                        } else {
+                          setMissingSuiteWarning(null)
+                        }
+                        loadCase(item.id)
+                      }}
                       aria-label={`Load saved case ${item.topSpecies || item.id}`}
                       className="rounded-md border border-white/10 bg-white/5 px-2 py-1 text-xs text-zinc-300 hover:border-white/20 hover:text-zinc-100"
                     >
-                      Load
+                      โหลดข้อมูล (Load)
                     </button>
                     <button
                       type="button"
@@ -154,12 +208,13 @@ export function SavedCasesPanel() {
                       aria-label={`Delete saved case ${item.topSpecies || item.id}`}
                       className="rounded-md border border-rose-500/20 bg-rose-500/10 px-2 py-1 text-xs text-rose-300 hover:border-rose-400/40"
                     >
-                      Delete
+                      ลบเคส (Delete)
                     </button>
                   </div>
                 </div>
               </article>
-            ))}
+              )
+            })}
           </div>
         )}
       </div>

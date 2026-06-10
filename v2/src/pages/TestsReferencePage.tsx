@@ -53,10 +53,12 @@ interface MediaCategory {
   plates: PlateItem[]
 }
 
+type ReferenceTab = 'tests' | 'media' | 'indicators' | 'storage'
+
 export function TestsReferencePage() {
   const [search, setSearch] = useState('')
   const [expanded, setExpanded] = useState<Record<string, boolean>>({})
-  const [activeTab, setActiveTab] = useState<'tests' | 'media' | 'indicators' | 'storage'>('tests')
+  const [activeTab, setActiveTab] = useState<ReferenceTab>('tests')
 
   // Search logic for biochemical tests
   const filteredTests = useMemo(() => {
@@ -116,18 +118,18 @@ export function TestsReferencePage() {
 
       {/* Tabs */}
       <div className="flex flex-wrap gap-2 border-b border-white/5 pb-2">
-        {[
+        {([
           { id: 'tests', label: '🧪 Biochemical Tests', count: testsCount },
           { id: 'media', label: '🧫 Culture Media', count: mediaCount },
           { id: 'indicators', label: '🎨 pH Indicators', count: PH_INDICATORS_DATA.length },
           { id: 'storage', label: '📦 Reagent Storage', count: REAGENT_STORAGE.length },
-        ].map((tab) => {
+        ] satisfies Array<{ id: ReferenceTab; label: string; count: number }>).map((tab) => {
           const isActive = activeTab === tab.id
           return (
             <button
               key={tab.id}
               type="button"
-              onClick={() => setActiveTab(tab.id as any)}
+              onClick={() => setActiveTab(tab.id)}
               className={`rounded-full px-4 py-1.5 text-xs font-semibold border transition ${
                 isActive
                   ? 'border-violet-500 bg-violet-500/10 text-violet-300'

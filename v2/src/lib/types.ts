@@ -41,14 +41,24 @@ export interface TestSuiteItem {
   note?: string
 }
 
+export type SuiteTriggerValue<T> = T | readonly T[]
+
+export type TestSuiteTrigger = {
+  [K in keyof InitialObservation]?: SuiteTriggerValue<NonNullable<InitialObservation[K]>>
+}
+
 export interface TestSuite {
   id: string
   name: string
   description?: string
   source?: string
+  version?: string
+  institutionName?: string
+  sourceCitation?: string
+  intendedUse?: string
   owner?: 'system' | 'user' | 'institution'
   group: string // OrganismGroup, e.g. 'gpc_cluster'
-  trigger?: Partial<InitialObservation>
+  trigger?: TestSuiteTrigger
   tests: TestSuiteItem[]
 }
 
@@ -98,6 +108,7 @@ export interface TestEvidence {
   impact: number
   direction: EvidenceDirection
   isKey: boolean
+  note?: string
 }
 
 export interface RankedSpecies extends Species {
@@ -120,6 +131,12 @@ export interface RankedSpecies extends Species {
   _gap?: number
   /** Typicality index (0..1) showing typicality of this isolate compared to taxon standard. */
   typicalityIndex?: number
+  /** Posterior within candidate set. */
+  posteriorWithinCandidateSet?: number
+  /** Case fit score. */
+  caseFitScore?: number
+  /** Number of strong contradictions. */
+  contradictionCount?: number
 }
 
 export type SpecimenType =
@@ -154,6 +171,10 @@ export interface SavedCase {
   group: string
   initialObservation?: InitialObservation
   answers: AnswersMap
+  suiteId?: string
+  suiteName?: string
+  suiteVersion?: string
+  engineVersion?: string
   topSpecies?: string
   topPct?: number
 }

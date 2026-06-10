@@ -2,6 +2,7 @@
 // Compares a database result symbol (e.g. "+", "−", "V", "γ/α") to a user answer.
 
 import type { BiochemRow, Species, Suite, SuiteTest } from './types'
+import { BIOCHEMICAL_TEST_REGISTRY } from '../data/tests/biochemicalTestRegistry'
 
 export function normalizeKey(value: string | number | undefined = ''): string {
   return String(value ?? '')
@@ -197,4 +198,6 @@ export function normalizeBiochemNamesForBug(bug: Species, suites: Record<string,
   return { ...bug, biochem: normalizedRows }
 }
 
-export const HARD_EXCLUSION_TESTS = ['hemolysis', 'coagulase', 'oxidase', 'catalase']
+export const HARD_EXCLUSION_TESTS = BIOCHEMICAL_TEST_REGISTRY
+  .filter((t) => t.hardExclusion)
+  .map((t) => t.id)

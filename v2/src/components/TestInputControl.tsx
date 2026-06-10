@@ -1,0 +1,63 @@
+import { lookupTestDefinition } from '@/data/tests/biochemicalTestRegistry'
+
+interface TestInputControlProps {
+  testId: string
+  value?: string
+  onChange: (value: string | null) => void
+  label?: string
+  layout?: 'compact' | 'fill'
+  ariaPrefix?: string
+}
+
+export function TestInputControl({
+  testId,
+  value = '',
+  onChange,
+  label,
+  layout = 'compact',
+  ariaPrefix = 'Set',
+}: TestInputControlProps) {
+  const definition = lookupTestDefinition(testId)
+  const displayLabel = label || definition?.label || testId
+
+  if (!definition) {
+    return (
+      <span
+        role="status"
+        className="rounded-md border border-amber-500/30 bg-amber-500/10 px-2 py-1 text-[10px] font-medium text-amber-200"
+      >
+        Missing registry: {testId}
+      </span>
+    )
+  }
+
+  const buttonBase =
+    layout === 'fill'
+      ? 'flex-1 rounded-lg border py-1.5 text-xs font-semibold transition'
+      : 'min-w-[28px] rounded-md border px-2 py-0.5 text-xs font-medium transition'
+
+  return (
+    <div className={`flex items-center ${layout === 'fill' ? 'gap-1.5' : 'gap-1'}`}>
+      {definition.options.map((option) => {
+        const isSelected = value === option
+        return (
+          <button
+            type="button"
+            key={option}
+            aria-label={`${ariaPrefix} ${displayLabel} to ${option}`}
+            aria-pressed={isSelected}
+            onClick={() => onChange(isSelected ? null : option)}
+            className={`${buttonBase} ${
+              isSelected
+                ? 'border-violet-400 bg-violet-500/30 text-violet-100 shadow-[0_0_8px_rgba(139,92,246,0.2)]'
+                : 'border-white/10 bg-white/5 text-zinc-400 hover:border-white/20 hover:text-zinc-200'
+            }`}
+          >
+            {option}
+          </button>
+        )
+      })}
+    </div>
+  )
+}
+

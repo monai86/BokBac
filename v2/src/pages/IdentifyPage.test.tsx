@@ -1,4 +1,4 @@
-import { cleanup, render, screen, waitFor } from '@testing-library/react'
+import { act, cleanup, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { useIdentifyStore } from '@/store/identifyStore'
@@ -12,6 +12,8 @@ describe('IdentifyPage reset flow', () => {
       answers: {},
       results: [],
       savedCases: [],
+      customSuites: [],
+      activeSuiteId: 'enterobacterales_default',
     })
     window.localStorage.clear()
   })
@@ -33,19 +35,20 @@ describe('IdentifyPage reset flow', () => {
     })
 
     expect(screen.getAllByText('Escherichia coli').length).toBeGreaterThan(0)
-    expect(screen.getByText('Why this result is leading')).toBeTruthy()
-    expect(screen.getByText(/prevalence priors/i)).toBeTruthy()
+    expect(screen.getByText('Why this is the current most likely match')).toBeTruthy()
+    expect(screen.getByText(/educational probabilistic assistant/i)).toBeTruthy()
+    expect(screen.getByText(/การจัดอันดับปัจจุบันมาจากค่าความชุก \(Prevalence prior\)/i)).toBeTruthy()
 
     await user.click(screen.getByRole('button', { name: /set oxidase to \+/i }))
-    expect(screen.getByText(/1 answer considered/i)).toBeTruthy()
-    expect(screen.getByText('Test-by-test evidence')).toBeTruthy()
+    expect(screen.getByText(/พิจารณาจาก 1 การทดสอบ/i)).toBeTruthy()
+    expect(screen.getByText('Evidence summary')).toBeTruthy()
 
     await user.click(screen.getByRole('button', { name: /reset/i }))
 
     expect(screen.queryByText('กำลังคำนวณ…')).toBeNull()
     expect(screen.getAllByText('Escherichia coli').length).toBeGreaterThan(0)
-    expect(screen.getByText('Why this result is leading')).toBeTruthy()
-    expect(screen.getByText(/prevalence priors/i)).toBeTruthy()
+    expect(screen.getByText('Why this is the current most likely match')).toBeTruthy()
+    expect(screen.getByText(/การจัดอันดับปัจจุบันมาจากค่าความชุก \(Prevalence prior\)/i)).toBeTruthy()
   })
 
   it('saves, reloads, and deletes a local case from the workflow', async () => {
@@ -80,9 +83,35 @@ describe('IdentifyPage reset flow', () => {
     expect(useIdentifyStore.getState().answers).toEqual({})
 
     await user.click(screen.getByRole('button', { name: /load saved case/i }))
-    expect(useIdentifyStore.getState().answers).toEqual({ Oxidase: '+' })
+    expect(useIdentifyStore.getState().answers).toEqual({ oxidase: '+' })
 
     await user.click(screen.getByRole('button', { name: /delete saved case/i }))
     expect(screen.getByText('No saved cases yet.')).toBeTruthy()
+  })
+
+  it('shows a diagnostics warning for contradictory wrong-group observations', async () => {
+    render(
+      <MemoryRouter>
+        <IdentifyPage />
+      </MemoryRouter>
+    )
+
+    act(() => {
+      useIdentifyStore.setState({
+        group: 'enterobacterales',
+        activeSuiteId: 'enterobacterales_default',
+        answers: { oxidase: '−', indole: '+' },
+        initialObservation: {
+          gramReaction: 'positive',
+          morphology: 'cocci',
+          arrangement: 'cluster',
+        },
+      })
+      useIdentifyStore.getState().recompute()
+    })
+
+    await waitFor(() => {
+      expect(screen.getByText(/Evidence quality warnings/i)).toBeTruthy()
+    })
   })
 })
