@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '@/auth/useAuth'
 import { auth, isFirebaseActive } from '@/auth/firebase'
@@ -7,6 +7,7 @@ import { loginWithEmail, signupWithEmail, loginWithGoogle } from '@/auth/authSer
 
 export function LoginPage() {
   const { setGuest } = useAuth()
+  const { user } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
 
@@ -26,6 +27,13 @@ export function LoginPage() {
   const [resetLoading, setResetLoading] = useState(false)
 
   const from = (location.state as any)?.from?.pathname || '/'
+
+  // Auto-navigate when user is authenticated (e.g. after Google redirect returns)
+  useEffect(() => {
+    if (user) {
+      navigate(from, { replace: true })
+    }
+  }, [user, navigate, from])
 
   const handleSuccess = () => {
     navigate(from, { replace: true })
@@ -112,16 +120,19 @@ export function LoginPage() {
       setAuthErr('กรุณาตั้งค่า Firebase Config ใน code ก่อนใช้งานครับ')
       return
     }
+    if (window.location.protocol === 'file:') {
+      alert('❌ การล็อกอินด้วย Google จำเป็นต้องเปิดผ่านเว็บเซิร์ฟเวอร์ (http/https)\n\n👉 แนะนำให้ใช้วิธี "สมัครสมาชิกด้วยอีเมล" แทนครับ')
+      return
+    }
     try {
+      setLoading(true)
       await loginWithGoogle()
-      handleSuccess()
+      // Page will redirect to Google — execution stops here
+      // On return, handleGoogleRedirectResult() in AuthProvider handles the rest
     } catch (err: any) {
       console.error(err)
-      if (err.code === 'auth/operation-not-supported-in-this-environment' || window.location.protocol === 'file:') {
-        alert('❌ การล็อกอินด้วย Google จำเป็นต้องเปิดผ่านเว็บเซิร์ฟเวอร์ (http/https)\nระบบไม่รองรับการเปิดไฟล์โดยตรงแบบนี้ (file://)\n\n👉 แนะนำให้ใช้วิธี "สมัครสมาชิกด้วยอีเมล" แทนครับ (หรือรันผ่าน Live Server ก็ได้ครับ)')
-      } else {
-        setAuthErr('การล็อกอินล้มเหลว: ' + err.message)
-      }
+      setLoading(false)
+      setAuthErr('การล็อกอินล้มเหลว: ' + err.message)
     }
   }
 

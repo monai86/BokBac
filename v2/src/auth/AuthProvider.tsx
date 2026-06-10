@@ -6,6 +6,7 @@ import { db as firestoreDb, isFirebaseActive } from './firebase'
 import { caseStorage, getLocalCases } from '@/services/caseStorage'
 import { doc, getDoc } from 'firebase/firestore'
 
+
 const GUEST_MODE_KEY = 'microbial-world:v4:guest-mode'
 
 function loadGuestMode() {
@@ -55,6 +56,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }
 
   useEffect(() => {
+    // Process Google sign-in redirect result (triggered after loginWithGoogle redirect)
+    authService.handleGoogleRedirectResult().catch((err) => {
+      console.error('Google redirect processing error:', err)
+    })
+
     const unsubscribe = authService.onAuthStateChanged(async (usr) => {
       setUser(usr)
       setLoading(false)
