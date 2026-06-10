@@ -49,19 +49,25 @@ The output bundle is written to the [`v2/dist/`](../v2/dist/) directory. This di
 
 ---
 
-## 3. Production Deployment: Cloudflare Pages
+## 3. Production Deployment: Cloudflare Workers Builds
 
-The recommended hosting platform is **Cloudflare Pages**.
+The recommended hosting platform is **Cloudflare Workers Builds** for the current hosted setup.
 
-Configure the Cloudflare Pages project using the following parameters:
+Configure the Cloudflare Git-connected project using the following parameters:
 
 | Configuration Setting | Value |
 |---|---|
-| **Root Directory** | `v2` |
-| **Framework Preset** | `Vite` |
+| **Path / Root Directory** | `v2` |
 | **Build Command** | `npm run build` |
-| **Build Output Directory** | `dist` |
+| **Deploy Command** | `npx wrangler deploy` |
 | **Node.js Version** | `22` (or higher) |
+
+The Worker deployment behavior is defined in [`v2/wrangler.jsonc`](../v2/wrangler.jsonc):
+
+- `assets.directory = "./dist"`
+- `assets.not_found_handling = "single-page-application"`
+
+Because SPA routing is handled by Wrangler static-assets configuration, do **not** deploy a `v2/public/_redirects` rule that rewrites `/*` to `/index.html` in this flow. That redirect is valid for Pages-style hosting but can fail Workers deploy validation with an infinite-loop error.
 
 ### Deploying to Vercel (Modern Track)
 Vercel is fully supported using the provided [`v2/vercel.json`](../v2/vercel.json) file. 
@@ -110,6 +116,6 @@ If using Firestore database sync, deploy the security rules in [`config/firestor
 * Restrict public read access to system suites.
 
 ### 3. Build & Deployment Audit Checklist
-* **Deployment target**: Production hosts must build from `v2` and publish `v2/dist` (or `dist` when the provider root is `v2`).
+* **Deployment target**: Production hosts must build from `v2`; for Workers Builds, Wrangler then publishes `v2/dist` using `v2/wrangler.jsonc`.
 * **Excluding Reference Materials**: Ensure that no local reference textbooks, copyright PDFs, raw extraction CSVs, or local-only assets are included in the public deployment output directory.
 * **HTTP Headers**: Use [`v2/public/_headers`](../v2/public/_headers) for security policies (e.g., Content-Security-Policy, X-Frame-Options, X-Content-Type-Options).

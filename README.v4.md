@@ -130,17 +130,17 @@ The v4 app remains static-hostable and deploys to Cloudflare Pages. Firebase is 
 - protected export/import flows
 - PHI/PII guidance before storing real clinical data
 
-## 🚀 Deployment (Cloudflare Pages)
+## 🚀 Deployment (Cloudflare Workers Builds)
 
-Connect this repo to Cloudflare Pages with:
+Connect this repo to Cloudflare Workers Builds with:
 
 | Setting | Value |
 |---|---|
 | Build command | `npm run build` |
-| Output directory | `dist` |
-| Root directory | `v2` |
+| Deploy command | `npx wrangler deploy` |
+| Root directory / Path | `v2` |
 | Node version | `22` |
 
-The `public/_headers` and `public/_redirects` files are picked up automatically.
+The Wrangler config in [`v2/wrangler.jsonc`](v2/wrangler.jsonc) points Workers static assets at `dist/` and enables SPA fallback with `assets.not_found_handling = "single-page-application"`. Keep [`v2/public/_headers`](v2/public/_headers) for security headers; do not use a `public/_redirects` SPA rule with this Workers deploy flow because Wrangler validates redirects separately and can reject looping `index.html` rewrites.
 
 Security headers include a self-only CSP, frame protection, MIME sniffing protection, referrer policy, and disabled camera/microphone/geolocation permissions.
