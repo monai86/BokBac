@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useIdentifyStore } from '@/store/identifyStore'
-import { EmailAuthProvider, reauthenticateWithCredential, updatePassword } from 'firebase/auth'
+import { EmailAuthProvider, reauthenticateWithCredential, updatePassword, updateProfile } from 'firebase/auth'
+import { isFirebaseActive } from '@/auth/firebase'
 
 export function SettingsPage() {
   const user = useIdentifyStore((s) => s.user)
@@ -37,7 +38,7 @@ export function SettingsPage() {
     // Update Firebase user profile if display name changed
     if (user && displayName.trim() !== (settings.displayName || user.displayName)) {
       try {
-        await user.updateProfile({ displayName: displayName.trim() })
+        await updateProfile(user, { displayName: displayName.trim() })
         await user.reload()
       } catch (e) {
         console.error('Error updating display name:', e)
@@ -131,7 +132,7 @@ export function SettingsPage() {
           ⚙️ ตั้งค่า
         </h1>
         <p className="mt-2 text-sm font-bold uppercase tracking-[0.16em] text-zinc-500">
-          {user ? '☁️ CLOUD SYNC' : '💾 LOCAL STORAGE'}
+          {user ? '☁️ CLOUD SYNC' : isFirebaseActive ? '💾 LOCAL STORAGE' : '💾 LOCAL STORAGE (Cloud Sync ไม่พร้อมใช้งาน)'}
         </p>
       </header>
 

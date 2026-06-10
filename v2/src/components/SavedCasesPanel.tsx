@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useIdentifyStore } from '@/store/identifyStore'
 import { getActiveSuite } from '@/lib/suiteCatalog'
 import type { SavedCase } from '@/lib/types'
+import { isFirebaseActive } from '@/auth/firebase'
 
 function formatSavedDate(value: string) {
   return new Intl.DateTimeFormat('th-TH', {
@@ -81,7 +82,7 @@ export function SavedCasesPanel({ standalone = false }: { standalone?: boolean }
     <section className={standalone ? 'saved-cases-standalone' : 'mb-5'}>
       <div className="mb-2 flex items-center justify-between gap-3">
         <h2 className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
-          {standalone ? '' : `Case History ${user ? '☁️ (Cloud synced)' : '💾 (Local only)'}`}
+          {standalone ? '' : `Case History ${user ? '☁️ (Cloud synced)' : isFirebaseActive ? '💾 (Local only)' : '💾 (Local only - Cloud sync disabled)'}`}
         </h2>
         <button
           type="button"

@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '@/auth/useAuth'
-import { isFirebaseActive } from '@/auth/firebase'
+import { auth, isFirebaseActive } from '@/auth/firebase'
+import { sendPasswordResetEmail } from 'firebase/auth'
 import { loginWithEmail, signupWithEmail, loginWithGoogle } from '@/auth/authService'
 
 export function LoginPage() {
@@ -87,8 +88,6 @@ export function LoginPage() {
     }
     setResetLoading(true)
     try {
-      const { auth } = await import('@/auth/firebase')
-      const { sendPasswordResetEmail } = await import('firebase/auth')
       if (auth) {
         await sendPasswordResetEmail(auth, resetEmail.trim())
         setResetMsg('✅ ระบบได้ส่งอีเมลรีเซ็ตรหัสผ่านไปยังเมลของคุณแล้ว กรุณาตรวจสอบ Inbox/Spam')
@@ -143,6 +142,14 @@ export function LoginPage() {
             <p className="login-kicker">Diagnostic Engine</p>
             <p className="login-subtitle">ระบบวินิจฉัยเชื้อแบคทีเรีย</p>
           </div>
+
+          {!isFirebaseActive && (
+            <div className="rounded-xl border border-amber-500/20 bg-amber-500/10 p-3 text-xs text-amber-200 leading-relaxed text-center">
+              ⚠️ ระบบคลาวด์ซิงค์ (Cloud Sync) ยังไม่พร้อมใช้งาน เนื่องจากไม่ได้ตั้งค่า Firebase Config
+              <br />
+              <span className="opacity-70 mt-1 block">ระบบกำลังทำงานในโหมดออฟไลน์และบันทึกข้อมูลแบบ Local เท่านั้น</span>
+            </div>
+          )}
 
           {authErr && (
             <div className="rounded-xl border border-red-500/20 bg-red-500/10 p-3 text-xs text-red-200 leading-relaxed">
