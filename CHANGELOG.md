@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.0.1] - 2026-06-11
+
 ### Added
 - **v4 Playwright workflow coverage** — added login-first guest-mode E2E coverage for initial observation, suggested suite selection, biochemical inputs, ranked result review, saved case creation, and saved case reload.
 - **v4 library browsing** — added searchable `LibraryPage` and linked `SpeciesDetailPage` in `v2/` so users can browse the species catalog, filter by bacterial group, and open organism-specific teaching details.
@@ -16,6 +18,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Repository organization** — moved secondary workflow/deployment docs under `docs/`, local reference materials under `assets/references/local/`, and deprecated local-only files under `archive/`.
 
 ### Fixed
+- **Bacterial Scientific Names Font Family**: Standardized species nomenclature to a clean sans-serif typeface globally, maintaining italics while removing mismatched serif styles.
+- **Specimen Page Layout**: Compacted hero cards and detail elements, and converted vertical sidebar selectors to responsive horizontal swipe scroll elements on mobile.
+- **Library Page Spacing**: Removed the large empty gap between the search box and group filters on desktop layouts.
+- **Theme Consistency**: Preserved standard dark mode system styling (neon color palette) and reverted design variations.
 - **v4 authentication flow** — protected the modern app shell behind `ProtectedRoute`, made `/login` the unauthenticated entry point, and kept explicit Guest Mode from redirecting back to login on reload.
 - **v4 auth state ownership** — consolidated Firebase session ownership in `AuthProvider`; Zustand now only mirrors the authenticated UID needed for case/settings persistence.
 - **NaCl test alias collision** — split `6.5% NaCl` (`nacl_6_5`) from `6% NaCl` (`nacl_6`) across legacy and v4 data to remove duplicate-key overrides during Vite build.
