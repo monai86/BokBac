@@ -303,6 +303,14 @@ h2, h3, h4, h5, h6, .font-sans-header {
   letter-spacing: -0.3px;
 }
 
+/* Ensure all italicized species names use the standard sans-serif font family */
+h1.italic,
+.italic,
+em,
+i {
+  font-family: 'Inter', 'Prompt', 'IBM Plex Sans Thai', sans-serif !important;
+}
+
 /* ═══════════════════════════════════════
    Premium App Shell & Navigation
    ═══════════════════════════════════════ */

@@ -51,7 +51,7 @@ export function SpeciesDetailPage() {
                 </span>
               )}
             </div>
-            <h1 className="text-2xl font-bold tracking-tight text-zinc-50 sm:text-3xl">
+            <h1 className="text-2xl font-bold tracking-tight text-zinc-50 sm:text-3xl italic">
               {species.name}
             </h1>
             {species.thai && <p className="mt-1 text-sm text-zinc-400">{species.thai}</p>}
