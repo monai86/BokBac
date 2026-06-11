@@ -128,7 +128,7 @@ export function LibraryPage() {
           />
         </label>
 
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2 group-filter-scroll">
           {GROUPS.map((g) => (
             <button
               type="button"

@@ -624,7 +624,7 @@ h2, h3, h4, h5, h6, .font-sans-header {
 
 .specimen-shell {
   display: grid;
-  grid-template-columns: 344px minmax(0, 1fr);
+  grid-template-columns: 248px minmax(0, 1fr);
   min-height: calc(100svh - 64px);
 }
 
@@ -632,7 +632,7 @@ h2, h3, h4, h5, h6, .font-sans-header {
   position: sticky;
   top: 64px;
   height: calc(100svh - 64px);
-  padding: 34px 16px 24px 24px;
+  padding: 20px 14px 24px 16px;
   border-right: 1px solid rgba(255,255,255,0.08);
   background:
     linear-gradient(90deg, rgba(31, 82, 70, 0.34), rgba(7, 11, 22, 0.32) 78%),
@@ -640,23 +640,23 @@ h2, h3, h4, h5, h6, .font-sans-header {
 }
 
 .specimen-main {
-  padding: 38px 36px 72px;
+  padding: 24px 28px 48px;
   min-width: 0;
 }
 
 .legacy-list-button {
-  min-height: 64px;
-  border-radius: 16px;
-  font-size: 16px;
+  min-height: 42px;
+  border-radius: 10px;
+  font-size: 13.5px;
 }
 
 .legacy-hero-card {
-  min-height: 188px;
-  border-radius: 20px;
+  min-height: auto;
+  border-radius: 12px;
 }
 
 .legacy-info-card {
-  min-height: 350px;
+  min-height: auto;
 }
 
 .case-page-header {
@@ -819,17 +819,68 @@ h2, h3, h4, h5, h6, .font-sans-header {
     border-radius: 999px !important;
   }
   .specimen-shell {
-    display: block;
+    display: flex;
+    flex-direction: column;
   }
   .specimen-sidebar {
-    position: static;
+    position: sticky;
+    top: 64px;
+    z-index: 10;
     height: auto;
-    padding: 18px 16px;
+    padding: 10px 16px !important;
     border-right: 0;
     border-bottom: 1px solid rgba(255,255,255,0.08);
+    background: rgba(3, 7, 18, 0.85) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+  .specimen-sidebar > div {
+    flex-direction: row !important;
+    overflow-x: auto !important;
+    gap: 8px !important;
+    padding-bottom: 4px;
+    -webkit-overflow-scrolling: touch !important;
+    scroll-snap-type: x proximity !important;
+    scrollbar-width: none;
+  }
+  .specimen-sidebar > div::-webkit-scrollbar {
+    display: none;
+  }
+  .specimen-sidebar > div > .text-zinc-500 {
+    display: none !important;
+  }
+  .legacy-list-button {
+    flex: 0 0 auto !important;
+    min-height: 38px !important;
+    height: 38px !important;
+    padding: 6px 12px !important;
+    border-radius: 999px !important;
+    font-size: 13px !important;
+    scroll-snap-align: start !important;
+  }
+  .legacy-list-button span {
+    font-size: 15px !important;
   }
   .specimen-main {
-    padding: 24px 16px 48px;
+    padding: 20px 16px 48px;
+  }
+  .group-filter-scroll {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    width: calc(100% + 32px) !important;
+    margin: 0 -16px !important;
+    padding: 2px 16px 8px !important;
+    -webkit-overflow-scrolling: touch !important;
+    scroll-snap-type: x proximity !important;
+    scrollbar-width: none;
+  }
+  .group-filter-scroll::-webkit-scrollbar {
+    display: none;
+  }
+  .group-filter-scroll button {
+    flex: 0 0 auto !important;
+    scroll-snap-align: start !important;
   }
   .workspace-page,
   .reference-page,
