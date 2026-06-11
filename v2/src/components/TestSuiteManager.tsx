@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useIdentifyStore } from '@/store/identifyStore'
 import { BIOCHEMICAL_TEST_REGISTRY } from '@/data/tests/biochemicalTestRegistry'
+import { getSuiteTestDisplay, normalizeTestKeyToId } from '@/lib/suiteCatalog'
 import type { TestSuite, TestSuiteItem } from '@/lib/types'
 import { calculateSuiteDiagnosticPower } from '@/data/tests/essentialTests'
 
@@ -141,13 +142,30 @@ export function TestSuiteManager() {
             setImportReport({ type: 'error', message: 'ไฟล์ JSON ไม่ถูกต้อง ขาดฟิลด์สำคัญ (id, name, tests)' })
             return
           }
+          const normalizedTests = parsed.tests.map((item, index) => {
+            const legacyLikeItem = item as TestSuiteItem & { id?: string; label?: string; options?: string[] }
+            const rawId = legacyLikeItem.testId || legacyLikeItem.id || ''
+            const testId = normalizeTestKeyToId(rawId)
+            const definition = BIOCHEMICAL_TEST_REGISTRY.find((reg) => reg.id === testId)
+            return {
+              testId,
+              required: item.required,
+              order: item.order || index + 1,
+              weightOverride: item.weightOverride,
+              note: item.note,
+              labelOverride: item.labelOverride || (legacyLikeItem.label && legacyLikeItem.label !== definition?.label ? legacyLikeItem.label : undefined),
+              optionsOverride: item.optionsOverride || legacyLikeItem.options,
+            }
+          })
+
           // Validate tests in imported suite
-          const invalidTests = parsed.tests.filter((t) => !BIOCHEMICAL_TEST_REGISTRY.some((reg) => reg.id === t.testId))
+          const invalidTests = normalizedTests.filter((t) => !BIOCHEMICAL_TEST_REGISTRY.some((reg) => reg.id === t.testId))
           if (invalidTests.length > 0) {
             setImportReport({ type: 'error', message: `พบ ${invalidTests.length} Test ID ที่ไม่มีในระบบ: ${invalidTests.map(t => t.testId).join(', ')}` })
             return
           }
           parsed.owner = 'user' // Mark as custom
+          parsed.tests = normalizedTests
           const nextCustoms = [...customSuites.filter((s) => s.id !== parsed.id), parsed]
           setCustomSuites(nextCustoms)
           setActiveSuiteId(parsed.id)
@@ -321,7 +339,7 @@ export function TestSuiteManager() {
             <label className="text-[10px] text-zinc-500 font-bold uppercase block mb-2">รายการการทดสอบ ({editedTests.length} ตัว)</label>
             <div className="grid gap-1 max-h-[220px] overflow-y-auto pr-1 custom-scrollbar">
               {editedTests.map((t, idx) => {
-                const def = BIOCHEMICAL_TEST_REGISTRY.find((reg) => reg.id === t.testId)
+                const display = getSuiteTestDisplay(t)
                 return (
                   <div
                     key={t.testId}
@@ -329,7 +347,7 @@ export function TestSuiteManager() {
                   >
                     <div className="flex items-center gap-2">
                       <span className="text-zinc-500 font-mono w-4">{idx + 1}.</span>
-                      <span className="font-medium text-zinc-200">{def?.label || t.testId}</span>
+                      <span className="font-medium text-zinc-200">{display.label}</span>
                       {t.required && (
                         <span className="text-[9px] font-bold text-rose-300 bg-rose-500/20 px-1 py-0.2 rounded">
                           จำเป็น (Gate)
@@ -472,7 +490,7 @@ export function TestSuiteManager() {
 
           <div className="flex flex-wrap gap-1.5 max-h-[120px] overflow-y-auto pr-1 custom-scrollbar">
             {currentSuite.tests.map((t) => {
-              const def = BIOCHEMICAL_TEST_REGISTRY.find((reg) => reg.id === t.testId)
+              const display = getSuiteTestDisplay(t)
               return (
                 <span
                   key={t.testId}
@@ -482,7 +500,7 @@ export function TestSuiteManager() {
                       : 'border-white/5 bg-white/[0.02] text-zinc-400'
                   }`}
                 >
-                  {def?.label || t.testId} {t.required ? '(Gate)' : ''}
+                  {display.label} {t.required ? '(Gate)' : ''}
                 </span>
               )
             })}

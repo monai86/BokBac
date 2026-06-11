@@ -1,6 +1,5 @@
 import { useIdentifyStore } from '@/store/identifyStore'
-import { getActiveSuite } from '@/lib/suiteCatalog'
-import { lookupTestDefinition } from '@/data/tests/biochemicalTestRegistry'
+import { getActiveSuite, getSuiteTestDisplay } from '@/lib/suiteCatalog'
 import { TestInputControl } from './TestInputControl'
 
 export function TestSelector() {
@@ -36,8 +35,7 @@ export function TestSelector() {
 
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
         {[...suite.tests].sort((a, b) => a.order - b.order).map((t) => {
-          const definition = lookupTestDefinition(t.testId)
-          const label = definition?.label || t.testId
+          const display = getSuiteTestDisplay(t)
           const current = answers[t.testId] || ''
           const isRecommended = topRecs.some((r) => r.testId === t.testId)
 
@@ -53,7 +51,7 @@ export function TestSelector() {
               }`}
             >
               <div className="flex items-center gap-1.5 min-w-0">
-                <span className="text-sm text-zinc-200 truncate">{label}</span>
+                      <span className="text-sm text-zinc-200 truncate">{display.label}</span>
                 {isRecommended && (
                   <span className="shrink-0 text-[9px] font-bold text-violet-300 bg-violet-500/25 px-1 py-0.5 rounded border border-violet-500/20 animate-pulse">
                     แนะนำ
@@ -62,7 +60,8 @@ export function TestSelector() {
               </div>
               <TestInputControl
                 testId={t.testId}
-                label={label}
+                label={display.label}
+                options={display.options}
                 value={current}
                 onChange={(nextValue) => setAnswer(t.testId, nextValue)}
               />

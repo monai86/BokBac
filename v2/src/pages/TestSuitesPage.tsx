@@ -1,13 +1,13 @@
 import { useState } from 'react'
 import { useIdentifyStore } from '@/store/identifyStore'
-import { lookupTestDefinition } from '@/data/tests/biochemicalTestRegistry'
+import { getSuiteTestDisplay } from '@/lib/suiteCatalog'
 
 const SUITE_TABS = [
   { id: 'gpc_cluster', label: 'GPC Cluster', icon: '🧫' },
   { id: 'gpc_chain', label: 'GPC Chain', icon: '🦠' },
   { id: 'gpb', label: 'GP Bacilli', icon: '🧪' },
   { id: 'enterobacterales', label: 'Enterobacterales', icon: '🦠' },
-  { id: 'vibrio_aeromonas', label: 'Vibrio / Aeromonas', icon: '💧' },
+  { id: 'vibrio', label: 'Vibrio / Aeromonas', icon: '💧' },
   { id: 'nfb', label: 'Non-Fermentative', icon: '⚡' },
   { id: 'gn_coccobacilli', label: 'GN Coccobacilli', icon: '🔬' },
 ]
@@ -81,8 +81,7 @@ export function TestSuitesPage() {
             </div>
             <div className="divide-y divide-white/[0.07]">
               {suite.tests.map((item, index) => {
-                const def = lookupTestDefinition(item.testId)
-                const options = def?.options || ['+', '−']
+                const display = getSuiteTestDisplay(item)
                 return (
                   <article
                     key={`${item.testId}-${index}`}
@@ -94,11 +93,11 @@ export function TestSuitesPage() {
                       </span>
                     </div>
                     <div>
-                      <h3>{def?.label || item.testId}</h3>
+                      <h3>{display.label}</h3>
                       <p>{item.testId}</p>
                     </div>
                     <div className="suite-options">
-                      {options.map((option) => (
+                      {display.options.map((option) => (
                         <span
                           key={option}
                           className="suite-option-pill"

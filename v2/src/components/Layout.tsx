@@ -1,5 +1,5 @@
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useAuth } from '@/auth/useAuth'
 
 const NAV = [
@@ -15,6 +15,7 @@ const NAV = [
 export function Layout() {
   const { user, logout } = useAuth()
   const location = useLocation()
+  const [isMobileNavOpen, setIsMobileNavOpen] = useState(false)
 
   // Activate Liquid Glass interactive effects (mouse tracking + tilt)
   useEffect(() => {
@@ -101,6 +102,10 @@ export function Layout() {
     }
   }, [])
 
+  useEffect(() => {
+    setIsMobileNavOpen(false)
+  }, [location.pathname])
+
   if (location.pathname === '/login') {
     return <Outlet />
   }
@@ -115,7 +120,18 @@ export function Layout() {
             <div style={{ fontSize: '8px', color: '#a78bfa', letterSpacing: '2px', textTransform: 'uppercase', fontWeight: 600, marginTop: '-2px', WebkitTextFillColor: 'initial' }}>DIAGNOSTIC ENGINE</div>
           </div>
         </Link>
-        <nav className="app-nav-scroll">
+        <button
+          type="button"
+          className="nav-menu-button"
+          aria-label={isMobileNavOpen ? 'ปิดเมนูนำทาง' : 'เปิดเมนูนำทาง'}
+          aria-expanded={isMobileNavOpen}
+          onClick={() => setIsMobileNavOpen((open) => !open)}
+        >
+          <span />
+          <span />
+          <span />
+        </button>
+        <nav className={`app-nav-scroll ${isMobileNavOpen ? 'is-open' : ''}`}>
           {NAV.map((n) => (
             <NavLink
               key={n.to}

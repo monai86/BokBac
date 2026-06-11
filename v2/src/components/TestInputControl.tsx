@@ -5,6 +5,7 @@ interface TestInputControlProps {
   value?: string
   onChange: (value: string | null) => void
   label?: string
+  options?: string[]
   layout?: 'compact' | 'fill'
   ariaPrefix?: string
 }
@@ -14,6 +15,7 @@ export function TestInputControl({
   value = '',
   onChange,
   label,
+  options,
   layout = 'compact',
   ariaPrefix = 'Set',
 }: TestInputControlProps) {
@@ -38,7 +40,7 @@ export function TestInputControl({
 
   return (
     <div className={`flex items-center ${layout === 'fill' ? 'gap-1.5' : 'gap-1'}`}>
-      {definition.options.map((option) => {
+      {(options || definition.options).map((option) => {
         const isSelected = value === option
         return (
           <button
@@ -56,4 +58,3 @@ export function TestInputControl({
     </div>
   )
 }
-

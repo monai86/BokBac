@@ -39,7 +39,7 @@ describe('IdentifyPage reset flow', () => {
     expect(screen.getByText(/educational probabilistic assistant/i)).toBeTruthy()
     expect(screen.getByText(/การจัดอันดับปัจจุบันมาจากค่าความชุก \(Prevalence prior\)/i)).toBeTruthy()
 
-    await user.click(screen.getByRole('button', { name: /set oxidase to \+/i }))
+    await user.click(screen.getByRole('button', { name: /set oxidase to −/i }))
     expect(screen.getByText(/พิจารณาจาก 1 การทดสอบ/i)).toBeTruthy()
     expect(screen.getByText('Evidence summary')).toBeTruthy()
 
@@ -63,7 +63,7 @@ describe('IdentifyPage reset flow', () => {
       expect(screen.queryByText('กำลังคำนวณ…')).toBeNull()
     })
 
-    await user.click(screen.getByRole('button', { name: /set oxidase to \+/i }))
+    await user.click(screen.getByRole('button', { name: /set oxidase to −/i }))
     await user.click(screen.getByRole('button', { name: /save current identification case/i }))
 
     expect(screen.getByRole('button', { name: /load saved case/i })).toBeTruthy()
@@ -83,7 +83,7 @@ describe('IdentifyPage reset flow', () => {
     expect(useIdentifyStore.getState().answers).toEqual({})
 
     await user.click(screen.getByRole('button', { name: /load saved case/i }))
-    expect(useIdentifyStore.getState().answers).toEqual({ oxidase: '+' })
+    expect(useIdentifyStore.getState().answers).toEqual({ oxidase: '−' })
 
     await user.click(screen.getByRole('button', { name: /delete saved case/i }))
     expect(screen.getByText('No saved cases yet.')).toBeTruthy()

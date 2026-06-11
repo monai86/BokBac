@@ -4,7 +4,7 @@ Modern rewrite of the bacterial identification web app using Vite + React 19 + T
 
 ## Version
 
-Current modern app version: `v4.0.2`
+Current modern app version: `v4.0.3`
 
 Legacy v3 remains `3.1.1` in the root `VERSION` file. The modern v4 version is authoritative in [`v2/package.json`](v2/package.json).
 

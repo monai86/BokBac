@@ -8,6 +8,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.0.3] - 2026-06-11
+
+### Added
+- **v4 suite-specific test display metadata** — added per-suite label and option overrides so a Canonical Test ID can render with the teaching method name used by that biochemical suite.
+- **v4 legacy suite import normalization** — custom suite imports now normalize legacy test IDs such as `glucose_of`, `motile_gpb`, and `lecithinase_gpb` into canonical v4 test IDs while preserving imported labels/options as suite display overrides.
+- **v4 expanded biochemical registry coverage** — restored legacy teaching tests for Enterobacterales, NFB, Vibrionaceae, and GN coccobacilli suites, including salt concentration tests, TCBS, CTA carbohydrates, nutrient/chocolate agar growth, PDC, KCN, Salicin, Inositol, and Dulcitol.
+
+### Changed
+- **v4 biochemical suite labels** — aligned Test Suite Reference, Custom Suite Manager, recommended tests, and biochemical result entry controls to use the same suite-aware display helper.
+- **v4 suite-specific result options** — constrained default biochemical result buttons by selected Test Suite, so shared tests such as TSI, Oxidase, and Catalase show the organism-group-appropriate options instead of every global outcome.
+- **v4 GPB and contextual glucose panels** — restored legacy-style display names/options such as `Glucose O/F`, `MSA (Mannitol)`, `Motility (25°C)`, `H₂S in TSI`, and `Lecithinase (Egg yolk)`.
+- **v4 mobile navigation** — replaced the narrow-screen expanded navigation grid with a hamburger menu so the app header no longer consumes the first viewport on phones.
+- **v4 mobile auth placement** — kept the login action in the right-side header control cluster on narrow screens instead of centering it between the brand and hamburger menu.
+- **v4 Gram stain wording** — removed visible "Wizard" wording and tightened the introduction copy/layout on the morphology helper card.
+
+### Fixed
+- **v4 Test Suite Reference group selection** — fixed the Vibrio / Aeromonas tab to load the `vibrio` suite instead of falling back to the first suite.
+- **v4 suite registry coverage** — added registry coverage for `growth_45` and `rhamnose`, and added regression tests to ensure every default suite item has a biochemical registry definition.
+
 ## [4.0.2] - 2026-06-11
 
 ### Added

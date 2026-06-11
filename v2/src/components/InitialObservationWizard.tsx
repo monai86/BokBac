@@ -68,21 +68,25 @@ export function InitialObservationWizard() {
       <div className="lg-specular" />
       <div className="lg-caustic" />
       <div className="lg-content">
-        <div className="mb-4 flex items-center justify-between">
-          <div>
-            <h2 className="text-xl font-bold text-zinc-100 flex items-center gap-2">
-              <span>🔬</span> ตัวช่วยวิเคราะห์ผลย้อมสไลด์ (Gram Stain & Morphology Wizard)
+        <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div className="max-w-3xl">
+            <p className="mb-1 text-[11px] font-bold uppercase tracking-[0.18em] text-cyan-300">
+              Gram Stain & Morphology
+            </p>
+            <h2 className="flex items-start gap-2 text-[22px] font-extrabold leading-tight text-zinc-100 sm:text-[26px]">
+              <span className="mt-0.5 text-xl">🔬</span>
+              <span>ตัวช่วยเลือกกลุ่มเชื้อจากผลย้อมสไลด์</span>
             </h2>
-            <p className="text-xs text-zinc-400">
+            <p className="mt-2 max-w-2xl text-[13px] leading-relaxed text-zinc-400">
               ระบุลักษณะเบื้องต้นเพื่อค้นหากลุ่มแบคทีเรียที่สอดคล้อง สิ่งส่งตรวจช่วยจัดลำดับคำแนะนำเท่านั้น ไม่เพิ่มความมั่นใจของผลจำแนกขั้นสุดท้าย
             </p>
           </div>
           <button
             type="button"
             onClick={resetInitialObservation}
-            className="text-xs text-zinc-500 hover:text-zinc-200 transition"
+            className="self-start rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-xs font-semibold text-zinc-400 transition hover:border-white/20 hover:bg-white/[0.06] hover:text-zinc-100"
           >
-            ↺ ล้างข้อมูล Wizard
+            ↺ ล้างข้อมูล
           </button>
         </div>
 

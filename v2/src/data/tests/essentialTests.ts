@@ -19,7 +19,7 @@ export const ESSENTIAL_GROUP_TESTS: Record<string, EssentialGroupTests> = {
   },
   vibrio: {
     primary: ['oxidase'],
-    core: ['sucrose', 'o129', 'salt_tolerance', 'indole'], // note: salt_tolerance maps to 6.5% NaCl in suite
+    core: ['sucrose', 'string_test', 'salt_0', 'salt_6', 'indole'],
     minTests: 4,
   },
   gpc_cluster: {
@@ -76,6 +76,12 @@ export function calculateSuiteDiagnosticPower(
     // special alias handling for rules matching suites
     if (cleanId === 'salttolerance') {
       return testIdSet.has('65nacl') || testIdSet.has('salttolerance')
+    }
+    if (cleanId === 'salt0') {
+      return testIdSet.has('salt0') || testIdSet.has('0nacl')
+    }
+    if (cleanId === 'salt6') {
+      return testIdSet.has('salt6') || testIdSet.has('6nacl')
     }
     if (cleanId === 'glucose') {
       return testIdSet.has('glucose') || testIdSet.has('glucoseacid') || testIdSet.has('glucoseof')

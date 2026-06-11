@@ -151,7 +151,7 @@ export function IdentifyPage() {
         </div>
       )}
 
-      {/* STEP 1: Observation Wizard */}
+      {/* STEP 1: Gram stain and morphology */}
       {(!isStepMode || step === 1) && (
         <div className="space-y-4 animate-fade-in">
           <section className="space-y-2">
@@ -189,7 +189,7 @@ export function IdentifyPage() {
                   Manual Group Override
                 </h3>
                 <p className="text-[11px] text-zinc-500 mb-2">
-                  เลือกกลุ่มแบคทีเรียเพื่อโหลด Test Suite แบบแมนนวล (จะข้ามการแนะนำจาก Wizard)
+                  เลือกกลุ่มแบคทีเรียเพื่อโหลด Test Suite แบบแมนนวล (จะข้ามคำแนะนำอัตโนมัติ)
                 </p>
                 <GroupSelector />
               </section>

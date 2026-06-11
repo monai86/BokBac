@@ -39,6 +39,8 @@ export interface TestSuiteItem {
   order: number
   weightOverride?: number
   note?: string
+  labelOverride?: string
+  optionsOverride?: string[]
 }
 
 export type SuiteTriggerValue<T> = T | readonly T[]

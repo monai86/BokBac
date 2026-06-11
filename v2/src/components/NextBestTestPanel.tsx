@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useIdentifyStore } from '@/store/identifyStore'
+import { getSuiteTestDisplay } from '@/lib/suiteCatalog'
 import { TestInputControl } from './TestInputControl'
 
 export function NextBestTestPanel() {
@@ -63,6 +64,8 @@ export function NextBestTestPanel() {
           <div className="grid gap-3 sm:grid-cols-3">
             {topRecommendations.map((rec) => {
               const current = answers[rec.testId] || ''
+              const suiteItem = activeSuite?.tests.find((item) => item.testId === rec.testId)
+              const display = suiteItem ? getSuiteTestDisplay(suiteItem) : { label: rec.testLabel, options: undefined }
 
               return (
                 <div
@@ -72,7 +75,7 @@ export function NextBestTestPanel() {
                   <div>
                     <div className="flex items-center justify-between gap-2">
                       <span className="text-sm font-medium text-zinc-200 truncate" title={rec.testLabel}>
-                        {rec.testLabel}
+                        {display.label}
                       </span>
                       <span className="shrink-0 text-[10px] font-bold text-violet-200 bg-violet-500/10 px-1.5 py-0.5 rounded">
                         uncertainty -{rec.entropyReduction}%
@@ -85,7 +88,8 @@ export function NextBestTestPanel() {
 
                   <TestInputControl
                     testId={rec.testId}
-                    label={rec.testLabel}
+                    label={display.label}
+                    options={display.options}
                     value={current}
                     layout="fill"
                     ariaPrefix="Set recommended"
