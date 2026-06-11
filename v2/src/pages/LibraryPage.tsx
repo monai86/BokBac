@@ -101,7 +101,7 @@ export function LibraryPage() {
   return (
     <div className="workspace-page max-w-none px-4 sm:px-6 flex flex-col h-[calc(100vh-80px)] overflow-hidden">
       {/* Toolbar */}
-      <header className="mb-3 flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between flex-shrink-0">
+      <header className="mb-3 flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-start xl:gap-6 flex-shrink-0">
         <label className="relative w-full xl:max-w-[280px]">
           <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500 text-lg">🔍</span>
           <span className="sr-only">ค้นหาเชื้อ</span>
@@ -128,7 +128,7 @@ export function LibraryPage() {
           />
         </label>
 
-        <div className="flex flex-wrap items-center gap-2 group-filter-scroll">
+        <div className="flex flex-wrap items-center gap-2 group-filter-scroll flex-1">
           {GROUPS.map((g) => (
             <button
               type="button"
