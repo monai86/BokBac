@@ -19,13 +19,13 @@ declare global {
 }
 
 const fallbackFirebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
-  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
+  apiKey: "AIzaSyD8sZ9bJoOq5Dv0M7NSaDkt5Dj321LgYQA",
+  authDomain: "bokbac-app.firebaseapp.com",
+  projectId: "bokbac-app",
+  storageBucket: "bokbac-app.firebasestorage.app",
+  messagingSenderId: "1058529712770",
+  appId: "1:1058529712770:web:a7d00fe2ac20d39fe9729b",
+  measurementId: "G-YNS6WJSJ2L",
 }
 
 const firebaseConfig = (typeof window !== 'undefined' && window.MICROBACT_FIREBASE_CONFIG && window.MICROBACT_FIREBASE_CONFIG.apiKey && window.MICROBACT_FIREBASE_CONFIG.apiKey !== "YOUR_API_KEY")
