@@ -7,7 +7,7 @@ import { caseStorage, getLocalCases } from '@/services/caseStorage'
 import { doc, getDoc } from 'firebase/firestore'
 
 
-const GUEST_MODE_KEY = 'microbial-world:v4:guest-mode'
+const GUEST_MODE_KEY = 'bokbac:v4:guest-mode'
 
 function loadGuestMode() {
   if (typeof window === 'undefined') return false
@@ -74,7 +74,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             const prefDoc = await getDoc(doc(firestoreDb, 'users', usr.uid, 'settings', 'preferences'))
             if (prefDoc.exists()) {
               settings = prefDoc.data()
-              window.localStorage.setItem('mbsettings', JSON.stringify(settings))
+              window.localStorage.setItem('bokbac:v4:settings', JSON.stringify(settings))
             }
           }
           const syncedCases = await caseStorage.syncLocalToCloud(usr.uid)

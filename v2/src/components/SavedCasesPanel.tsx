@@ -118,7 +118,7 @@ export function SavedCasesPanel({ standalone = false }: { standalone?: boolean }
             />
           </label>
           <a
-            download="microbial-world-cases.json"
+            download="bokbac-cases.json"
             href={exportHref}
             aria-disabled={filteredCases.length === 0}
             className={`rounded-md border px-3 py-2 text-center text-xs font-medium transition ${

@@ -10,7 +10,7 @@ import {
 import { db as firestoreDb, isFirebaseActive } from '@/auth/firebase'
 import type { SavedCase } from '@/lib/types'
 
-const SAVED_CASES_KEY = 'microbial-world:v4:saved-cases'
+const SAVED_CASES_KEY = 'bokbac:v4:saved-cases'
 
 function canUseStorage() {
   return typeof window !== 'undefined' && typeof window.localStorage !== 'undefined'

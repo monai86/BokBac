@@ -70,6 +70,24 @@ export function IdentifyPage() {
 
   return (
     <div className="mx-auto max-w-6xl p-4 sm:p-6 lg:p-8 space-y-6">
+      {/* Onboarding Guide */}
+      <div className="rounded-xl border border-violet-500/20 bg-gradient-to-r from-violet-900/10 to-indigo-900/10 p-4 text-xs leading-relaxed flex items-start gap-3 relative overflow-hidden">
+        <div className="lg-specular" />
+        <div className="lg-caustic" />
+        <span className="text-base shrink-0">💡</span>
+        <div className="space-y-1">
+          <p className="font-semibold text-zinc-100">
+            เริ่มต้นใช้งาน BokBac (Quick Guide)
+          </p>
+          <p className="text-zinc-400">
+            เริ่มต้นด้วยการระบุผล Gram stain และสัณฐานวิทยา (Morphology) ในขั้นตอนที่ 1 ระบบจะแนะนำชุดการทดสอบทางชีวเคมี (Test Suite) ที่เหมาะสม จากนั้นทำแบบทดสอบทางชีวเคมีในขั้นตอนที่ 2 และตรวจสอบผลการวิเคราะห์คะแนนความน่าจะเป็นของเชื้อในขั้นตอนที่ 3
+          </p>
+          <p className="text-zinc-400 italic mt-1 pt-1 border-t border-white/5">
+            Start with Gram stain and morphology. BokBac will suggest relevant biochemical test suites, then calculate ranked bacterial candidates using probabilistic matching.
+          </p>
+        </div>
+      </div>
+
       {/* Progress Stepper Bar (Only in Step Mode) */}
       {isStepMode && (
         <div className="lg-surface p-4 bg-zinc-900/40 border border-white/5 shadow-md flex flex-col sm:flex-row gap-4 items-center justify-between">
@@ -363,14 +381,12 @@ export function IdentifyPage() {
       )}
 
       {/* Educational Disclaimer */}
-      <footer className="border-t border-white/5 pt-4 text-[10px] text-zinc-600 leading-normal space-y-1">
+      <footer className="border-t border-white/5 pt-4 text-[10px] text-zinc-650 leading-normal space-y-1">
         <p>
-          <strong>Educational Disclaimer:</strong> BokBac is an educational decision-support tool for learning bacterial identification logic.
-          It is not a replacement for local laboratory SOPs, quality control, confirmatory identification systems, antimicrobial susceptibility testing standards, or professional clinical judgment.
+          <strong>Educational Disclaimer:</strong> BokBac is an educational decision-support tool. Results should be interpreted together with laboratory standards, confirmatory testing, and clinical context. BokBac should not be used as the sole basis for clinical diagnosis.
         </p>
         <p>
-          <strong>คำชี้แจงเพื่อการศึกษา:</strong> BokBac เป็นเครื่องมือเพื่อการเรียนรู้และช่วยฝึกการคิดวิเคราะห์ในการ identify bacteria เท่านั้น
-          ไม่ควรใช้แทน SOP ของห้องปฏิบัติการ การควบคุมคุณภาพ การทดสอบยืนยัน หรือการตัดสินใจทางการแพทย์จริง
+          <strong>คำชี้แจงเพื่อการศึกษา:</strong> BokBac เป็นเครื่องมือเพื่อการศึกษาและช่วยตัดสินใจ ผลลัพธ์ควรได้รับการตีความร่วมกับมาตรฐานห้องปฏิบัติการ การทดสอบยืนยัน และบริบททางคลินิก ไม่ควรใช้ BokBac เป็นเกณฑ์เดียวในการวินิจฉัยโรคทางคลินิก
         </p>
       </footer>
     </div>

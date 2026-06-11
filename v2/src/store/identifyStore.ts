@@ -24,8 +24,8 @@ import { db as firestoreDb, isFirebaseActive } from '@/auth/firebase'
 import { caseStorage, getLocalCases } from '@/services/caseStorage'
 import { doc, setDoc } from 'firebase/firestore'
 
-const CUSTOM_SUITES_KEY = 'microbial-world:v4:custom-suites'
-const ACTIVE_SUITE_ID_KEY = 'microbial-world:v4:active-suite-id'
+const CUSTOM_SUITES_KEY = 'bokbac:v4:custom-suites'
+const ACTIVE_SUITE_ID_KEY = 'bokbac:v4:active-suite-id'
 
 function canUseStorage() {
   return typeof window !== 'undefined' && typeof window.localStorage !== 'undefined'
@@ -106,7 +106,7 @@ export const useIdentifyStore = create<IdentifyState>()((set, get) => ({
   suiteSelectionReason: undefined,
   
   authUserId: null,
-  settings: canUseStorage() ? JSON.parse(window.localStorage.getItem('mbsettings') || '{}') : {},
+  settings: canUseStorage() ? JSON.parse(window.localStorage.getItem('bokbac:v4:settings') || '{}') : {},
 
   setGroup: (g) => {
     // Find active suite or default for this group
@@ -288,7 +288,7 @@ export const useIdentifyStore = create<IdentifyState>()((set, get) => ({
   saveSettings: async (newSettings) => {
     set({ settings: newSettings })
     if (canUseStorage()) {
-      window.localStorage.setItem('mbsettings', JSON.stringify(newSettings))
+      window.localStorage.setItem('bokbac:v4:settings', JSON.stringify(newSettings))
     }
     const { authUserId } = get()
     if (isFirebaseActive && firestoreDb && authUserId) {
