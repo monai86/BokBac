@@ -7,9 +7,16 @@ import { ResultExplanation } from '@/components/ResultExplanation'
 import { SavedCasesPanel } from '@/components/SavedCasesPanel'
 import { InitialObservationWizard } from '@/components/InitialObservationWizard'
 import { TestSuiteManager } from '@/components/TestSuiteManager'
+import { LoadingSplash } from '@/components/LoadingSplash'
 import { useIdentifyStore } from '@/store/identifyStore'
 import { ESSENTIAL_GROUP_TESTS, calculateSuiteDiagnosticPower } from '@/data/tests/essentialTests'
 import { lookupTestDefinition } from '@/data/tests/biochemicalTestRegistry'
+
+const WORKFLOW_STEPS = [
+  { n: 1, l: 'Gram Stain / Morphology', icon: '🔬' },
+  { n: 2, l: 'Biochemical Tests', icon: '⚗️' },
+  { n: 3, l: 'Probabilistic Review', icon: '📊' },
+]
 
 export function IdentifyPage() {
   const results = useIdentifyStore((s) => s.results)
@@ -90,56 +97,40 @@ export function IdentifyPage() {
 
       {/* Progress Stepper Bar (Only in Step Mode) */}
       {isStepMode && (
-        <div className="lg-surface p-4 bg-zinc-900/40 border border-white/5 shadow-md flex flex-col sm:flex-row gap-4 items-center justify-between">
+        <div className="identify-stepper lg-surface">
           <div className="lg-specular" />
           <div className="lg-caustic" />
-          <div className="lg-content flex items-center gap-3 sm:gap-6 w-full sm:w-auto overflow-x-auto pb-2 sm:pb-0 scrollbar-none snap-x">
-            {[
-              { n: 1, l: 'Gram Stain / Morphology', icon: '🔬' },
-              { n: 2, l: 'Biochemical Tests', icon: '⚗️' },
-              { n: 3, l: 'Probabilistic Review', icon: '📊' },
-            ].map((s, idx, arr) => (
-              <div key={s.n} className="flex items-center gap-2 shrink-0 snap-start">
+          <div className="lg-content identify-stepper-content">
+            <div className="identify-step-list" aria-label="Diagnostic workflow progress">
+              {WORKFLOW_STEPS.map((s, idx, arr) => (
                 <div
-                  className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all border ${
-                    step >= s.n
-                      ? 'bg-violet-500 border-violet-400 text-white shadow-[0_0_10px_rgba(139,92,246,0.4)]'
-                      : 'bg-zinc-800 border-zinc-700 text-zinc-500'
-                  }`}
+                  key={s.n}
+                  className={`identify-step-item ${step === s.n ? 'is-current' : ''} ${step > s.n ? 'is-complete' : ''}`}
                 >
+                  <div className="identify-step-dot">
                   {step > s.n ? '✓' : s.n}
+                  </div>
+                  <span className="identify-step-label">
+                    <span>{s.icon}</span>
+                    {s.l}
+                  </span>
+                  {idx < arr.length - 1 && (
+                    <div className={`identify-step-connector ${step > s.n ? 'is-complete' : ''}`} />
+                  )}
                 </div>
-                <span
-                  className={`text-xs font-semibold ${
-                    step === s.n ? 'text-zinc-100' : 'text-zinc-500'
-                  }`}
-                >
-                  <span className="mr-1">{s.icon}</span>
-                  {s.l}
-                </span>
-                {idx < arr.length - 1 && (
-                  <div
-                    className={`w-4 sm:w-10 h-px transition-colors ${
-                      step > s.n ? 'bg-violet-500/40' : 'bg-white/5'
-                    }`}
-                  />
-                )}
-              </div>
-            ))}
-          </div>
-
-          <div className="lg-content flex items-center gap-2 shrink-0 w-full sm:w-auto justify-end">
+              ))}
+            </div>
             <button
               type="button"
               onClick={() => setIsStepMode(false)}
-              className="px-3 py-1.5 rounded-lg border border-white/10 bg-white/5 text-zinc-400 hover:text-zinc-100 hover:bg-white/10 text-xs font-semibold transition"
+              className="identify-step-action"
             >
               🧩 แสดงหน้าเดียว
             </button>
             <button
               type="button"
               onClick={handleReset}
-              className="px-3 py-1.5 rounded-lg border border-white/10 bg-white/5 text-zinc-400 hover:text-zinc-100 hover:bg-white/10 text-xs font-semibold transition"
+              className="identify-step-action"
             >
               🔄 เริ่มใหม่
             </button>
@@ -287,7 +278,7 @@ export function IdentifyPage() {
             </div>
             {top10.length === 0 ? (
               <div className="lg-surface p-6 text-center text-zinc-500">
-                กำลังประมวลผลความน่าจะเป็น…
+                <LoadingSplash label="กำลังประมวลผลความน่าจะเป็น..." />
               </div>
             ) : (
               <>

@@ -13,7 +13,7 @@ const NAV = [
 ]
 
 export function Layout() {
-  const { user, isGuest, logout } = useAuth()
+  const { user, logout } = useAuth()
   const location = useLocation()
 
   // Activate Liquid Glass interactive effects (mouse tracking + tilt)
@@ -144,7 +144,7 @@ export function Layout() {
             </>
           ) : (
             <Link to="/login" className="btn btn-ghost" style={{ padding: '8px 16px', fontSize: '12px' }}>
-              {isGuest ? 'Guest mode' : 'เข้าสู่ระบบ'}
+              เข้าสู่ระบบ
             </Link>
           )}
         </div>

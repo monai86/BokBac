@@ -50,7 +50,7 @@ const IMP_COLOR: Record<string, string> = {
 function InfoCard({ title, color, children }: { title: string; color?: string; children: React.ReactNode }) {
   const c = color || '#a78bfa'
   return (
-    <div className="card" style={{ padding: '14px', background: 'var(--glass-bg)', backdropFilter: 'var(--glass-blur)', border: `1px solid ${c}40`, borderRadius: 12, borderLeft: `3px solid ${c}` }}>
+    <div className="card library-info-card" style={{ borderColor: `${c}40`, boxShadow: `inset 0 0 0 1px ${c}20` }}>
       <div style={{ fontSize: 11, fontWeight: 700, color: c, letterSpacing: .5, textTransform: 'uppercase', marginBottom: 6 }}>{title}</div>
       {children}
     </div>
@@ -81,6 +81,19 @@ export function LibraryPage() {
     return species.find((item) => item.id === speciesId) || null
   }, [speciesId, species])
 
+  const navigationList = useMemo(
+    () => (selectedSpecies && filtered.some((item) => item.id === selectedSpecies.id) ? filtered : species),
+    [filtered, selectedSpecies, species],
+  )
+
+  const selectedIndex = selectedSpecies
+    ? navigationList.findIndex((item) => item.id === selectedSpecies.id)
+    : -1
+  const previousSpecies = selectedIndex > 0 ? navigationList[selectedIndex - 1] : null
+  const nextSpecies = selectedIndex >= 0 && selectedIndex < navigationList.length - 1
+    ? navigationList[selectedIndex + 1]
+    : null
+
   // Automatically reset tab when species changes
   useEffect(() => {
     setActiveTab('clinical')
@@ -99,9 +112,9 @@ export function LibraryPage() {
 
 
   return (
-    <div className="workspace-page max-w-none px-4 sm:px-6 flex flex-col h-[calc(100vh-80px)] overflow-hidden">
+    <div className="workspace-page library-page max-w-none px-4 sm:px-6 flex flex-col">
       {/* Toolbar */}
-      <header className="mb-3 flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-start xl:gap-6 flex-shrink-0">
+      <header className="library-toolbar mb-3 flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-start xl:gap-6 flex-shrink-0">
         <label className="relative w-full xl:max-w-[280px]">
           <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500 text-lg">🔍</span>
           <span className="sr-only">ค้นหาเชื้อ</span>
@@ -156,9 +169,9 @@ export function LibraryPage() {
       </header>
 
       {/* Split catalog layout */}
-      <div className="flex flex-1 min-h-0 overflow-hidden gap-4 mt-2">
+      <div className={`library-layout flex flex-1 min-h-0 gap-4 mt-2 ${selectedSpecies ? 'has-selection' : ''}`}>
         {/* Left side list */}
-        <div className={`overflow-y-auto transition-all duration-300 pr-1 ${selectedSpecies ? 'lg:w-[35%] w-full' : 'w-full'}`}>
+        <div className={`library-list-pane overflow-y-auto transition-all duration-300 pr-1 ${selectedSpecies ? 'lg:w-[35%] w-full' : 'w-full'}`}>
           {filtered.length === 0 ? (
             <div className="lg-surface p-8 text-center text-sm text-zinc-500">
               ไม่พบ species ที่ตรงกับคำค้นนี้
@@ -212,7 +225,7 @@ export function LibraryPage() {
 
         {/* Right side details panel */}
         {selectedSpecies && (
-          <div className="lg:w-[65%] w-full overflow-y-auto lg:relative lg:block fixed inset-0 lg:inset-auto z-50 lg:z-auto bg-[#0a0514]/95 lg:bg-[#0a0514]/70 lg:border-l lg:border-white/10 lg:pl-4 p-4 lg:p-0 flex flex-col">
+          <div className="library-detail-pane lg:w-[65%] w-full overflow-y-auto lg:relative lg:block bg-[#0a0514]/70 lg:border-l lg:border-white/10 lg:pl-4 flex flex-col">
             <div className="lg-surface p-5 sm:p-6 flex-1 flex flex-col" style={{ background: `linear-gradient(135deg, ${groupColor}15, rgba(10,5,20,0.8))` }}>
               <div className="lg-specular" />
               <div className="lg-caustic" />
@@ -220,6 +233,13 @@ export function LibraryPage() {
                 {/* Header panel */}
                 <div className="flex items-start justify-between gap-4 pb-4 border-b border-white/10">
                   <div>
+                    <button
+                      type="button"
+                      onClick={() => navigate('/library')}
+                      className="library-back-button"
+                    >
+                      ← กลับไปคลังเชื้อ
+                    </button>
                     <h1 className="text-2xl font-bold italic" style={{ color: groupColor }}>
                       {selectedSpecies.name}
                     </h1>
@@ -237,13 +257,25 @@ export function LibraryPage() {
                       )}
                     </div>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => navigate('/library')}
-                    className="px-3 py-1.5 rounded-lg border border-white/10 bg-white/5 text-zinc-400 hover:text-zinc-100 hover:bg-white/10 text-xs font-semibold transition"
-                  >
-                    ✕ ปิดหน้าต่าง
-                  </button>
+                  <div className="library-detail-actions">
+                    {previousSpecies && (
+                      <Link to={`/library/${previousSpecies.id}`} className="library-detail-nav">
+                        ← ก่อนหน้า
+                      </Link>
+                    )}
+                    {nextSpecies && (
+                      <Link to={`/library/${nextSpecies.id}`} className="library-detail-nav">
+                        ถัดไป →
+                      </Link>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => navigate('/library')}
+                      className="library-detail-nav"
+                    >
+                      ปิด
+                    </button>
+                  </div>
                 </div>
 
                 {/* Tab select bar */}

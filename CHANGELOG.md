@@ -8,6 +8,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.0.2] - 2026-06-11
+
+### Added
+- **v4 expanded teaching suite tests** — added PPR, Gas from Glucose, Lecithinase, GPB H₂S/TSI, GPB Indole/Oxidase, and Reverse CAMP coverage in the modern test-suite registry and regression tests.
+- **v4 loading feedback** — added a reusable compact loading indicator for auth checks, login actions, reset email actions, and probability processing states.
+
+### Changed
+- **v4 narrow-screen workflow layout** — updated specimen selection, diagnostic step progress, library details, and Test Suite Reference layouts to avoid trapped horizontal scrolling on narrow windows.
+- **v4 login action styling** — changed the primary login action to an animated pastel gradient while preserving reduced-motion behavior.
+
+### Fixed
+- **v4 library detail navigation** — made organism detail pages usable on narrow screens with visible back, previous, and next navigation instead of a fixed overlay that trapped users.
+
 ## [4.0.1] - 2026-06-11
 
 ### Added

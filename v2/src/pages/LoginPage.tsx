@@ -4,6 +4,7 @@ import { useAuth } from '@/auth/useAuth'
 import { auth, isFirebaseActive } from '@/auth/firebase'
 import { sendPasswordResetEmail } from 'firebase/auth'
 import { loginWithEmail, signupWithEmail, loginWithGoogle } from '@/auth/authService'
+import { LoadingSplash } from '@/components/LoadingSplash'
 
 export function LoginPage() {
   const { setGuest } = useAuth()
@@ -248,9 +249,9 @@ export function LoginPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="btn btn-primary w-full"
+                className="btn btn-primary login-submit-button w-full"
               >
-                {loading ? 'กำลังดำเนินการ...' : mode === 'login' ? 'เข้าสู่ระบบ' : 'สร้างบัญชีใหม่'}
+                {loading ? <LoadingSplash compact label="กำลังเข้าสู่ระบบ..." /> : mode === 'login' ? 'เข้าสู่ระบบ' : 'สร้างบัญชีใหม่'}
               </button>
             </form>
           ) : (
@@ -290,9 +291,9 @@ export function LoginPage() {
                   <button
                     type="submit"
                     disabled={resetLoading}
-                    className="btn btn-primary flex-1 py-2 text-xs font-bold"
+                    className="btn btn-primary login-submit-button flex-1 py-2 text-xs font-bold"
                   >
-                    {resetLoading ? 'กำลังส่ง...' : 'ส่งอีเมลรีเซ็ต'}
+                    {resetLoading ? <LoadingSplash compact label="กำลังส่ง..." /> : 'ส่งอีเมลรีเซ็ต'}
                   </button>
                 </div>
               </form>

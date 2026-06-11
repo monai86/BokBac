@@ -3,6 +3,29 @@ import { SPECIMEN_GUIDE } from '@/data/bacteriaLibrary'
 import { getLibrarySpecies } from '@/lib/libraryCatalog'
 import { useNavigate } from 'react-router-dom'
 
+const WORKFLOW_STEPS = [
+  {
+    day: 'Day 1',
+    title: 'รับสิ่งส่งตรวจ',
+    desc: 'Gram stain ด่วน เลือก plate ให้ตรงกับ specimen และบ่มตามเงื่อนไข',
+  },
+  {
+    day: 'Day 2',
+    title: 'อ่าน colony',
+    desc: 'ดู colony morphology, ทำ Gram stain จาก colony เดี่ยว และเลือก screening test',
+  },
+  {
+    day: 'Day 3',
+    title: 'ลง biochemical',
+    desc: 'เลือกชุดทดสอบตาม Gram group เช่น catalase, oxidase, TSI, bile esculin หรือ disc tests',
+  },
+  {
+    day: 'Day 4',
+    title: 'สรุปผล',
+    desc: 'เทียบผลกับ reference, ตรวจ contradiction และบันทึก case สำหรับทบทวน',
+  },
+]
+
 export function SpecimenPage() {
   const [selectedId, setSelectedId] = useState('blood')
   const navigate = useNavigate()
@@ -64,188 +87,125 @@ export function SpecimenPage() {
           </div>
         </aside>
 
-        {/* Specimen Detail Area */}
         <div className="specimen-main space-y-5">
-          {/* Hero Header Card */}
-          <div className="legacy-hero-card lg-surface p-5 bg-gradient-to-br from-violet-500/10 via-white/[0.02] to-yellow-500/5 border border-white/10 shadow-lg">
+          <div className="specimen-quick-panel lg-surface">
             <div className="lg-specular" />
             <div className="lg-caustic" />
-            <div className="lg-content flex items-center gap-4">
-              <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-violet-500/20 to-yellow-500/10 border border-violet-400/25 flex items-center justify-center text-3xl shadow-md shrink-0">
-                {currentSpecimen.emoji}
+            <div className="lg-content">
+              <div className="specimen-title-row">
+                <div className="specimen-mark" aria-hidden="true">{currentSpecimen.emoji}</div>
+                <div>
+                  <p className="specimen-kicker">Specimen guide</p>
+                  <h1>{currentSpecimen.label.split(' (')[0]}</h1>
+                  <p className="specimen-subtitle">
+                    {currentSpecimen.label.match(/\(([^)]+)\)/)?.[1] || 'Clinical specimen'}
+                  </p>
+                </div>
               </div>
-              <div>
-                <h2 className="text-xl sm:text-2xl font-bold text-zinc-50">
-                  {currentSpecimen.label.split(' (')[0]}
-                </h2>
-                <p className="text-[10px] uppercase tracking-widest text-zinc-500 font-bold mt-0.5">
-                  {currentSpecimen.label.match(/\(([^)]+)\)/)?.[1] || 'Specimen'}
-                </p>
+
+              <div className="specimen-facts">
+                <section>
+                  <span>อาหารเลี้ยงเชื้อ</span>
+                  <strong>{currentSpecimen.plates.length} plates</strong>
+                </section>
+                <section>
+                  <span>เงื่อนไขบ่ม</span>
+                  <strong>{currentSpecimen.condition}</strong>
+                </section>
+                <section>
+                  <span>จุดตรวจเร็ว</span>
+                  <strong>{currentSpecimen.notes}</strong>
+                </section>
               </div>
             </div>
           </div>
 
-          {/* Cards Grid */}
-          <div className="grid gap-5 xl:grid-cols-2">
-            {/* Culture Media Card */}
-            <div className="legacy-info-card lg-surface p-5 space-y-3">
+          <div className="specimen-detail-grid">
+            <section className="specimen-section lg-surface specimen-section-media">
               <div className="lg-specular" />
               <div className="lg-caustic" />
-              <div className="lg-content space-y-3">
-                <div className="flex items-center gap-2">
-                  <div className="w-1 h-4 bg-gradient-to-b from-indigo-500 to-purple-500 rounded-sm" />
-                  <span className="text-sm font-bold text-zinc-200">🧫 อาหารเลี้ยงเชื้อ</span>
+              <div className="lg-content">
+                <div className="specimen-section-head">
+                  <span className="specimen-section-code">01</span>
+                  <h2>Culture media</h2>
                 </div>
-                <div className="flex flex-col gap-2">
+                <ol className="specimen-plate-list">
                   {currentSpecimen.plates.map((plate, index) => (
-                    <div
-                      key={plate}
-                      className="flex items-center gap-3 bg-white/[0.035] border border-white/7 rounded-lg px-4 py-2.5 transition hover:translate-x-1 hover:border-violet-500/25 hover:bg-violet-500/5"
-                    >
-                      <span className="w-7 h-7 rounded-lg bg-violet-500/40 text-white text-xs font-bold flex items-center justify-center border border-violet-500/30 shrink-0 shadow-lg shadow-violet-500/20">
-                        {index + 1}
-                      </span>
-                      <span className="text-sm font-semibold text-zinc-300">{plate}</span>
-                    </div>
+                    <li key={plate}>
+                      <span>{index + 1}</span>
+                      <strong>{plate}</strong>
+                    </li>
                   ))}
-                </div>
+                </ol>
               </div>
-            </div>
+            </section>
 
-            {/* Incubation Conditions Card */}
-            <div className="legacy-info-card lg-surface p-5 space-y-3">
+            <section className="specimen-section lg-surface specimen-section-condition">
               <div className="lg-specular" />
               <div className="lg-caustic" />
-              <div className="lg-content space-y-3">
-                <div className="flex items-center gap-2">
-                  <div className="w-1 h-4 bg-gradient-to-b from-cyan-500 to-blue-500 rounded-sm" />
-                  <span className="text-sm font-bold text-zinc-200">🌡️ เงื่อนไขการบ่ม</span>
+              <div className="lg-content">
+                <div className="specimen-section-head">
+                  <span className="specimen-section-code">02</span>
+                  <h2>Incubation</h2>
                 </div>
-                <div className="p-3.5 rounded-lg border border-cyan-500/20 bg-cyan-500/5">
-                  <div className="flex items-center gap-2 text-[10px] font-bold text-cyan-400 mb-1.5">
-                    <span>🌡️</span>
-                    <span>อุณหภูมิ & สภาพแวดล้อม</span>
-                  </div>
-                  <p className="text-sm text-zinc-300 leading-relaxed">
-                    {currentSpecimen.condition}
-                  </p>
+                <p className="specimen-readable">{currentSpecimen.condition}</p>
+                <div className="specimen-note-strip">
+                  <span>Note</span>
+                  <strong>{currentSpecimen.notes}</strong>
                 </div>
               </div>
-            </div>
+            </section>
 
-            {/* Important Notes Card */}
-            <div className={`lg-surface p-5 space-y-3 ${organismList.length === 0 ? 'xl:col-span-2' : ''}`}>
-              <div className="lg-specular" />
-              <div className="lg-caustic" />
-              <div className="lg-content space-y-3">
-                <div className="flex items-center gap-2">
-                  <div className="w-1 h-4 bg-gradient-to-b from-emerald-500 to-teal-500 rounded-sm" />
-                  <span className="text-sm font-bold text-zinc-200">📋 หมายเหตุสำคัญ</span>
-                </div>
-                <div className="p-3.5 rounded-lg border border-emerald-500/20 bg-emerald-500/5">
-                  <p className="text-sm text-zinc-300 leading-relaxed">
-                    {currentSpecimen.notes}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Common Pathogens Card */}
             {organismList.length > 0 && (
-              <div className="lg-surface p-5 space-y-3">
+              <section className="specimen-section lg-surface specimen-section-organisms">
                 <div className="lg-specular" />
                 <div className="lg-caustic" />
-                <div className="lg-content space-y-3">
-                  <div className="flex items-center gap-2">
-                    <div className="w-1 h-4 bg-gradient-to-b from-purple-500 to-pink-500 rounded-sm" />
-                    <span className="text-sm font-bold text-zinc-200">🦠 เชื้อสาเหตุที่พบบ่อย</span>
+                <div className="lg-content">
+                  <div className="specimen-section-head">
+                    <span className="specimen-section-code">03</span>
+                    <h2>Common pathogens</h2>
                   </div>
-                  <div className="flex flex-wrap gap-1.5">
+                  <div className="specimen-organism-list">
                     {organismList.map((org) => (
                       <button
                         key={org}
                         type="button"
                         onClick={() => handleSelectOrganism(org)}
-                        className="px-2.5 py-1.5 rounded-lg border border-purple-500/20 bg-purple-500/10 text-purple-200 text-xs font-medium transition hover:bg-purple-500/20 hover:border-purple-500/40"
+                        className="specimen-organism-chip"
                       >
                         {org}
                       </button>
                     ))}
                   </div>
                 </div>
-              </div>
+              </section>
             )}
           </div>
 
-          {/* Day 1-4 Lab Workflow Timeline */}
-          <div className="lg-surface p-6 space-y-4 bg-zinc-900/10 border border-white/5">
+          <section className="specimen-workflow lg-surface">
             <div className="lg-specular" />
             <div className="lg-caustic" />
-            <div className="lg-content space-y-4">
-              <div className="flex items-center gap-3">
-                <span className="text-xl">📅</span>
+            <div className="lg-content">
+              <div className="specimen-section-head specimen-workflow-head">
+                <span className="specimen-section-code">04</span>
                 <div>
-                  <h3 className="text-sm font-bold text-orange-400">ตารางการดำเนินงานทางห้องปฏิบัติการ</h3>
-                  <p className="text-[11px] text-zinc-500 mt-0.5">4-Day Standard Lab Workup Timeline</p>
+                  <h2>Lab workup timeline</h2>
+                  <p>4-day teaching workflow for specimen-to-result reasoning</p>
                 </div>
               </div>
-
-              <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-                {[
-                  {
-                    day: 'Day 1',
-                    icon: '📦',
-                    title: 'รับและลงเพลท',
-                    desc: 'รับสิ่งส่งตรวจ ทำ Gram stain ด่วน และลงเพลทอาหารเลี้ยงเชื้อที่เหมาะสม จากนั้นนำเข้าตู้บ่ม 37°C',
-                    color: 'border-blue-500/25 bg-blue-500/5 text-blue-400',
-                    iconBg: 'bg-blue-500/20 text-blue-300'
-                  },
-                  {
-                    day: 'Day 2',
-                    icon: '🔍',
-                    title: 'ดูผลและทดสอบขั้นต้น',
-                    desc: 'ตรวจดูสัณฐานวิทยาของโคโลนี ทำ Gram stain โคโลนีเดี่ยว และทดสอบเบื้องต้น เช่น Catalase หรือ Oxidase',
-                    color: 'border-cyan-500/25 bg-cyan-500/5 text-cyan-400',
-                    iconBg: 'bg-cyan-500/20 text-cyan-300'
-                  },
-                  {
-                    day: 'Day 3',
-                    icon: '⚗️',
-                    title: 'การทดสอบชีวเคมี',
-                    desc: 'ลงชุดทดสอบเคมีเป้าหมายตามผลการวิเคราะห์เบื้องต้น (เช่น TSI, LIA, Citrate, MIO หรือแผ่นน้ำยาพิเศษ)',
-                    color: 'border-violet-500/25 bg-violet-500/5 text-violet-400',
-                    iconBg: 'bg-violet-500/20 text-violet-300'
-                  },
-                  {
-                    day: 'Day 4',
-                    icon: '✅',
-                    title: 'อ่านผลและรายงาน',
-                    desc: 'แปลผลปฏิกิริยาชีวเคมีทั้งหมด ตรวจความถูกต้องเปรียบเทียบกับคู่มือ สรุปชนิดเชื้อ และส่งผลรายงานแพทย์',
-                    color: 'border-emerald-500/25 bg-emerald-500/5 text-emerald-400',
-                    iconBg: 'bg-emerald-500/20 text-emerald-300'
-                  }
-                ].map((d) => (
-                  <div
-                    key={d.day}
-                    className={`rounded-xl border p-4 flex flex-col gap-3 ${d.color}`}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-base ${d.iconBg} border border-white/5`}>
-                        {d.icon}
-                      </div>
-                      <div>
-                        <span className="px-2 py-0.5 rounded bg-white/5 text-[9px] font-bold border border-white/10 uppercase tracking-wide">
-                          {d.day}
-                        </span>
-                        <h4 className="text-xs font-bold text-zinc-100 mt-1">{d.title}</h4>
-                      </div>
+              <div className="specimen-timeline">
+                {WORKFLOW_STEPS.map((step) => (
+                  <article key={step.day}>
+                    <span>{step.day}</span>
+                    <div>
+                      <h3>{step.title}</h3>
+                      <p>{step.desc}</p>
                     </div>
-                    <p className="text-[11px] text-zinc-400 leading-relaxed">{d.desc}</p>
-                  </div>
+                  </article>
                 ))}
               </div>
             </div>
-          </div>
+          </section>
         </div>
       </div>
     </div>
