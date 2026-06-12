@@ -95,5 +95,5 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: v2
-          command: deploy
+          command: pages deploy dist --project-name bokbac
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
