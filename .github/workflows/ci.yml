@@ -8,6 +8,7 @@ on:
 
 permissions:
   contents: read
+  deployments: write
 
 jobs:
   test-v2:
@@ -70,9 +71,6 @@ jobs:
     environment:
       name: production
       url: https://bokbac.pages.dev
-    defaults:
-      run:
-        working-directory: v2
     steps:
       - uses: actions/checkout@v4
 
@@ -84,9 +82,11 @@ jobs:
           cache-dependency-path: v2/package-lock.json
 
       - name: Install dependencies
+        working-directory: v2
         run: npm ci
 
       - name: Build production bundle
+        working-directory: v2
         run: npm run build
 
       - name: Deploy with Wrangler
