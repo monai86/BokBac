@@ -8,6 +8,10 @@ BokBac is an educational bacterial identification context. Its language distingu
 A named biochemical test panel for one organism group. A Test Suite contains ordered test identifiers and may represent a system default, user custom panel, or institution panel.
 _Avoid_: panel, checklist, assay bundle
 
+**User Custom Suite**:
+A user-created Test Suite made from any biochemical tests in the registry. It is not locked to one organism group by default; the active organism group still controls the candidate species set during calculation.
+_Avoid_: default group suite, organism-specific suite
+
 **Canonical Test ID**:
 The stable identifier for a biochemical test result across UI, saved cases, and calculation. Display labels may change, but the Canonical Test ID should remain stable.
 _Avoid_: label key, test name key

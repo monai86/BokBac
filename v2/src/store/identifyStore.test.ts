@@ -106,6 +106,31 @@ describe('identifyStore reset flow', () => {
     )
   })
 
+  it('keeps a global user custom suite active when the organism group changes', () => {
+    const customSuite = {
+      id: 'custom_global_small_panel',
+      name: 'My Small Panel',
+      owner: 'user' as const,
+      scope: 'global' as const,
+      group: 'custom',
+      tests: [
+        { testId: 'oxidase', required: false, order: 1 },
+        { testId: 'indole', required: false, order: 2 },
+      ],
+    }
+
+    useIdentifyStore.getState().setCustomSuites([customSuite])
+    useIdentifyStore.getState().setActiveSuiteId(customSuite.id)
+    useIdentifyStore.getState().setGroup('nfb')
+
+    const state = useIdentifyStore.getState()
+    const active = getActiveSuite(state.defaultSuites, state.customSuites, state.activeSuiteId, state.group)
+
+    expect(state.group).toBe('nfb')
+    expect(state.activeSuiteId).toBe(customSuite.id)
+    expect(active?.id).toBe(customSuite.id)
+  })
+
   it('migrates legacy label-based saved answers when loading a case', () => {
     const legacyCase = {
       id: 'legacy-case',

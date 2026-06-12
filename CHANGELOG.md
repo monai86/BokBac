@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.0.4] - 2026-06-12
+
+### Added
+- **v4 user custom suite library** — added "Test suite ของฉัน" management on the Test Suite page so users can create, name, edit, select, import/export, and delete multiple custom biochemical panels.
+- **v4 custom suite persistence** — custom suites now persist locally for Guest Mode and sync under the authenticated user in Firestore when Firebase is enabled.
+
+### Changed
+- **v4 global custom suite calculation** — user-created custom suites can be used across organism groups; the Bayesian engine now evaluates the active custom suite against the currently selected group and uses the custom suite size for coverage/recommendation behavior.
+- **v4 custom result options** — custom suites use the global biochemical test option set by default, while default organism-group suites keep their group-constrained result options.
+
 ## [4.0.3] - 2026-06-11
 
 ### Added

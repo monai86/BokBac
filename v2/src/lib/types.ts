@@ -59,9 +59,12 @@ export interface TestSuite {
   sourceCitation?: string
   intendedUse?: string
   owner?: 'system' | 'user' | 'institution'
+  scope?: 'group' | 'global'
   group: string // OrganismGroup, e.g. 'gpc_cluster'
   trigger?: TestSuiteTrigger
   tests: TestSuiteItem[]
+  createdAt?: string
+  updatedAt?: string
 }
 
 // Deprecated suite format (kept for backwards compatibility with legacy parts if needed)

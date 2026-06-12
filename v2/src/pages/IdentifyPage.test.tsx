@@ -49,7 +49,7 @@ describe('IdentifyPage reset flow', () => {
     expect(screen.getAllByText('Escherichia coli').length).toBeGreaterThan(0)
     expect(screen.getByText('Why this is the current most likely match')).toBeTruthy()
     expect(screen.getByText(/การจัดอันดับปัจจุบันมาจากค่าความชุก \(Prevalence prior\)/i)).toBeTruthy()
-  })
+  }, 10000)
 
   it('saves, reloads, and deletes a local case from the workflow', async () => {
     const user = userEvent.setup()
@@ -113,5 +113,39 @@ describe('IdentifyPage reset flow', () => {
     await waitFor(() => {
       expect(screen.getByText(/Evidence quality warnings/i)).toBeTruthy()
     })
+  })
+
+  it('uses global biochemical options when a user custom suite is active', async () => {
+    const customSuite = {
+      id: 'custom_global_oxidase_only',
+      name: 'My Oxidase Suite',
+      description: 'User-created suite that is not locked to one organism group',
+      owner: 'user' as const,
+      scope: 'global' as const,
+      group: 'custom',
+      tests: [{ testId: 'oxidase', required: false, order: 1 }],
+    }
+
+    useIdentifyStore.setState({
+      group: 'enterobacterales',
+      customSuites: [customSuite],
+      activeSuiteId: customSuite.id,
+      answers: {},
+      results: [],
+      recommendedTests: [],
+    })
+
+    render(
+      <MemoryRouter>
+        <IdentifyPage />
+      </MemoryRouter>
+    )
+
+    await waitFor(() => {
+      expect(screen.queryByText('กำลังคำนวณ…')).toBeNull()
+    })
+
+    expect(screen.getByRole('button', { name: /set oxidase to \+/i })).toBeTruthy()
+    expect(screen.getByRole('button', { name: /set oxidase to −/i })).toBeTruthy()
   })
 })

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useIdentifyStore } from '@/store/identifyStore'
 import { getSuiteTestDisplay } from '@/lib/suiteCatalog'
+import { TestSuiteManager } from '@/components/TestSuiteManager'
 
 const SUITE_TABS = [
   { id: 'gpc_cluster', label: 'GPC Cluster', icon: '🧫' },
@@ -23,6 +24,8 @@ export function TestSuitesPage() {
 
   return (
     <div className="suite-page suite-page-compact">
+      <TestSuiteManager />
+
       <header className="lg-surface suite-header suite-header-compact">
         <div className="lg-specular" />
         <div className="lg-caustic" />

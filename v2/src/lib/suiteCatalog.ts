@@ -5,7 +5,11 @@ export const ENGINE_VERSION = '4.0.0'
 export const UNVERSIONED_SUITE = 'unversioned'
 
 export function getSuitesForGroup(suites: TestSuite[], group: string): TestSuite[] {
-  return suites.filter((suite) => suite.group === group)
+  return suites.filter((suite) => suite.group === group || isGlobalCustomSuite(suite))
+}
+
+export function isGlobalCustomSuite(suite: TestSuite): boolean {
+  return suite.owner === 'user' && (suite.scope === 'global' || suite.group === 'custom')
 }
 
 export function getActiveSuite(
@@ -15,7 +19,10 @@ export function getActiveSuite(
   group: string,
 ): TestSuite | undefined {
   const allSuites = [...defaultSuites, ...customSuites]
-  const active = allSuites.find((suite) => suite.id === activeSuiteId && suite.group === group)
+  const active = allSuites.find((suite) => {
+    if (suite.id !== activeSuiteId) return false
+    return suite.group === group || isGlobalCustomSuite(suite)
+  })
   return active || allSuites.find((suite) => suite.group === group)
 }
 
@@ -48,13 +55,13 @@ export function getSuiteTestDisplay(item: TestSuiteItem): {
   }
 }
 
-export function buildSuitesMap(defaultSuites: TestSuite[], activeSuite?: TestSuite): SuitesMap {
+export function buildSuitesMap(defaultSuites: TestSuite[], activeSuite?: TestSuite, activeGroup?: string): SuitesMap {
   const suitesMap: SuitesMap = {}
   for (const suite of defaultSuites) {
     suitesMap[suite.group] = toLegacySuite(suite)
   }
   if (activeSuite) {
-    suitesMap[activeSuite.group] = toLegacySuite(activeSuite)
+    suitesMap[activeGroup || activeSuite.group] = toLegacySuite(activeSuite)
   }
   return suitesMap
 }

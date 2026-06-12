@@ -57,4 +57,18 @@ describe('TestSuiteManager import validation', () => {
     expect(screen.getByText(/Test ID ที่ไม่มีในระบบ/i)).toBeTruthy()
     expect(useIdentifyStore.getState().customSuites).toEqual([])
   })
+
+  it('filters available biochemical tests by name while editing a custom suite', async () => {
+    const user = userEvent.setup()
+    render(<TestSuiteManager />)
+
+    await user.click(screen.getByRole('button', { name: /สร้าง Suite ใหม่/i }))
+    await user.type(screen.getByPlaceholderText(/ค้นหา เช่น/i), 'indole')
+
+    expect(screen.getByRole('button', { name: /Indole/i })).toBeTruthy()
+    expect(screen.queryByRole('button', { name: /^Oxidase/i })).toBeNull()
+
+    await user.click(screen.getByRole('button', { name: /Indole/i }))
+    expect(screen.getByText('Indole (IMViC)')).toBeTruthy()
+  })
 })

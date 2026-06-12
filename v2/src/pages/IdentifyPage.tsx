@@ -11,6 +11,7 @@ import { LoadingSplash } from '@/components/LoadingSplash'
 import { useIdentifyStore } from '@/store/identifyStore'
 import { ESSENTIAL_GROUP_TESTS, calculateSuiteDiagnosticPower } from '@/data/tests/essentialTests'
 import { lookupTestDefinition } from '@/data/tests/biochemicalTestRegistry'
+import { getActiveSuite } from '@/lib/suiteCatalog'
 
 const WORKFLOW_STEPS = [
   { n: 1, l: 'Gram Stain / Morphology', icon: '🔬' },
@@ -31,8 +32,7 @@ export function IdentifyPage() {
   const customSuites = useIdentifyStore((s) => s.customSuites) || []
   const activeSuiteId = useIdentifyStore((s) => s.activeSuiteId)
 
-  const allSuites = [...defaultSuites, ...customSuites]
-  const activeSuite = allSuites.find((s) => s.id === activeSuiteId) || allSuites.find((s) => s.group === group)
+  const activeSuite = getActiveSuite(defaultSuites, customSuites, activeSuiteId, group)
 
   const suiteTestIds = activeSuite?.tests.map((t) => t.testId) || []
   const suitePower = calculateSuiteDiagnosticPower(group, suiteTestIds)

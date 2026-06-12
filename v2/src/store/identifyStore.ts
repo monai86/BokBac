@@ -23,27 +23,12 @@ import { selectSuiteForObservation } from '@/lib/selectSuiteForObservation'
 import { db as firestoreDb, isFirebaseActive } from '@/auth/firebase'
 import { caseStorage, getLocalCases } from '@/services/caseStorage'
 import { doc, setDoc } from 'firebase/firestore'
+import { customSuiteStorage, getLocalCustomSuites } from '@/services/customSuiteStorage'
 
-const CUSTOM_SUITES_KEY = 'bokbac:v4:custom-suites'
 const ACTIVE_SUITE_ID_KEY = 'bokbac:v4:active-suite-id'
 
 function canUseStorage() {
   return typeof window !== 'undefined' && typeof window.localStorage !== 'undefined'
-}
-
-function loadCustomSuites(): TestSuite[] {
-  if (!canUseStorage()) return []
-  try {
-    const raw = window.localStorage.getItem(CUSTOM_SUITES_KEY)
-    return raw ? JSON.parse(raw) : []
-  } catch {
-    return []
-  }
-}
-
-function persistCustomSuites(suites: TestSuite[]) {
-  if (!canUseStorage()) return
-  window.localStorage.setItem(CUSTOM_SUITES_KEY, JSON.stringify(suites))
 }
 
 interface IdentifyState {
@@ -78,12 +63,14 @@ interface IdentifyState {
   loadCase: (id: string) => void
   deleteCase: (id: string) => Promise<void>
   setCustomSuites: (suites: TestSuite[]) => void
+  deleteCustomSuite: (id: string) => Promise<void>
   setActiveSuiteId: (id: string) => void
   recompute: () => void
   
   applyAuthSnapshot: (snapshot: {
     authUserId: string | null
     savedCases?: SavedCase[]
+    customSuites?: TestSuite[]
     settings?: IdentifyState['settings']
   }) => void
   saveSettings: (settings: any) => Promise<void>
@@ -101,7 +88,7 @@ export const useIdentifyStore = create<IdentifyState>()((set, get) => ({
   recommendedTests: [],
   savedCases: getLocalCases(),
   defaultSuites: DEFAULT_SUITES,
-  customSuites: loadCustomSuites(),
+  customSuites: getLocalCustomSuites(),
   activeSuiteId: canUseStorage() ? window.localStorage.getItem(ACTIVE_SUITE_ID_KEY) || 'enterobacterales_default' : 'enterobacterales_default',
   suiteSelectionReason: undefined,
   
@@ -111,7 +98,7 @@ export const useIdentifyStore = create<IdentifyState>()((set, get) => ({
   setGroup: (g) => {
     // Find active suite or default for this group
     const all = [...get().defaultSuites, ...get().customSuites]
-    let active = all.find((s) => s.group === g && s.id === get().activeSuiteId)
+    let active = getActiveSuite(get().defaultSuites, get().customSuites, get().activeSuiteId, g)
     if (!active) {
       active = all.find((s) => s.group === g)
     }
@@ -133,16 +120,19 @@ export const useIdentifyStore = create<IdentifyState>()((set, get) => ({
 
   setInitialObservation: (obs) => {
     const next = { ...get().initialObservation, ...obs }
-    const selection = selectSuiteForObservation(next, [...get().defaultSuites, ...get().customSuites])
+    const currentActive = getActiveSuite(get().defaultSuites, get().customSuites, get().activeSuiteId, get().group)
+    const keepGlobalCustom = currentActive?.owner === 'user' && currentActive.scope === 'global'
+    const selection = selectSuiteForObservation(next, get().defaultSuites)
     if (selection) {
+      const nextSuiteId = keepGlobalCustom ? currentActive.id : selection.suiteId
       if (canUseStorage()) {
-        window.localStorage.setItem(ACTIVE_SUITE_ID_KEY, selection.suiteId)
+        window.localStorage.setItem(ACTIVE_SUITE_ID_KEY, nextSuiteId)
       }
-      const groupChanged = get().group !== selection.groupId || get().activeSuiteId !== selection.suiteId
+      const groupChanged = get().group !== selection.groupId || get().activeSuiteId !== nextSuiteId
       set({
         initialObservation: next,
         group: selection.groupId,
-        activeSuiteId: selection.suiteId,
+        activeSuiteId: nextSuiteId,
         answers: groupChanged ? {} : get().answers,
         results: groupChanged ? [] : get().results,
         recommendedTests: groupChanged ? [] : get().recommendedTests,
@@ -218,7 +208,7 @@ export const useIdentifyStore = create<IdentifyState>()((set, get) => ({
     if (!match) return
     const allSuites = [...get().defaultSuites, ...get().customSuites]
     const suite = match.suiteId
-      ? allSuites.find((item) => item.id === match.suiteId && item.group === match.group)
+      ? allSuites.find((item) => item.id === match.suiteId && (item.group === match.group || item.scope === 'global'))
       : undefined
     const fallbackSuite = allSuites.find((item) => item.group === match.group)
     const activeSuiteId = suite?.id || fallbackSuite?.id || get().activeSuiteId
@@ -247,8 +237,22 @@ export const useIdentifyStore = create<IdentifyState>()((set, get) => ({
   },
 
   setCustomSuites: (suites) => {
-    persistCustomSuites(suites)
     set({ customSuites: suites })
+    void customSuiteStorage.saveSuites(suites, get().authUserId || undefined)
+    get().recompute()
+  },
+
+  deleteCustomSuite: async (id) => {
+    const nextCustoms = get().customSuites.filter((suite) => suite.id !== id)
+    const removingActive = get().activeSuiteId === id
+    set({ customSuites: nextCustoms })
+    await customSuiteStorage.deleteSuite(id, nextCustoms, get().authUserId || undefined)
+    if (removingActive) {
+      const fallback = get().defaultSuites.find((suite) => suite.group === get().group)
+      if (fallback) {
+        get().setActiveSuiteId(fallback.id)
+      }
+    }
     get().recompute()
   },
 
@@ -263,7 +267,7 @@ export const useIdentifyStore = create<IdentifyState>()((set, get) => ({
   recompute: () => {
     const { group, answers, initialObservation, defaultSuites, customSuites, activeSuiteId, settings } = get()
     const activeSuite = getActiveSuite(defaultSuites, customSuites, activeSuiteId, group)
-    const suitesMap = buildSuitesMap(defaultSuites, activeSuite)
+    const suitesMap = buildSuitesMap(defaultSuites, activeSuite, group)
 
     const opts = {
       library: LIBRARY_CLEAN,
@@ -278,11 +282,13 @@ export const useIdentifyStore = create<IdentifyState>()((set, get) => ({
     set({ results: ranked, recommendedTests: recs })
   },
 
-  applyAuthSnapshot: ({ authUserId, savedCases, settings }) => {
+  applyAuthSnapshot: ({ authUserId, savedCases, customSuites, settings }) => {
     const next: Partial<IdentifyState> = { authUserId }
     if (savedCases) next.savedCases = savedCases
+    if (customSuites) next.customSuites = customSuites
     if (settings) next.settings = settings
     set(next)
+    get().recompute()
   },
 
   saveSettings: async (newSettings) => {

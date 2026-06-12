@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useIdentifyStore } from '@/store/identifyStore'
-import { getSuiteTestDisplay } from '@/lib/suiteCatalog'
+import { getActiveSuite, getSuiteTestDisplay } from '@/lib/suiteCatalog'
 import { TestInputControl } from './TestInputControl'
 
 export function NextBestTestPanel() {
@@ -17,8 +17,7 @@ export function NextBestTestPanel() {
 
   if (recommendedTests.length === 0) return null
 
-  const allSuites = [...defaultSuites, ...customSuites]
-  const activeSuite = allSuites.find((s) => s.id === activeSuiteId) || allSuites.find((s) => s.group === group)
+  const activeSuite = getActiveSuite(defaultSuites, customSuites, activeSuiteId, group)
   const suiteTestIds = new Set(activeSuite?.tests.map((t) => t.testId) || [])
 
   const filteredRecommendations = showOutsideSuite

@@ -4,6 +4,7 @@ import * as authService from './authService'
 import { useIdentifyStore } from '@/store/identifyStore'
 import { db as firestoreDb, isFirebaseActive } from './firebase'
 import { caseStorage, getLocalCases } from '@/services/caseStorage'
+import { customSuiteStorage, getLocalCustomSuites } from '@/services/customSuiteStorage'
 import { doc, getDoc } from 'firebase/firestore'
 
 
@@ -52,6 +53,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     useIdentifyStore.getState().applyAuthSnapshot({
       authUserId: null,
       savedCases: getLocalCases(),
+      customSuites: getLocalCustomSuites(),
     })
   }
 
@@ -77,10 +79,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
               window.localStorage.setItem('bokbac:v4:settings', JSON.stringify(settings))
             }
           }
-          const syncedCases = await caseStorage.syncLocalToCloud(usr.uid)
+          const [syncedCases, syncedCustomSuites] = await Promise.all([
+            caseStorage.syncLocalToCloud(usr.uid),
+            customSuiteStorage.syncLocalToCloud(usr.uid),
+          ])
           useIdentifyStore.getState().applyAuthSnapshot({
             authUserId: usr.uid,
             savedCases: syncedCases,
+            customSuites: syncedCustomSuites,
             settings,
           })
         } catch (error) {
@@ -88,12 +94,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           useIdentifyStore.getState().applyAuthSnapshot({
             authUserId: usr.uid,
             savedCases: getLocalCases(),
+            customSuites: getLocalCustomSuites(),
           })
         }
       } else {
         useIdentifyStore.getState().applyAuthSnapshot({
           authUserId: null,
           savedCases: getLocalCases(),
+          customSuites: getLocalCustomSuites(),
         })
       }
     })

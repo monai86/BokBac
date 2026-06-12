@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useIdentifyStore } from '@/store/identifyStore'
 import { BIOCHEMICAL_TEST_REGISTRY } from '@/data/tests/biochemicalTestRegistry'
-import { getSuiteTestDisplay, normalizeTestKeyToId } from '@/lib/suiteCatalog'
+import { getActiveSuite, getSuiteTestDisplay, normalizeTestKeyToId } from '@/lib/suiteCatalog'
 import type { TestSuite, TestSuiteItem } from '@/lib/types'
 import { calculateSuiteDiagnosticPower } from '@/data/tests/essentialTests'
 
@@ -10,12 +10,12 @@ export function TestSuiteManager() {
   const defaultSuites = useIdentifyStore((s) => s.defaultSuites) || []
   const customSuites = useIdentifyStore((s) => s.customSuites) || []
   const setCustomSuites = useIdentifyStore((s) => s.setCustomSuites)
+  const deleteCustomSuite = useIdentifyStore((s) => s.deleteCustomSuite)
   const activeSuiteId = useIdentifyStore((s) => s.activeSuiteId)
   const setActiveSuiteId = useIdentifyStore((s) => s.setActiveSuiteId)
 
   // Find the active suite
-  const allSuites = [...defaultSuites, ...customSuites]
-  const currentSuite = allSuites.find((s) => s.id === activeSuiteId) || allSuites.find((s) => s.group === group)
+  const currentSuite = getActiveSuite(defaultSuites, customSuites, activeSuiteId, group)
 
   const [isEditing, setIsEditing] = useState(false)
   const [editedName, setEditedName] = useState('')
@@ -23,6 +23,7 @@ export function TestSuiteManager() {
   const [editedTests, setEditedTests] = useState<TestSuiteItem[]>([])
   const [validationError, setValidationError] = useState<string | null>(null)
   const [importReport, setImportReport] = useState<{ type: 'error' | 'success', message: string } | null>(null)
+  const [testSearch, setTestSearch] = useState('')
 
   if (!currentSuite) return null
 
@@ -30,14 +31,37 @@ export function TestSuiteManager() {
   const power = calculateSuiteDiagnosticPower(group, currentSuite.tests.map((t) => t.testId))
   const editedPower = calculateSuiteDiagnosticPower(group, editedTests.map((t) => t.testId))
 
+  const handleCreateBlank = () => {
+    const now = new Date().toISOString()
+    const newSuite: TestSuite = {
+      id: `custom_global_${Date.now()}`,
+      name: `Test Suite ของฉัน ${customSuites.length + 1}`,
+      description: 'ชุด biochemical test ที่ผู้ใช้สร้างเอง',
+      owner: 'user',
+      scope: 'global',
+      group: 'custom',
+      createdAt: now,
+      updatedAt: now,
+      tests: [],
+    }
+
+    setCustomSuites([...customSuites, newSuite])
+    setActiveSuiteId(newSuite.id)
+    startEditing(newSuite)
+  }
+
   // Duplicate system suite
   const handleDuplicate = () => {
+    const now = new Date().toISOString()
     const newSuite: TestSuite = {
       id: `custom_${currentSuite.group}_${Date.now()}`,
       name: `${currentSuite.name} (Custom)`,
       description: currentSuite.description || '',
       owner: 'user',
+      scope: currentSuite.owner === 'system' ? 'group' : currentSuite.scope || 'global',
       group: currentSuite.group,
+      createdAt: now,
+      updatedAt: now,
       tests: [...currentSuite.tests],
     }
 
@@ -51,6 +75,7 @@ export function TestSuiteManager() {
     setEditedName(suite.name)
     setEditedDesc(suite.description || '')
     setEditedTests([...suite.tests].sort((a, b) => a.order - b.order))
+    setTestSearch('')
     setValidationError(null)
     setIsEditing(true)
   }
@@ -61,12 +86,17 @@ export function TestSuiteManager() {
       setValidationError('กรุณากรอกชื่อ Test Suite')
       return
     }
+    if (editedTests.length === 0) {
+      setValidationError('กรุณาเลือก biochemical test อย่างน้อย 1 รายการ')
+      return
+    }
 
     const updated: TestSuite = {
       ...currentSuite,
       name: editedName,
       description: editedDesc,
       tests: editedTests.map((t, idx) => ({ ...t, order: idx + 1 })),
+      updatedAt: new Date().toISOString(),
     }
 
     const nextCustoms = customSuites.map((s) => (s.id === currentSuite.id ? updated : s))
@@ -76,13 +106,12 @@ export function TestSuiteManager() {
   }
 
   // Delete suite
-  const handleDelete = () => {
+  const handleDelete = async () => {
     const nextCustoms = customSuites.filter((s) => s.id !== currentSuite.id)
-    setCustomSuites(nextCustoms)
-    // Fallback to default suite for this group
-    const defSuite = defaultSuites.find((s) => s.group === group)
-    if (defSuite) {
-      setActiveSuiteId(defSuite.id)
+    await deleteCustomSuite(currentSuite.id)
+    if (!nextCustoms.some((suite) => suite.id === activeSuiteId)) {
+      const defSuite = defaultSuites.find((s) => s.group === group)
+      if (defSuite) setActiveSuiteId(defSuite.id)
     }
     setIsEditing(false)
   }
@@ -106,6 +135,7 @@ export function TestSuiteManager() {
       order: editedTests.length + 1,
     }
     setEditedTests([...editedTests, newItem])
+    setTestSearch('')
   }
 
   const moveTest = (index: number, direction: 'up' | 'down') => {
@@ -165,6 +195,10 @@ export function TestSuiteManager() {
             return
           }
           parsed.owner = 'user' // Mark as custom
+          parsed.scope = parsed.scope || 'global'
+          parsed.group = parsed.group || 'custom'
+          parsed.updatedAt = new Date().toISOString()
+          parsed.createdAt = parsed.createdAt || parsed.updatedAt
           parsed.tests = normalizedTests
           const nextCustoms = [...customSuites.filter((s) => s.id !== parsed.id), parsed]
           setCustomSuites(nextCustoms)
@@ -181,19 +215,39 @@ export function TestSuiteManager() {
   const availableToSelect = BIOCHEMICAL_TEST_REGISTRY.filter(
     (reg) => !editedTests.some((t) => t.testId === reg.id)
   )
+  const normalizedSearch = testSearch.trim().toLowerCase()
+  const visibleTestsToAdd = availableToSelect
+    .filter((test) => {
+      if (!normalizedSearch) return true
+      return [
+        test.label,
+        test.id,
+        test.category || '',
+        test.mcmKey || '',
+      ].some((value) => value.toLowerCase().includes(normalizedSearch))
+    })
+    .sort((a, b) => a.label.localeCompare(b.label))
+    .slice(0, 12)
 
   return (
     <div className="backdrop-blur-md bg-white/[0.02] border border-white/10 rounded-xl p-5 shadow-xl transition-all">
       <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
         <div>
           <h2 className="text-base font-bold text-zinc-100 flex items-center gap-2">
-            <span>📊</span> จัดการ Test Suite คลาสแล็บ (Biochemical Panels)
+            <span>📊</span> Test suite ของฉัน
           </h2>
           <p className="text-xs text-zinc-400">
-            ปรับแต่งชุดการทดสอบให้ตรงกับของแต่ละมหาวิทยาลัยหรือชั้นเรียน
+            สร้างชุด biochemical test เอง เลือก test ใดก็ได้ และเก็บไว้ใช้ครั้งต่อไป
           </p>
         </div>
         <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={handleCreateBlank}
+            className="rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white px-3 py-1.5 text-xs font-semibold transition"
+          >
+            + สร้าง Suite ใหม่
+          </button>
           {isSystemSuite ? (
             <button
               type="button"
@@ -261,15 +315,13 @@ export function TestSuiteManager() {
                 </option>
               ))}
           </optgroup>
-          {customSuites.filter((s) => s.group === group).length > 0 && (
-            <optgroup label="Custom Suites ของคุณ">
-              {customSuites
-                .filter((s) => s.group === group)
-                .map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {s.name}
-                  </option>
-                ))}
+          {customSuites.length > 0 && (
+            <optgroup label="Test suite ของฉัน">
+              {customSuites.map((s) => (
+                <option key={s.id} value={s.id}>
+                  {s.name}{s.scope === 'global' ? ' (ใช้ได้ทุกกลุ่ม)' : ''}
+                </option>
+              ))}
             </optgroup>
           )}
         </select>
@@ -397,25 +449,46 @@ export function TestSuiteManager() {
             </div>
           </div>
 
-          {/* Add test dropdown */}
-          <div className="flex gap-2 items-center mb-4">
-            <span className="text-xs text-zinc-400">เพิ่มการทดสอบ:</span>
-            <select
-              onChange={(e) => {
-                if (e.target.value) {
-                  handleAddTest(e.target.value)
-                  e.target.value = ''
-                }
-              }}
-              className="rounded-lg border border-white/10 bg-zinc-950 px-2 py-1 text-xs text-zinc-300"
-            >
-              <option value="">-- เลือกการทดสอบ --</option>
-              {availableToSelect.map((t) => (
-                <option key={t.id} value={t.id}>
-                  {t.label}
-                </option>
-              ))}
-            </select>
+          {/* Search and add tests */}
+          <div className="mb-4 rounded-xl border border-white/10 bg-black/20 p-3">
+            <div className="mb-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+              <label className="text-xs font-semibold text-zinc-300">
+                เพิ่มการทดสอบ
+              </label>
+              <span className="text-[10px] text-zinc-500">
+                ค้นได้จากชื่อ test, ID, category หรือ MCM key
+              </span>
+            </div>
+            <input
+              type="search"
+              value={testSearch}
+              onChange={(e) => setTestSearch(e.target.value)}
+              placeholder="ค้นหา เช่น Indole, TSI, oxidase, carbohydrate..."
+              className="mb-2 w-full rounded-lg border border-white/10 bg-zinc-950 px-3 py-2 text-xs text-zinc-200 outline-none transition placeholder:text-zinc-600 focus:border-violet-500"
+            />
+            <div className="grid max-h-[220px] gap-1 overflow-y-auto pr-1 custom-scrollbar sm:grid-cols-2">
+              {visibleTestsToAdd.length > 0 ? (
+                visibleTestsToAdd.map((test) => (
+                  <button
+                    key={test.id}
+                    type="button"
+                    onClick={() => handleAddTest(test.id)}
+                    className="rounded-lg border border-white/5 bg-white/[0.02] px-3 py-2 text-left transition hover:border-violet-500/30 hover:bg-violet-500/10"
+                  >
+                    <span className="block text-xs font-semibold text-zinc-200">
+                      {test.label}
+                    </span>
+                    <span className="mt-0.5 block text-[10px] text-zinc-500">
+                      {test.id}{test.category ? ` · ${test.category}` : ''}
+                    </span>
+                  </button>
+                ))
+              ) : (
+                <div className="rounded-lg border border-dashed border-white/10 px-3 py-4 text-center text-xs text-zinc-500 sm:col-span-2">
+                  ไม่พบ test ที่ตรงกับคำค้นหา
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="flex justify-between border-t border-white/10 pt-3">
@@ -454,6 +527,11 @@ export function TestSuiteManager() {
               ผู้สร้าง: {isSystemSuite ? 'ระบบ' : 'ผู้ใช้ (Custom)'}
             </span>
           </div>
+          {!isSystemSuite && currentSuite.scope === 'global' && (
+            <div className="mb-3 rounded-lg border border-cyan-500/15 bg-cyan-500/10 px-3 py-2 text-[11px] leading-relaxed text-cyan-100">
+              Suite นี้ไม่ล็อกตามกลุ่มเชื้อ ผลที่กรอกได้จะใช้ตัวเลือก global ของ biochemical test แต่ละตัว และการคำนวณจะใช้ test ในชุดนี้กับกลุ่มเชื้อที่เลือกอยู่ปัจจุบัน
+            </div>
+          )}
           <p className="text-zinc-400 mb-3 text-[11px] leading-relaxed">
             {currentSuite.description || 'ไม่มีคำอธิบาย'}
           </p>
