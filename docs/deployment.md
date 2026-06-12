@@ -8,7 +8,19 @@ This document provides the maintained setup, build, and deployment path for BokB
 
 The maintained app is built using Vite, React, and TypeScript.
 
-To run the modern app locally:
+To run the modern app locally from the repository root:
+```bash
+# Install dependencies in the maintained app workspace
+cd v2
+npm ci
+cd ..
+
+# Start the Vite local development server for the maintained app
+npm run dev
+```
+Open `http://127.0.0.1:5173`.
+
+If you prefer to run commands inside `v2/` directly, the equivalent workflow is:
 ```bash
 # Navigate to the v2 workspace directory
 cd v2
@@ -19,7 +31,7 @@ npm ci
 # Start the Vite local development server
 npm run dev
 ```
-Open the URL shown in the console (usually `http://localhost:5173`).
+Open the URL shown in the console (usually `http://127.0.0.1:5173` or `http://localhost:5173`).
 
 The maintained UI is login-first with explicit Guest Mode. If Firebase variables are absent, the app should still render the login page, allow Guest Mode, and save guest cases locally with `localStorage`.
 

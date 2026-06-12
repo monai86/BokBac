@@ -1,0 +1,12 @@
+{
+  "name": "bokbac-workspace",
+  "private": true,
+  "scripts": {
+    "dev": "npm --prefix v2 run dev -- --host 127.0.0.1",
+    "build": "npm --prefix v2 run build",
+    "test": "npm --prefix v2 run test",
+    "lint": "npm --prefix v2 run lint",
+    "typecheck": "npm --prefix v2 run typecheck",
+    "preview": "npm --prefix v2 run preview -- --host 127.0.0.1"
+  }
+}

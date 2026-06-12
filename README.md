@@ -87,7 +87,31 @@ For detailed reviews of the engineering, algorithms, and design choices behind B
 ## ⚡ Quick Start for Developers
 
 ### Maintained Modern Track (v4.x)
-To run, lint, typecheck, test, or build the maintained Vite + React + TS application:
+The repository root now proxies the standard npm commands to the maintained `v2/` app, so the default local workflow is:
+
+```bash
+# Install dependencies for the maintained app
+cd v2
+npm ci
+cd ..
+
+# Start the maintained local app on http://127.0.0.1:5173
+npm run dev
+
+# Run static linting checks
+npm run lint
+
+# Run TypeScript typechecks
+npm run typecheck
+
+# Run unit and integration tests (Vitest)
+npm run test
+
+# Build production assets
+npm run build
+```
+
+If you want to work inside the Vite app directory directly, the equivalent commands remain:
 
 ```bash
 # Navigate to the maintained application directory

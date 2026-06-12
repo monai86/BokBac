@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+
 jobs:
   test-v2:
     name: v4 (Vite + TS + Vitest)
@@ -58,3 +61,39 @@ jobs:
 
       - name: Run legacy test_bayes.mjs (50 scenarios)
         run: node scripts/test_bayes.mjs
+
+  deploy-production:
+    name: Deploy production to Cloudflare
+    runs-on: ubuntu-latest
+    needs: [test-v2, test-legacy]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    environment:
+      name: production
+      url: https://bokbac.pages.dev
+    defaults:
+      run:
+        working-directory: v2
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: v2/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build production bundle
+        run: npm run build
+
+      - name: Deploy with Wrangler
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: v2
+          command: deploy
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}

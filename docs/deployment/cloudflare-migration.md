@@ -26,6 +26,23 @@ Cloudflare Pages is the recommended production host for BokBac v4.
 5. Add Firebase environment variables only if Auth/Firestore sync is enabled.
 6. Deploy.
 
+## GitHub Actions Auto-Deploy
+
+This repository now includes a production deploy job in [`.github/workflows/ci.yml`](../../.github/workflows/ci.yml).
+
+On every push to `main`, GitHub Actions will:
+
+1. Run the maintained `v2` lint, typecheck, test, and build steps.
+2. Run the legacy validation script.
+3. Deploy to `https://bokbac.pages.dev` with Wrangler only after the checks pass.
+
+Add these GitHub repository secrets before expecting automatic production deploys:
+
+- `CLOUDFLARE_API_TOKEN`
+- `CLOUDFLARE_ACCOUNT_ID`
+
+Recommended token scope: allow Wrangler deployment for the target Cloudflare account/project only.
+
 ## Firebase Variables
 
 Set these in Cloudflare Pages → Settings → Environment variables when Firebase is enabled:

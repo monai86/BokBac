@@ -35,6 +35,21 @@ npm run build
 
 ไฟล์ `v2/public/_headers` และ `v2/public/_redirects` จะถูก copy เข้า build output อัตโนมัติ
 
+### Auto-deploy จาก GitHub Actions
+
+repo นี้มี production deploy job อยู่ใน [`.github/workflows/ci.yml`](../../.github/workflows/ci.yml) แล้ว
+
+เมื่อ push เข้า `main` ระบบจะ:
+
+1. รัน lint, typecheck, test, build ของ `v2`
+2. รัน legacy validation
+3. deploy ไป `https://bokbac.pages.dev` ด้วย Wrangler หลังจากทุกขั้นผ่าน
+
+ต้องตั้ง GitHub repository secrets ต่อไปนี้ก่อน:
+
+- `CLOUDFLARE_API_TOKEN`
+- `CLOUDFLARE_ACCOUNT_ID`
+
 ## Vercel
 
 ใช้ `v2/vercel.json` เมื่อ import repo:
