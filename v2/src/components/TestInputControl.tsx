@@ -39,7 +39,7 @@ export function TestInputControl({
       : 'min-w-[28px] wf-opt-btn px-2 py-0.5 text-center flex items-center justify-center'
 
   return (
-    <div className={`flex items-center ${layout === 'fill' ? 'gap-1.5' : 'gap-1'}`}>
+    <div className={`flex flex-wrap items-center ${layout === 'fill' ? 'gap-1.5' : 'gap-1'}`}>
       {(options || definition.options).map((option) => {
         const isSelected = value === option
         return (

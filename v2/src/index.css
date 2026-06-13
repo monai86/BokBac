@@ -1896,7 +1896,7 @@ i {
   -webkit-backdrop-filter: blur(12px) saturate(1.3);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 16px;
-  padding: 16px 18px;
+  padding: 12px 14px;
   box-shadow:
     0 1px 2px rgba(0,0,0,0.4),
     0 8px 24px rgba(0,0,0,0.15),
@@ -1905,6 +1905,11 @@ i {
               border-color 0.25s ease,
               box-shadow 0.25s ease,
               background 0.25s ease;
+}
+@media (min-width: 640px) {
+  .wf-test-card {
+    padding: 16px 18px;
+  }
 }
 .wf-test-card:hover {
   border-color: rgba(167, 139, 250, 0.3);
