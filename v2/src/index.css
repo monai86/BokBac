@@ -2006,3 +2006,61 @@ i {
   0% { left: -100%; }
   100% { left: 150%; }
 }
+
+/* Container query layout for test cards to prevent label truncation */
+.wf-test-card {
+  container-type: inline-size;
+}
+
+.wf-test-card-body {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+  width: 100%;
+}
+
+.wf-test-card-label-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  width: 100%;
+}
+
+.wf-test-card-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #e2e8f0;
+  white-space: normal;
+  word-break: break-word;
+}
+
+.wf-test-card-input-container {
+  display: flex;
+  justify-content: flex-start;
+  width: 100%;
+}
+
+/* Layout for wider test card containers */
+@container (min-width: 380px) {
+  .wf-test-card-body {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px 12px;
+  }
+
+  .wf-test-card-label-container {
+    width: auto;
+    flex: 1 1 120px;
+  }
+
+  .wf-test-card-input-container {
+    width: auto;
+    justify-content: flex-end;
+    flex-shrink: 0;
+  }
+}
+

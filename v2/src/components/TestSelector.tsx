@@ -42,7 +42,7 @@ export function TestSelector() {
           return (
             <div
               key={t.testId}
-              className={`wf-test-card flex items-center justify-between gap-2 ${
+              className={`wf-test-card ${
                 current ? 'answered' : ''
               } ${
                 isRecommended
@@ -50,21 +50,25 @@ export function TestSelector() {
                   : ''
               }`}
             >
-              <div className="flex items-center gap-1.5 min-w-0">
-                      <span className="text-sm text-zinc-200 truncate">{display.label}</span>
-                {isRecommended && (
-                  <span className="shrink-0 text-[9px] font-bold text-violet-300 bg-violet-500/25 px-1 py-0.5 rounded border border-violet-500/20 animate-pulse">
-                    แนะนำ
-                  </span>
-                )}
+              <div className="wf-test-card-body">
+                <div className="wf-test-card-label-container">
+                  <span className="wf-test-card-label">{display.label}</span>
+                  {isRecommended && (
+                    <span className="shrink-0 text-[9px] font-bold text-violet-300 bg-violet-500/25 px-1 py-0.5 rounded border border-violet-500/20 animate-pulse">
+                      แนะนำ
+                    </span>
+                  )}
+                </div>
+                <div className="wf-test-card-input-container">
+                  <TestInputControl
+                    testId={t.testId}
+                    label={display.label}
+                    options={display.options}
+                    value={current}
+                    onChange={(nextValue) => setAnswer(t.testId, nextValue)}
+                  />
+                </div>
               </div>
-              <TestInputControl
-                testId={t.testId}
-                label={display.label}
-                options={display.options}
-                value={current}
-                onChange={(nextValue) => setAnswer(t.testId, nextValue)}
-              />
             </div>
           )
         })}
