@@ -246,7 +246,7 @@ const SCENARIOS: Scenario[] = [
     name: 'Plesiomonas shigelloides',
     group: 'vibrio',
     answers: { Oxidase: '+', Indole: '+', Sucrose: '−', Salt0: '+', O129: '+', Inositol: '+' },
-    expected: { topId: ['plesiomonas_shigelloides', 'aeromonas_salmonicida'], minPct: 10 },
+    expected: { topId: 'plesiomonas_shigelloides', minPct: 25 },
   },
   {
     name: 'A. caviae',

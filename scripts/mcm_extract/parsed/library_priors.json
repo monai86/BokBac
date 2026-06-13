@@ -491,7 +491,7 @@
   },
   "plesiomonas_shigelloides": {
     "name": "Plesiomonas shigelloides",
-    "group": "enterobacterales",
+    "group": "vibrio",
     "importance": "moderate",
     "prevalence_score": 2,
     "prevalence_symbol": "++"

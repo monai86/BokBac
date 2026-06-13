@@ -1022,14 +1022,14 @@ export const LIBRARY_BATCH3 = [
     notes: 'Associated with reptiles. Very similar to Salmonella biochemically but is Indole positive and Mannitol negative.'
   },
   {
-    id: 'plesiomonas_shigelloides', group: 'enterobacterales', name: 'Plesiomonas shigelloides', thai: 'เพลซิโอโมแนส ชิเกลลอยดีส', gram: '−', morph: 'Rods',
-    importance: 'moderate', tags: ['Oxidase+', 'Enterobacterales', 'LDC+ ODC+ AD+'],
+    id: 'plesiomonas_shigelloides', group: 'vibrio', name: 'Plesiomonas shigelloides', thai: 'เพลซิโอโมแนส ชิเกลลอยดีส', gram: '−', morph: 'Rods',
+    importance: 'moderate', tags: ['Oxidase+', 'Vibrio biochem', 'LDC+ ODC+ AD+'],
     clinical: { habitat: 'Freshwater, aquatic animals', diseases: ['Secretory diarrhea', 'Bacteremia'], transmission: 'Ingestion of contaminated water/seafood', factors: 'Enterotoxins' },
     colony: { BAP: 'Grey, shiny', MAC: 'NLF or late LF' },
     gramStain: 'GNB',
-    biochem: [{ t: 'Oxidase', r: '+', n: 'KEY: Only Enterobacterales that is Oxidase positive!' }, { t: 'TSI', r: 'K/A', n: '' }, { t: 'Indole', r: '+', n: '' }, { t: 'LDC', r: '+', n: '' }, { t: 'ODC', r: '+', n: '' }, { t: 'ADC (Arginine)', r: '+', n: 'Triple decarboxylase positive!' }],
+    biochem: [{ t: 'Oxidase', r: '+', n: 'KEY: Oxidase positive!' }, { t: 'TSI', r: 'K/A', n: '' }, { t: 'Indole', r: '+', n: '' }, { t: 'LDC', r: '+', n: '' }, { t: 'ODC', r: '+', n: '' }, { t: 'ADC (Arginine)', r: '+', n: 'Triple decarboxylase positive!' }],
     media: ['Blood agar', 'MacConkey'], condition: '37°C',
-    notes: 'Recently moved to Enterobacterales family. ONLY Enterobacterales that is Oxidase positive! Triple positive for LDC, ODC, AD.'
+    notes: 'Taxonomically moved to Enterobacterales family, but clinically uses Vibrio biochemical suite. Oxidase positive! Triple positive for LDC, ODC, AD.'
   },
   {
     id: 'yersinia_enterocolitica', group: 'enterobacterales', name: 'Yersinia enterocolitica', thai: 'เยอร์ซินเยีย เอนเทอโรโคไลติกา', gram: '−', morph: 'Rods',
