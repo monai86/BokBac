@@ -37,7 +37,9 @@ let auth: Auth | null = null
 let db: Firestore | null = null
 let isFirebaseActive = false
 
-if (firebaseConfig && firebaseConfig.apiKey && firebaseConfig.apiKey !== "YOUR_API_KEY") {
+const isTestEnv = typeof process !== 'undefined' && process.env.NODE_ENV === 'test'
+
+if (!isTestEnv && firebaseConfig && firebaseConfig.apiKey && firebaseConfig.apiKey !== "YOUR_API_KEY") {
   try {
     app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp()
     auth = getAuth(app)

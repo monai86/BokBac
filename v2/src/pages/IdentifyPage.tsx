@@ -270,7 +270,7 @@ export function IdentifyPage() {
           <section className="space-y-3">
             <div className="space-y-1">
               <h2 className="font-serif-header text-[20px] font-extrabold text-white mb-1.5 tracking-[-0.5px]">
-                📊 Step 3 — ผลการวินิจฉัย
+                📊 Step 3 — ผลการจำแนกชนิด
               </h2>
               <p className="text-[#64748b] text-[13px] mb-6 leading-relaxed">
                 คะแนนความน่าจะเป็นในการจำแนกชนิดเชื้อ จากผล biochemical ที่กรอก
@@ -374,10 +374,10 @@ export function IdentifyPage() {
       {/* Educational Disclaimer */}
       <footer className="border-t border-white/5 pt-4 text-[10px] text-zinc-650 leading-normal space-y-1">
         <p>
-          <strong>Educational Disclaimer:</strong> BokBac is an educational decision-support tool. Results should be interpreted together with laboratory standards, confirmatory testing, and clinical context. BokBac should not be used as the sole basis for clinical diagnosis.
+          <strong>Educational Disclaimer:</strong> BokBac is for educational bacterial identification support only. Confidence scores reflect consistency with reference data, not clinical confirmation. Confirmatory laboratory procedures are still required. BokBac should not be used as the sole basis for clinical diagnosis.
         </p>
         <p>
-          <strong>คำชี้แจงเพื่อการศึกษา:</strong> BokBac เป็นเครื่องมือเพื่อการศึกษาและช่วยตัดสินใจ ผลลัพธ์ควรได้รับการตีความร่วมกับมาตรฐานห้องปฏิบัติการ การทดสอบยืนยัน และบริบททางคลินิก ไม่ควรใช้ BokBac เป็นเกณฑ์เดียวในการวินิจฉัยโรคทางคลินิก
+          <strong>คำชี้แจงเพื่อการศึกษา:</strong> BokBac มีวัตถุประสงค์เพื่อการเรียนการสอนและสนับสนุนการจำแนกชนิดแบคทีเรียเท่านั้น ค่าระดับความน่าเชื่อถือสะท้อนถึงความสอดคล้องกับข้อมูลอ้างอิง ไม่ใช่การยืนยันทางคลินิก การวิเคราะห์ทางห้องปฏิบัติการเพื่อยืนยันผลยังคงเป็นสิ่งจำเป็นเสมอ และไม่ควรใช้ BokBac เป็นเกณฑ์เดียวในการวินิจฉัยโรคทางคลินิก
         </p>
       </footer>
     </div>

@@ -151,8 +151,8 @@ export function LoginPage() {
           <div className="text-center">
             <span className="login-logo-mark" aria-hidden="true">🦠</span>
             <h1 className="login-brand-title">BOK BAC</h1>
-            <p className="login-kicker">Diagnostic Engine</p>
-            <p className="login-subtitle">ระบบวินิจฉัยเชื้อแบคทีเรีย</p>
+            <p className="login-kicker">Educational Support Engine</p>
+            <p className="login-subtitle">ระบบจำแนกชนิดแบคทีเรียเพื่อการศึกษา</p>
           </div>
 
           {!isFirebaseActive && (

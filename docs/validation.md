@@ -52,6 +52,21 @@ Each scenario defines:
 * **Expected Probability**: $\ge 50\%$
 * **Logic**: Specifically tests clinical differentiation in Southeast Asia. Differentiated from *Burkholderia thailandensis* by its inability to assimilate arabinose (Arabinose `-`).
 
+### 2.2 Case-Based Validation Scenarios
+
+The table below lists representative identification scenarios across key bacterial groups. These cases are validated to ensure that the probabilistic engine resolves the expected organism as the top-ranked candidate:
+
+| ID | Category | Expected Organism | Entered Observations (Gram, Morph, Key Tests) | Expected Top-Ranked Result | Pass/Fail Criteria (Top-Ranked & P_min) |
+|---|---|---|---|---|---|
+| **1** | Gram-positive cocci in clusters | *Staphylococcus aureus* | Gram: `+`, Morphology: `cocci`, Arrangement: `cluster`, Catalase: `+`, Coagulase: `+` | *Staphylococcus aureus* | Ranked #1 with $P \ge 80\%$ |
+| **2** | Gram-positive cocci in clusters | *Staphylococcus epidermidis* | Gram: `+`, Morphology: `cocci`, Arrangement: `cluster`, Catalase: `+`, Coagulase: `-`, Novobiocin: `S` | *Staphylococcus epidermidis* | Ranked #1 with $P \ge 70\%$ |
+| **3** | Gram-positive cocci in chains | *Streptococcus pyogenes* | Gram: `+`, Morphology: `cocci`, Arrangement: `chain`, Catalase: `-`, Hemolysis: `β`, Bacitracin: `S` | *Streptococcus pyogenes* | Ranked #1 with $P \ge 80\%$ |
+| **4** | Gram-positive cocci in chains | *Streptococcus pneumoniae* | Gram: `+`, Morphology: `cocci`, Arrangement: `chain`, Catalase: `-`, Hemolysis: `α`, Optochin: `S` | *Streptococcus pneumoniae* | Ranked #1 with $P \ge 80\%$ |
+| **5** | Enterobacterales | *Escherichia coli* | Gram: `-`, Morphology: `bacilli`, Oxidase: `-`, Lactose: `+`, Indole: `+`, Citrate: `-` | *Escherichia coli* | Ranked #1 with $P \ge 80\%$ |
+| **6** | Enterobacterales | *Klebsiella pneumoniae* | Gram: `-`, Morphology: `bacilli`, Oxidase: `-`, Lactose: `+`, Indole: `-`, Citrate: `+`, VP: `+`, Motility: `-` | *Klebsiella pneumoniae* | Ranked #1 with $P \ge 80\%$ |
+| **7** | Non-fermenting Gram-negative rods | *Pseudomonas aeruginosa* | Gram: `-`, Morphology: `bacilli`, Oxidase: `+`, TSI: `K/K`, Motility: `+`, Growth at 42°C: `+` | *Pseudomonas aeruginosa* | Ranked #1 with $P \ge 85\%$ |
+| **8** | Curved Gram-negative rods | *Vibrio cholerae* | Gram: `-`, Morphology: `curved rods`, Oxidase: `+`, TCBS: `Yellow` (Sucrose `+`), 0% NaCl: `+`, 6% NaCl: `-` | *Vibrio cholerae* | Ranked #1 with $P \ge 80\%$ |
+
 ---
 
 ## 3. Running Validation Locally

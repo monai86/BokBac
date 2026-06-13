@@ -8,6 +8,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Case-based validation table in `docs/validation.md` with 8 representative clinical microbiology scenarios covering Gram-positive clusters/chains, Enterobacterales, non-fermenting rods, and curved Gram-negative rods.
+- New biochemical tests `colony_xld` (XLD colony characteristics) and `growth_macconkey` (growth on MacConkey agar) to the test registry.
+- New auto-derivation rules in `testMatcher.ts` to automatically infer `colony_xld` (Enterobacterales), `growth_macconkey` (Fastidious GNs), and `pyr` (GPC chains) for engine matching.
+
+### Changed
+- Refined UI copy across login, layout navigation tabs, result explanation panels, and page footers to use educational identification terminology ("จำแนกชนิด", "Educational Support Engine") rather than diagnostic terms.
+- Enhanced clinical and educational disclaimers on the About and Identify pages to clearly state that BokBac is for educational use only, confidence scores reflect consistency with reference data, and laboratory confirmation is required.
+- Updated default test suites:
+  - **Enterobacterales**: Added required Arginine Dihydrolase (`adh`) and optional XLD colony characteristics (`colony_xld`).
+  - **NFB**: Added required `catalase` and optional `ldc`, `odc`, and `adh`.
+  - **Fastidious GNs**: Added required `growth_macconkey` and optional `odc`.
+  - **GPC chains**: Added optional `pyr` (PYR test).
+  - **Vibrionaceae**: Updated `oxidase` option selection to allow both `+` and `−` outcomes.
+
+### Fixed
+- Disabled background Firebase initialization during automated Vitest runs to prevent network and timer hangs, resolving local test timeouts.
+
 ## [4.0.4] - 2026-06-12
 
 ### Added

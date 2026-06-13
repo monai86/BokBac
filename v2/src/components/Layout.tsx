@@ -4,7 +4,7 @@ import { useAuth } from '@/auth/useAuth'
 
 const NAV = [
   { to: '/specimen', label: 'ตัวอย่างตรวจ', emoji: '🧫', short: '🧫 ตัวอย่าง' },
-  { to: '/', label: 'วินิจฉัย', emoji: '🔬', short: '🔬 วินิจฉัย' },
+  { to: '/', label: 'จำแนกชนิด', emoji: '🔬', short: '🔬 จำแนกชนิด' },
   { to: '/cases', label: 'Case ที่บันทึก', emoji: '💾', short: '💾 Case' },
   { to: '/library', label: 'คลังเชื้อ', emoji: '📚', short: '📚 คลัง' },
   { to: '/reference', label: 'การทดสอบ', emoji: '⚗️', short: '⚗️ Tests' },
@@ -117,7 +117,7 @@ export function Layout() {
           <span className="emoji">🦠</span>
           <div>
             <div style={{ fontSize: '15px', fontWeight: 800 }}>BOK BAC</div>
-            <div style={{ fontSize: '8px', color: '#a78bfa', letterSpacing: '2px', textTransform: 'uppercase', fontWeight: 600, marginTop: '-2px', WebkitTextFillColor: 'initial' }}>DIAGNOSTIC ENGINE</div>
+            <div style={{ fontSize: '8px', color: '#a78bfa', letterSpacing: '2px', textTransform: 'uppercase', fontWeight: 600, marginTop: '-2px', WebkitTextFillColor: 'initial' }}>IDENTIFICATION ASSISTANT</div>
           </div>
         </Link>
         <button

@@ -900,6 +900,30 @@ export const BIOCHEMICAL_TEST_REGISTRY: BiochemicalTestDefinition[] = [
     costLevel: 'low',
     curriculumPriority: 3,
   },
+  {
+    id: 'colony_xld',
+    label: 'Colony on XLD agar',
+    resultKind: 'categorical',
+    options: ['Yellow (xylose+)', 'Red (xylose−)', 'Red with black center (H₂S+)'],
+    mcmKey: undefined,
+    category: 'growth',
+    estimatedTime: '18-24 hrs',
+    timePenalty: 2,
+    costLevel: 'medium',
+    curriculumPriority: 4,
+  },
+  {
+    id: 'growth_macconkey',
+    label: 'Growth on MacConkey agar',
+    resultKind: 'binary',
+    options: ['+', '−'],
+    mcmKey: undefined,
+    category: 'growth',
+    estimatedTime: '18-24 hrs',
+    timePenalty: 2,
+    costLevel: 'low',
+    curriculumPriority: 4,
+  },
 ];
 
 export function lookupTestDefinition(testId: string): BiochemicalTestDefinition | undefined {

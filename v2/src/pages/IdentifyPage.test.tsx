@@ -36,7 +36,7 @@ describe('IdentifyPage reset flow', () => {
 
     expect(screen.getAllByText('Escherichia coli').length).toBeGreaterThan(0)
     expect(screen.getByText('Why this is the current most likely match')).toBeTruthy()
-    expect(screen.getByText(/educational probabilistic assistant/i)).toBeTruthy()
+    expect(screen.getAllByText(/educational bacterial identification support/i).length).toBeGreaterThan(0)
     expect(screen.getByText(/การจัดอันดับปัจจุบันมาจากค่าความชุก \(Prevalence prior\)/i)).toBeTruthy()
 
     await user.click(screen.getByRole('button', { name: /set oxidase to −/i }))

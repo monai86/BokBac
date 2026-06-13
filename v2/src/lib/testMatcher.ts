@@ -156,6 +156,8 @@ export const TEST_ALIASES: Record<string, string[]> = {
   satellitism: ['satellitism', 'staph streak', 'satellite', 'xv test'],
   growth_chocolate: ['growth on chocolate agar', 'chocolate agar', 'ca growth'],
   fructose: ['fructose', 'cta fructose'],
+  colony_xld: ['colony_xld', 'xld', 'xld colony', 'xylose lysine deoxycholate'],
+  growth_macconkey: ['growth_macconkey', 'growth on macconkey', 'growth on macconkey agar', 'macconkey growth', 'macconkey'],
 }
 
 export function isTestMatchByAlias(rowName: string, suiteTest: SuiteTest): boolean {
@@ -199,7 +201,50 @@ export function normalizeBiochemNamesForBug(bug: Species, suites: Record<string,
   if (!bug) return bug
   const suite = suites[bug.group]
   if (!suite?.tests?.length) return bug
-  const rows = bug.biochem || []
+  const rows = [...(bug.biochem || [])]
+
+  // 1. Auto-derive colony_xld for Enterobacterales
+  if (bug.group === 'enterobacterales' && bug.colony?.XLD) {
+    const rawXld = bug.colony.XLD.toLowerCase()
+    let result = ''
+    if (rawXld.includes('yellow')) {
+      result = 'Yellow (xylose+)'
+    } else if (rawXld.includes('black') || rawXld.includes('h2s') || rawXld.includes('center')) {
+      result = 'Red with black center (H₂S+)'
+    } else if (rawXld.includes('red') || rawXld.includes('pink') || rawXld.includes('colorless')) {
+      result = 'Red (xylose−)'
+    }
+    if (result && !rows.some(r => r.t === 'colony_xld')) {
+      rows.push({ t: 'colony_xld', r: result, n: `Auto-derived from XLD: ${bug.colony.XLD}` })
+    }
+  }
+
+  // 2. Auto-derive growth_macconkey for Fastidious GNs
+  if (bug.group === 'gn_coccobacilli') {
+    let result = '−'
+    if (bug.colony?.MAC) {
+      const rawMac = bug.colony.MAC.toLowerCase()
+      if (rawMac.includes('growth') && !rawMac.includes('no growth') && !rawMac.includes('poor')) {
+        result = '+'
+      }
+    }
+    if (!rows.some(r => r.t === 'growth_macconkey')) {
+      rows.push({ t: 'growth_macconkey', r: result, n: `Auto-derived MAC growth` })
+    }
+  }
+
+  // 3. Auto-derive pyr for GPC chains
+  if (bug.group === 'gpc_chain') {
+    let result = '−'
+    const nameLower = bug.name.toLowerCase()
+    if (nameLower.includes('pyogenes') || nameLower.includes('enterococcus') || bug.tags?.includes('PYR+')) {
+      result = '+'
+    }
+    if (!rows.some(r => r.t === 'pyr')) {
+      rows.push({ t: 'pyr', r: result, n: `Auto-derived PYR` })
+    }
+  }
+
   const seenSuiteTestIds = new Set<string>()
   const normalizedRows = rows.map((row) => {
     const matched = suite.tests.find((st) => isTestMatchByAlias(row.t, st))

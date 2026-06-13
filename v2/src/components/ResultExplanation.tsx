@@ -141,9 +141,9 @@ export function ResultExplanation({
       }}>
         <span style={{ fontSize: '18px', lineHeight: '1' }}>💡</span>
         <div>
-          <strong style={{ color: '#fff', display: 'block', marginBottom: '2px' }}>คำแนะนำเพื่อการเรียนรู้ (Educational Assistant)</strong>
-          <span className="sr-only">BokBac is an educational probabilistic assistant.</span>
-          BokBac เป็นระบบช่วยคำนวณและวิเคราะห์โอกาสในการจำแนกเชื้อแบคทีเรีย เพื่อวัตถุประสงค์ในการศึกษาเท่านั้น ไม่สามารถนำไปใช้ในการวินิจฉัยทางคลินิกจริงได้
+          <strong style={{ color: '#fff', display: 'block', marginBottom: '2px' }}>คำแนะนำเพื่อการเรียนรู้ (Educational Support)</strong>
+          <span className="sr-only">BokBac is for educational bacterial identification support only.</span>
+          BokBac เป็นระบบช่วยจำแนกชนิดแบคทีเรียเพื่อการเรียนการสอนเท่านั้น ค่าระดับความน่าเชื่อถือสะท้อนถึงความสอดคล้องกับข้อมูลอ้างอิง ไม่ใช่การยืนยันทางคลินิก การวิเคราะห์ทางห้องปฏิบัติการเพื่อยืนยันผลยังคงเป็นสิ่งจำเป็นเสมอ
         </div>
       </div>
 

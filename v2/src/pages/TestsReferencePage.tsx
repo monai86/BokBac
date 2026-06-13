@@ -313,7 +313,7 @@ export function TestsReferencePage() {
                             {test.significance && (
                               <div>
                                 <div className="text-[10px] font-bold text-amber-500 uppercase tracking-wider mb-1">
-                                  ความสำคัญในการวินิจฉัย (Significance)
+                                  ความสำคัญในการระบุชนิด (Significance)
                                 </div>
                                 <p className="text-[11px] text-zinc-300 leading-relaxed">{test.significance}</p>
                               </div>

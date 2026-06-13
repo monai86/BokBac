@@ -64,7 +64,7 @@ describe('default test suites', () => {
     expect(getSuiteTestDisplay(byGroup.gpc_cluster.tests.find((item) => item.testId === 'catalase')!).options).toEqual(['+'])
     expect(getSuiteTestDisplay(byGroup.gpc_chain.tests.find((item) => item.testId === 'catalase')!).options).toEqual(['−'])
     expect(getSuiteTestDisplay(byGroup.enterobacterales.tests.find((item) => item.testId === 'oxidase')!).options).toEqual(['−'])
-    expect(getSuiteTestDisplay(byGroup.vibrio.tests.find((item) => item.testId === 'oxidase')!).options).toEqual(['+'])
+    expect(getSuiteTestDisplay(byGroup.vibrio.tests.find((item) => item.testId === 'oxidase')!).options).toEqual(['+', '−'])
     expect(getSuiteTestDisplay(byGroup.gn_coccobacilli.tests.find((item) => item.testId === 'oxidase')!).options).toEqual(['+'])
   })
 
