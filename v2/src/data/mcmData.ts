@@ -832,7 +832,7 @@ export const MCM_DATA = {
       "nitrate_reduction": 95,
       "novobiocin": 5,
       "trehalose": 50,
-      "mannitol_d": 95,
+      "mannitol_d": 5,
       "mannose_d": 95,
       "lactose": 95,
       "sucrose": 95
@@ -960,8 +960,8 @@ export const MCM_DATA = {
       "sucrose": 5,
       "nitrate_reduction": 50
     },
-    "prevalence_score": 1,
-    "prevalence_symbol": "+"
+    "prevalence_score": 2,
+    "prevalence_symbol": "++"
   },
   "neisseria_cinerea": {
     "species": "Neisseria cinerea",
@@ -990,8 +990,8 @@ export const MCM_DATA = {
       "nitrate_reduction": 5,
       "polysaccharide_from_suc": 95
     },
-    "prevalence_score": 1,
-    "prevalence_symbol": "+"
+    "prevalence_score": 2,
+    "prevalence_symbol": "++"
   },
   "n_gonorrhoeae": {
     "species": "Neisseria gonorrhoeae",
@@ -1065,8 +1065,8 @@ export const MCM_DATA = {
       "nitrate_reduction": 5,
       "polysaccharide_from_suc": 95
     },
-    "prevalence_score": 1,
-    "prevalence_symbol": "+"
+    "prevalence_score": 2,
+    "prevalence_symbol": "++"
   },
   "neisseria_sicca": {
     "species": "Neisseria sicca",
@@ -1164,14 +1164,14 @@ export const MCM_DATA = {
     "species": "Burkholderia thailandensis",
     "source": "MCM 11th ch.43 Table 2",
     "tests": {
-      "urea": 50,
-      "citrate": 50,
-      "gelatin_hydrolysis": 50,
-      "esculin": 50,
+      "urea": 5,
+      "citrate": 95,
+      "gelatin_hydrolysis": 95,
+      "esculin": 95,
       "glucose_acid": 95,
       "xylose_d": 95,
       "lactose": 95,
-      "sucrose": 50,
+      "sucrose": 95,
       "maltose": 95,
       "mannitol_d": 95,
       "arabinose": 95,
@@ -1208,12 +1208,12 @@ export const MCM_DATA = {
     "source": "MCM 11th ch.39 Table 1",
     "tests": {
       "motility": 95,
-      "urea": 5,
-      "voges_proskauer": 95,
+      "urea": 95,
+      "voges_proskauer": 5,
       "citrate_simon": 5,
       "indole_production": 5,
-      "rhamnose": 5,
-      "sucrose": 80,
+      "rhamnose": 95,
+      "sucrose": 5,
       "cellobiose": 5,
       "sorbose": 5,
       "sorbitol": 5,
@@ -1221,7 +1221,7 @@ export const MCM_DATA = {
       "melibiose": 95,
       "salicin": 5,
       "arabinose": 95,
-      "trehalose": 5
+      "trehalose": 95
     },
     "prevalence_score": 2,
     "prevalence_symbol": "++"
@@ -1230,20 +1230,20 @@ export const MCM_DATA = {
     "species": "Yersinia enterocolitica",
     "source": "MCM 11th ch.39 Table 1",
     "tests": {
-      "motility": 95,
+      "motility": 5,
       "urea": 95,
-      "voges_proskauer": 95,
+      "voges_proskauer": 5,
       "citrate_simon": 50,
-      "indole_production": 5,
+      "indole_production": 50,
       "rhamnose": 50,
-      "sucrose": 5,
+      "sucrose": 95,
       "cellobiose": 95,
       "sorbose": 95,
       "sorbitol": 95,
       "ornithine_decarboxylase": 95,
       "melibiose": 5,
       "salicin": 5,
-      "arabinose": 5,
+      "arabinose": 95,
       "trehalose": 95
     },
     "prevalence_score": 3,
@@ -1624,13 +1624,16 @@ export const MCM_DATA = {
     "tests": {
       "ornithine_decarboxylase": 5,
       "lysine_decarboxylase": 5,
-      "indole_production": 50,
+      "indole_production": 5,
       "voges_proskauer": 95,
       "motility": 95,
       "sorbitol_d": 50,
       "adonitol": 5,
-      "malonate": 5,
-      "yellow_pigment": 95
+      "malonate": 60,
+      "yellow_pigment": 95,
+      "glucose_acid": 95,
+      "lactose": 80,
+      "sucrose": 95
     },
     "prevalence_score": 2,
     "prevalence_symbol": "++"
@@ -1678,7 +1681,7 @@ export const MCM_DATA = {
       "catalase": 95,
       "camp": 95,
       "rhamnose": 95,
-      "xylose": 5,
+      "xylose_d": 5,
       "mannitol_d": 5
     },
     "prevalence_score": 3,
@@ -1693,7 +1696,7 @@ export const MCM_DATA = {
       "catalase": 95,
       "camp": 5,
       "rhamnose": 95,
-      "xylose": 5,
+      "xylose_d": 5,
       "mannitol_d": 5
     },
     "prevalence_score": 2,
@@ -1708,8 +1711,8 @@ export const MCM_DATA = {
       "catalase": 95,
       "camp": 5,
       "rhamnose": 5,
-      "xylose": 95,
-      "mannitol_d": 95
+      "xylose_d": 95,
+      "mannitol_d": 5
     },
     "prevalence_score": 1,
     "prevalence_symbol": "+"
@@ -1762,7 +1765,7 @@ export const MCM_DATA = {
     "prevalence_score": 2,
     "prevalence_symbol": "++"
   },
-  "bacillus_thuringiensis": {
+  "b_thuringiensis": {
     "species": "Bacillus thuringiensis",
     "source": "MCM 11th ch.26 Table 1",
     "tests": {
@@ -1773,10 +1776,10 @@ export const MCM_DATA = {
       "glucose_acid": 95,
       "mannitol_d": 5,
       "gelatin_hydrolysis": 95,
-      "urea": 50
+      "urea": 5
     },
-    "prevalence_score": 1,
-    "prevalence_symbol": "+"
+    "prevalence_score": 2,
+    "prevalence_symbol": "++"
   },
   "acinetobacter_baumannii": {
     "species": "Acinetobacter baumannii",
@@ -2069,7 +2072,22 @@ export const MCM_DATA = {
     "prevalence_score": 3,
     "prevalence_symbol": "+++",
     "prevalence_source": "LIBRARY importance",
-    "tests": {}
+    "tests": {
+      "indole_production": 5,
+      "voges_proskauer": 95,
+      "motility": 95,
+      "ornithine_decarboxylase": 95,
+      "lysine_decarboxylase": 5,
+      "arginine_dihydrolase": 95,
+      "citrate_simmons": 95,
+      "urea": 5,
+      "glucose_acid": 95,
+      "lactose": 95,
+      "sucrose": 95,
+      "glucose_gas": 95,
+      "h2s": 5,
+      "malonate": 5
+    }
   },
   "edwardsiella_tarda": {
     "species": "Edwardsiella tarda",
@@ -2353,14 +2371,6 @@ export const MCM_DATA = {
   },
   "b_megaterium": {
     "species": "Bacillus megaterium",
-    "source": "LIBRARY importance proxy",
-    "prevalence_score": 1,
-    "prevalence_symbol": "+",
-    "prevalence_source": "LIBRARY importance",
-    "tests": {}
-  },
-  "b_thuringiensis": {
-    "species": "Bacillus thuringiensis",
     "source": "LIBRARY importance proxy",
     "prevalence_score": 1,
     "prevalence_symbol": "+",

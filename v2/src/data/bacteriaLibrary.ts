@@ -240,7 +240,7 @@ export const LIBRARY = [
     clinical: { habitat: 'Human GI tract (no animal reservoir)', diseases: ['Bacillary dysentery (bloody mucoid diarrhea)', 'Shigellosis'], transmission: 'Fecal-oral; extremely low infectious dose (10–100 organisms)' },
     colony: { BAP: 'Grey colorless', MAC: 'NLF colorless', XLD: 'Red/pink (NLF no H₂S)', SS: 'Colorless' },
     gramStain: 'GNB; non-motile; no capsule',
-    biochem: [{ t: 'Oxidase', r: '−', n: '' }, { t: 'TSI', r: 'K/A', n: 'No H₂S, no gas' }, { t: 'H₂S (TSI)', r: '−', n: 'KEY vs Salmonella' }, { t: 'Indole', r: 'V', n: '' }, { t: 'MR (IMViC)', r: '+', n: '' }, { t: 'VP (IMViC)', r: '−', n: '' }, { t: 'Citrate (IMViC)', r: '−', n: '' }, { t: 'Motility', r: '−', n: 'KEY: non-motile' }, { t: 'LDC (Lysine decarboxylase)', r: '−', n: 'KEY vs Salmonella (+)' }, { t: 'ODC (Ornithine decarboxylase)', r: 'V', n: '' }, { t: 'PDC (Phenylalanine deaminase)', r: '−', n: '' }, { t: 'Gas from Glucose', r: '−', n: '' }, { t: 'Lactose', r: '−', n: '' }, { t: 'Sucrose', r: '−', n: '' }, { t: 'Mannitol', r: 'V', n: 'S. dysenteriae: − ; others: +' }, { t: 'Dulcitol', r: '−', n: '' }, { t: 'Adonitol', r: '−', n: '' }, { t: 'Inositol', r: '−', n: '' }, { t: 'Sorbitol', r: 'V', n: '' }, { t: 'Arabinose', r: 'V', n: '' }, { t: 'Malonate', r: '−', n: '' }, { t: 'KCN', r: '−', n: '' }],
+    biochem: [{ t: 'Oxidase', r: '−', n: '' }, { t: 'TSI', r: 'K/A', n: 'No H₂S, no gas' }, { t: 'H₂S (TSI)', r: '−', n: 'KEY vs Salmonella' }, { t: 'Indole', r: 'V', n: '' }, { t: 'MR (IMViC)', r: '+', n: '' }, { t: 'VP (IMViC)', r: '−', n: '' }, { t: 'Citrate (IMViC)', r: '−', n: '' }, { t: 'Urease', r: '−', n: '' }, { t: 'Motility', r: '−', n: 'KEY: non-motile' }, { t: 'LDC (Lysine decarboxylase)', r: '−', n: 'KEY vs Salmonella (+)' }, { t: 'ODC (Ornithine decarboxylase)', r: 'V', n: '' }, { t: 'PDC (Phenylalanine deaminase)', r: '−', n: '' }, { t: 'Gas from Glucose', r: '−', n: '' }, { t: 'Lactose', r: '−', n: '' }, { t: 'Sucrose', r: '−', n: '' }, { t: 'Mannitol', r: 'V', n: 'S. dysenteriae: − ; others: +' }, { t: 'Dulcitol', r: '−', n: '' }, { t: 'Adonitol', r: '−', n: '' }, { t: 'Inositol', r: '−', n: '' }, { t: 'Sorbitol', r: 'V', n: '' }, { t: 'Arabinose', r: 'V', n: '' }, { t: 'Malonate', r: '−', n: '' }, { t: 'KCN', r: '−', n: '' }],
     media: ['MacConkey', 'XLD', 'SS agar'], condition: '37°C 18–24h',
     notes: 'Non-motile + H₂S− + NLF = Shigella. ไม่มี Animal reservoir (human only). Low infectious dose → เน้น hand hygiene'
   },
@@ -284,7 +284,7 @@ export const LIBRARY = [
     clinical: { habitat: 'Marine/coastal environments; seafood (shrimp, shellfish, raw fish)', diseases: ['Gastroenteritis after raw seafood', 'Wound infection (seawater)'], transmission: 'Raw/undercooked seafood; seawater wounds' },
     colony: { BAP: 'Grey-white, β-hemolysis (Kanagawa+)', TCBS: 'Green (sucrose fermenter−)', Wagatsuma: 'β-hemolysis (Kanagawa phenomenon)' },
     gramStain: 'GN curved rods; motile',
-    biochem: [{ t: 'Oxidase', r: '+', n: '' }, { t: 'Hemolysis', r: '+', n: 'Kanagawa phenomenon' }, { t: 'TSI', r: 'K/A', n: '' }, { t: 'TCBS', r: 'Green/blue', n: 'KEY: sucrose−' }, { t: 'Sucrose', r: '−', n: 'KEY vs V. cholerae (yellow)' }, { t: 'Gas from Glucose', r: '−', n: '' }, { t: '0% NaCl', r: '−', n: 'Requires salt' }, { t: '1% NaCl', r: '+', n: '' }, { t: '6% NaCl', r: '+', n: '' }, { t: '8% NaCl', r: '+', n: '' }, { t: '10% NaCl', r: '−', n: '' }, { t: 'Lactose', r: '−', n: '' }, { t: 'Arabinose', r: '−', n: 'KEY vs V. cholerae: −' }, { t: 'Mannitol', r: '+', n: '' }, { t: 'Inositol', r: '−', n: '' }, { t: 'Sorbitol', r: '−', n: 'KEY vs V. cholerae (+)' }, { t: 'LDC', r: '+', n: '' }, { t: 'ODC', r: '+', n: '' }, { t: 'ADC (Arginine)', r: '−', n: '' }, { t: 'Kanagawa', r: '+', n: 'TDH thermostable hemolysin' }],
+    biochem: [{ t: 'Oxidase', r: '+', n: '' }, { t: 'Hemolysis', r: '+', n: 'Kanagawa phenomenon' }, { t: 'TSI', r: 'K/A', n: '' }, { t: 'TCBS', r: 'Green/blue', n: 'KEY: sucrose−' }, { t: 'Sucrose', r: '−', n: 'KEY vs V. cholerae (yellow)' }, { t: 'Gas from Glucose', r: '−', n: '' }, { t: '0% NaCl', r: '−', n: 'Requires salt' }, { t: '1% NaCl', r: '+', n: '' }, { t: '6% NaCl', r: '+', n: '' }, { t: '8% NaCl', r: '+', n: '' }, { t: '10% NaCl', r: '−', n: '' }, { t: 'Lactose', r: '−', n: '' }, { t: 'Arabinose', r: '+', n: 'KEY vs V. cholerae: +' }, { t: 'Mannitol', r: '+', n: '' }, { t: 'Inositol', r: '−', n: '' }, { t: 'Sorbitol', r: '−', n: 'KEY vs V. cholerae (+)' }, { t: 'LDC', r: '+', n: '' }, { t: 'ODC', r: '+', n: '' }, { t: 'ADC (Arginine)', r: '−', n: '' }, { t: 'Kanagawa', r: '+', n: 'TDH thermostable hemolysin' }],
     media: ['TCBS', 'Blood agar'], condition: '37°C with 1–3% NaCl',
     notes: 'TCBS green + 3% NaCl required = V. parahaemolyticus. ไม่เติบโตที่ 0% NaCl (ต้องการเกลือ). Kanagawa = TDH toxin'
   },
@@ -295,7 +295,7 @@ export const LIBRARY = [
     clinical: { habitat: 'Freshwater lakes, rivers, drinking water', diseases: ['Gastroenteritis', 'Wound infection after freshwater exposure', 'Bacteremia (immunocompromised)'], transmission: 'Contaminated freshwater; wounds' },
     colony: { BAP: 'Grey-white, wide β-hemolysis', TCBS: 'No growth or scant (KEY vs Vibrio)', MAC: 'LF or NLF' },
     gramStain: 'GNB straight; motile (polar flagella)',
-    biochem: [{ t: 'Oxidase', r: '+', n: 'KEY' }, { t: 'Hemolysis', r: '+', n: 'β-hemolysis wide' }, { t: 'TSI', r: 'A/AG', n: '' }, { t: 'TCBS', r: '−', n: 'No growth (KEY vs Vibrio)' }, { t: 'Sucrose', r: '+', n: '' }, { t: 'Gas from Glucose', r: '+', n: '' }, { t: '0% NaCl', r: '+', n: 'Freshwater; no salt needed' }, { t: '1% NaCl', r: '+', n: '' }, { t: '6% NaCl', r: '−', n: 'KEY vs Vibrio' }, { t: 'Indole', r: '+', n: '' }, { t: 'VP', r: '+', n: '' }, { t: 'LDC', r: '+', n: '' }, { t: 'ODC', r: '−', n: '' }, { t: 'ADC (Arginine)', r: '+', n: '' }, { t: 'Lactose', r: '+', n: '' }, { t: 'Arabinose', r: '+', n: '' }, { t: 'Mannitol', r: '+', n: '' }, { t: 'Inositol', r: '−', n: '' }, { t: 'Sorbitol', r: '+', n: '' }],
+    biochem: [{ t: 'Oxidase', r: '+', n: 'KEY' }, { t: 'Hemolysis', r: '+', n: 'β-hemolysis wide' }, { t: 'TSI', r: 'A/AG', n: '' }, { t: 'Motile', r: '+', n: '' }, { t: 'TCBS', r: '−', n: 'No growth (KEY vs Vibrio)' }, { t: 'Sucrose', r: '+', n: '' }, { t: 'Gas from Glucose', r: '+', n: '' }, { t: '0% NaCl', r: '+', n: 'Freshwater; no salt needed' }, { t: '1% NaCl', r: '+', n: '' }, { t: '6% NaCl', r: '−', n: 'KEY vs Vibrio' }, { t: 'Indole', r: '+', n: '' }, { t: 'VP', r: '+', n: '' }, { t: 'LDC', r: '+', n: '' }, { t: 'ODC', r: '−', n: '' }, { t: 'ADC (Arginine)', r: '+', n: '' }, { t: 'Lactose', r: '+', n: '' }, { t: 'Arabinose', r: '+', n: '' }, { t: 'Mannitol', r: '+', n: '' }, { t: 'Inositol', r: '−', n: '' }, { t: 'Sorbitol', r: '+', n: '' }],
     media: ['Blood agar', 'MacConkey', 'TCBS (to differentiate)'], condition: '37°C aerobic',
     notes: 'Oxidase+ + TCBS no growth = แยกจาก Vibrio. β-hemolysis ชัดเจน. 0% NaCl + = freshwater origin. ไม่ต้องการเกลือ (vs Vibrio ต้องการ)'
   },
@@ -330,7 +330,7 @@ export const LIBRARY = [
     clinical: { habitat: 'Normal nasopharynx (5–10% carriers)', diseases: ['Bacterial meningitis (serogroup B most common in US/EU)', 'Meningococcemia (fulminant; petechiae/purpura)', 'Waterhouse-Friderichsen syndrome'], transmission: 'Respiratory droplets; close contact' },
     colony: { BAP: 'Grey-white 1–2mm, γ-hemolysis; CO₂ required', ChocAgar: 'Larger growth', MAC: 'No growth' },
     gramStain: 'GN diplococci (kidney-bean); intracellular in PMN in CSF',
-    biochem: [{ t: 'Oxidase', r: '+', n: '' }, { t: 'Growth on NA', r: '±', n: 'KEY: gonorrhoeae = −; meningitidis = ±' }, { t: 'CTA Glucose', r: '+', n: '' }, { t: 'CTA Maltose', r: '+', n: 'KEY vs N. gonorrhoeae (−)' }, { t: 'CTA Lactose', r: '−', n: '' }, { t: 'CTA Sucrose', r: '−', n: '' }, { t: 'DNase', r: '−', n: '' }, { t: 'Nitrate (NO₃→NO₂)', r: '−', n: '' }],
+    biochem: [{ t: 'Oxidase', r: '+', n: '' }, { t: 'Growth on Nutrient agar', r: '±', n: 'KEY: gonorrhoeae = −; meningitidis = ±' }, { t: 'CTA Glucose', r: '+', n: '' }, { t: 'CTA Maltose', r: '+', n: 'KEY vs N. gonorrhoeae (−)' }, { t: 'CTA Lactose', r: '−', n: '' }, { t: 'CTA Sucrose', r: '−', n: '' }, { t: 'DNase', r: '−', n: '' }, { t: 'Nitrate (NO₃→NO₂)', r: '−', n: '' }],
     media: ['Chocolate agar', 'Blood agar', 'Thayer-Martin (selective)'], condition: '37°C, 5% CO₂',
     notes: 'CTA Glucose+ + Maltose+ = Meningococcus. Petechial rash + fever + meningismus = EMERGENCY. Prophylaxis ด้วย rifampicin/ciprofloxacin ให้ close contacts'
   },
@@ -341,7 +341,7 @@ export const LIBRARY = [
     clinical: { habitat: 'Human genitourinary tract only', diseases: ['Gonorrhea: urethritis/cervicitis', 'PID', 'Disseminated gonococcal infection (DGI)', 'Neonatal conjunctivitis (ophthalmia neonatorum)'], transmission: 'Sexual contact; vertical (birth)' },
     colony: { BAP: 'Very small 0.5–1mm; oxidase+; needs CO₂; growth only on enriched media', TM: 'Selective for GC; inhibits normal flora' },
     gramStain: 'GN diplococci intracellular in PMN',
-    biochem: [{ t: 'Oxidase', r: '+', n: '' }, { t: 'Growth on NA', r: '−', n: 'KEY: cannot grow on Nutrient agar (fastidious)' }, { t: 'CTA Glucose', r: '+', n: 'Only sugar fermented' }, { t: 'CTA Maltose', r: '−', n: 'KEY vs meningococcus (+)' }, { t: 'CTA Lactose', r: '−', n: '' }, { t: 'CTA Sucrose', r: '−', n: '' }, { t: 'DNase', r: '−', n: '' }, { t: 'Nitrate (NO₃→NO₂)', r: '−', n: '' }],
+    biochem: [{ t: 'Oxidase', r: '+', n: '' }, { t: 'Growth on Nutrient agar', r: '−', n: 'KEY: cannot grow on Nutrient agar (fastidious)' }, { t: 'CTA Glucose', r: '+', n: 'Only sugar fermented' }, { t: 'CTA Maltose', r: '−', n: 'KEY vs meningococcus (+)' }, { t: 'CTA Lactose', r: '−', n: '' }, { t: 'CTA Sucrose', r: '−', n: '' }, { t: 'DNase', r: '−', n: '' }, { t: 'Nitrate (NO₃→NO₂)', r: '−', n: '' }],
     media: ['Thayer-Martin', 'Chocolate agar', 'GC agar'], condition: '37°C, 5% CO₂, 24–48h; process immediately',
     notes: 'CTA Glucose+ ONLY = N. gonorrhoeae. ไม่เติบโตบน Nutrient agar (fastidious มากกว่า N. meningitidis). CRNG (ciprofloxacin-resistant) เพิ่มขึ้น'
   },
@@ -538,7 +538,7 @@ export const LIBRARY_EXTRA = [
     clinical: { habitat: 'Soil, food (rice, vegetables, spices)', diseases: ['Food poisoning: Emetic type (fried rice, 1–5h vomiting)', 'Food poisoning: Diarrheal type (8–16h, heat-labile toxin)', 'Wound infections', 'Eye infections (post-trauma)', 'Bacteremia (immunocompromised)'], transmission: 'Contaminated reheated food; wound contamination', factors: 'Emetic toxin (cereulide): heat-stable, preformed; Diarrheal enterotoxin: heat-labile; Lecithinase (phospholipase C)' },
     colony: { BAP: 'Large 3–5mm, grey-white, rough, spreading; strong β-hemolysis', MYP: 'Lecithinase+ = pink precipitate halo around colony' },
     gramStain: 'Large GPB (1×3–5µm) in long "bamboo rod" chains; subterminal oval spores (do NOT swell cell)',
-    biochem: [{ t: 'Catalase', r: '+', n: '' }, { t: 'Hemolysis', r: 'β (strong)', n: 'KEY vs B. anthracis (γ)' }, { t: 'Motile', r: '+', n: 'KEY vs B. anthracis (−)' }, { t: 'Lecithinase', r: '+', n: 'KEY vs B. anthracis (−)' }, { t: 'Nitrate', r: '+', n: '' }, { t: 'Glucose', r: '+', n: '' }, { t: 'Sucrose', r: '+', n: '' }, { t: 'Esculin', r: '+', n: '' }, { t: 'γ-phage lysis', r: '−', n: 'vs B. anthracis (+)' }],
+    biochem: [{ t: 'Catalase', r: '+', n: '' }, { t: 'Hemolysis', r: 'β (strong)', n: 'KEY vs B. anthracis (γ)' }, { t: 'Motile', r: '+', n: 'KEY vs B. anthracis (−)' }, { t: 'Lecithinase', r: '+', n: 'KEY vs B. anthracis (−)' }, { t: 'CAMP test', r: '−', n: '' }, { t: 'Rhamnose', r: '−', n: '' }, { t: 'Esculin', r: '+', n: '' }, { t: 'Glucose', r: '+', n: '' }, { t: 'Maltose', r: '+', n: '' }, { t: 'Sucrose', r: '+', n: '' }, { t: 'Nitrate', r: '+', n: '' }, { t: 'γ-phage lysis', r: '−', n: 'vs B. anthracis (+)' }],
     media: ['Blood agar (BAP)', 'MYP agar (selective)', 'PEMBA agar'], condition: '25–37°C aerobic; forms spores readily',
     notes: 'β-hemolysis + motile + lecithinase+ = B. cereus. Emetic type (1–5h) = heat-stable toxin in fried rice; Diarrheal type (8–16h) = heat-labile enterotoxin. MYP agar shows lecithinase+ halo'
   },
@@ -582,7 +582,7 @@ export const LIBRARY_EXTRA = [
     clinical: { habitat: 'Normal URT flora (nontypeable strains); humans only', diseases: ['Meningitis (type b — Hib): was #1 cause of pediatric bacterial meningitis before vaccine', 'Epiglottitis (life-threatening)', 'Pneumonia', 'Acute otitis media and sinusitis (nontypeable)', 'Bacteremia'], transmission: 'Respiratory droplets; nasopharyngeal carriage → invasion', factors: 'Polysaccharide capsule type b (PRP) antiphagocytic; IgA protease; nontypeable = mucosal infections' },
     colony: { ChocAgar: 'Tiny 1mm, grey, dewdrop, translucent; 5% CO₂ required', BAP: 'DOES NOT GROW alone → grows near S. aureus streak (Satellitism!)' },
     gramStain: 'Small GN pleomorphic coccobacilli (0.3×0.5–2µm); highly pleomorphic — short rods to long filaments',
-    biochem: [{ t: 'X factor (hemin)', r: 'Required', n: 'For respiratory enzymes' }, { t: 'V factor (NAD)', r: 'Required', n: 'Electron carrier' }, { t: 'Satellitism', r: '+', n: 'Grows near S. aureus on BAP' }, { t: 'Oxidase', r: '+', n: '' }, { t: 'Urease', r: '+', n: '' }, { t: 'Indole', r: '−', n: '' }],
+    biochem: [{ t: 'X factor (hemin)', r: 'Required', n: 'For respiratory enzymes' }, { t: 'V factor (NAD)', r: 'Required', n: 'Electron carrier' }, { t: 'Satellitism', r: '+', n: 'Grows near S. aureus on BAP' }, { t: 'Oxidase', r: '+', n: '' }, { t: 'Urease', r: '+', n: '' }, { t: 'Indole', r: '−', n: '' }, { t: 'Catalase', r: '+', n: '' }, { t: 'Hemolysis', r: 'γ', n: '' }, { t: 'Glucose', r: '+', n: '' }, { t: 'Sucrose', r: '−', n: '' }, { t: 'Lactose', r: '−', n: '' }],
     media: ['Chocolate agar (essential — X+V available)', 'Blood agar + S. aureus streak (Satellitism)'], condition: '35–37°C, 5% CO₂ essential, 18–24h; sensitive to drying',
     notes: 'Hib vaccine (PRP-conjugate) eliminated Hib meningitis in vaccinated populations. BOTH X and V factors required = key ID. Satellitism on BAP near S. aureus streak. Treat meningitis with cefotaxime/ceftriaxone'
   },
@@ -593,7 +593,7 @@ export const LIBRARY_EXTRA = [
     clinical: { habitat: 'Human GI tract only; no animal reservoir', diseases: ['Shigellosis (bacillary dysentery): bloody mucoid diarrhea, tenesmus', 'Most common Shigella in developed countries'], transmission: 'Fecal-oral; very low infectious dose (~10–200 organisms); contaminated food/water', factors: 'Intracellular colonic epithelial pathogen; acid-resistant' },
     colony: { BAP: 'Grey 2mm, γ-hemolysis', MAC: 'NLF (colorless)', XLD: 'Red/pink NLF', SS: 'Colorless (no black center)' },
     gramStain: 'GNB; non-capsulated; non-motile',
-    biochem: [{ t: 'Oxidase', r: '−', n: '' }, { t: 'TSI', r: 'K/A', n: 'No gas, No H₂S' }, { t: 'H₂S', r: '−', n: 'KEY vs Salmonella' }, { t: 'Indole', r: '−', n: '' }, { t: 'MR', r: '+', n: '' }, { t: 'VP', r: '−', n: '' }, { t: 'Citrate', r: '−', n: '' }, { t: 'Urease', r: '−', n: '' }, { t: 'Motile', r: '−', n: 'KEY — all Shigella non-motile' }, { t: 'LDC', r: '−', n: '' }, { t: 'ODC', r: '+', n: 'KEY — Serogroup D only' }, { t: 'Gas from glucose', r: '−', n: '' }, { t: 'Mannitol', r: '+', n: 'KEY vs S. dysenteriae (−)' }],
+    biochem: [{ t: 'Oxidase', r: '−', n: '' }, { t: 'TSI', r: 'K/A', n: 'No gas, No H₂S' }, { t: 'H₂S', r: '−', n: 'KEY vs Salmonella' }, { t: 'Indole', r: '−', n: '' }, { t: 'MR', r: '+', n: '' }, { t: 'VP', r: '−', n: '' }, { t: 'Citrate', r: '−', n: '' }, { t: 'Urease', r: '−', n: '' }, { t: 'Motile', r: '−', n: 'KEY — all Shigella non-motile' }, { t: 'LDC', r: '−', n: '' }, { t: 'ODC', r: '+', n: 'KEY — Serogroup D only' }, { t: 'Gas from glucose', r: '−', n: '' }, { t: 'Mannitol', r: '+', n: 'KEY vs S. dysenteriae (−)' }, { t: 'ONPG', r: '+', n: 'KEY — Serogroup D late lactose fermenter' }],
     media: ['MacConkey', 'SS agar', 'XLD', 'Selenite F broth (enrichment)'], condition: '35–37°C aerobic',
     notes: 'Serogroup D. ODC+ is KEY differentiator from other Shigella. No gas, no H₂S on TSI. Treat: azithromycin or fluoroquinolone. Extremely low infectious dose — hand hygiene critical'
   },
@@ -1067,7 +1067,7 @@ export const LIBRARY_BATCH3 = [
     clinical: { habitat: 'Humans', diseases: ['Severe dysentery, HUS'], transmission: 'Fecal-oral', factors: 'Shiga toxin (exotoxin)' },
     colony: { BAP: 'Grey', MAC: 'NLF' },
     gramStain: 'GNB',
-    biochem: [{ t: 'TSI', r: 'K/A', n: '' }, { t: 'H₂S', r: '−', n: '' }, { t: 'Motility', r: '−', n: '' }, { t: 'Mannitol', r: '−', n: 'KEY vs others (-/A/A/A)' }, { t: 'ODC', r: '−', n: '' }],
+    biochem: [{ t: 'TSI', r: 'K/A', n: '' }, { t: 'H₂S', r: '−', n: '' }, { t: 'Urease', r: '−', n: '' }, { t: 'Motility', r: '−', n: '' }, { t: 'Mannitol', r: '−', n: 'KEY vs others (-/A/A/A)' }, { t: 'ODC', r: '−', n: '' }, { t: 'ONPG', r: '−', n: '' }],
     media: ['MacConkey'], condition: '37°C',
     notes: 'Serogroup A. Mannitol negative (others are +). Shiga toxin producer.'
   },
@@ -1077,7 +1077,7 @@ export const LIBRARY_BATCH3 = [
     clinical: { habitat: 'Humans', diseases: ['Dysentery'], transmission: 'Fecal-oral', factors: 'Enterotoxins' },
     colony: { BAP: 'Grey', MAC: 'NLF' },
     gramStain: 'GNB',
-    biochem: [{ t: 'TSI', r: 'K/A', n: '' }, { t: 'H₂S', r: '−', n: '' }, { t: 'Motility', r: '−', n: '' }, { t: 'Indole', r: 'V', n: '' }, { t: 'Mannitol', r: '+', n: '' }],
+    biochem: [{ t: 'TSI', r: 'K/A', n: '' }, { t: 'H₂S', r: '−', n: '' }, { t: 'Urease', r: '−', n: '' }, { t: 'Motility', r: '−', n: '' }, { t: 'Indole', r: 'V', n: '' }, { t: 'Mannitol', r: '+', n: '' }, { t: 'ODC', r: '−', n: 'KEY vs S. sonnei (+)' }, { t: 'ONPG', r: '−', n: 'KEY vs S. sonnei (+)' }],
     media: ['MacConkey'], condition: '37°C',
     notes: 'Serogroup B.'
   },
@@ -1129,7 +1129,7 @@ export const LIBRARY_BATCH3 = [
     clinical: { habitat: 'Freshwater', diseases: ['Gastroenteritis (especially children)'], transmission: 'Freshwater ingestion', factors: 'Enterotoxins' },
     colony: { BAP: 'Grey, often NON-hemolytic', MAC: 'LF or NLF' },
     gramStain: 'GNB',
-    biochem: [{ t: 'Oxidase', r: '+', n: '' }, { t: 'TCBS', r: 'No growth', n: '' }, { t: 'TSI', r: 'A/A gas−', n: '' }, { t: 'VP', r: '−', n: 'KEY vs A. hydrophila (+)' }, { t: 'LDC', r: '−', n: 'From IMG_8022' }, { t: 'ODC', r: '−', n: '' }, { t: 'Arabinose', r: '+', n: '' }, { t: 'Lactose', r: '+', n: '' }, { t: 'Sucrose', r: '+', n: '' }, { t: 'Salicin', r: '+', n: '' }, { t: 'Esculin', r: '+', n: '' }, { t: '0% NaCl', r: '+', n: '' }, { t: '1% NaCl', r: '+', n: '' }, { t: '6% NaCl', r: '−', n: '' }],
+    biochem: [{ t: 'Oxidase', r: '+', n: '' }, { t: 'TCBS', r: 'No growth', n: '' }, { t: 'TSI', r: 'A/A gas−', n: '' }, { t: 'Motile', r: '+', n: '' }, { t: 'VP', r: '−', n: 'KEY vs A. hydrophila (+)' }, { t: 'LDC', r: '−', n: 'From IMG_8022' }, { t: 'ODC', r: '−', n: '' }, { t: 'Arabinose', r: '+', n: '' }, { t: 'Lactose', r: '+', n: '' }, { t: 'Sucrose', r: '+', n: '' }, { t: 'Salicin', r: '+', n: '' }, { t: 'Esculin', r: '+', n: '' }, { t: '0% NaCl', r: '+', n: '' }, { t: '1% NaCl', r: '+', n: '' }, { t: '6% NaCl', r: '−', n: '' }],
     media: ['Blood agar', 'MacConkey'], condition: '37°C',
     notes: 'VP negative separates it from A. hydrophila/sobria. Often non-hemolytic.'
   },
@@ -1139,7 +1139,7 @@ export const LIBRARY_BATCH3 = [
     clinical: { habitat: 'Freshwater', diseases: ['Gastroenteritis, bacteremia'], transmission: 'Freshwater', factors: 'Toxins' },
     colony: { BAP: 'Beta-hemolytic' },
     gramStain: 'GNB',
-    biochem: [{ t: 'Oxidase', r: '+', n: '' }, { t: 'TCBS', r: 'No growth', n: '' }, { t: 'TSI', r: 'A/A gas', n: '' }, { t: 'VP', r: '±', n: 'From IMG_8022' }, { t: 'LDC', r: '+', n: '' }, { t: 'ODC', r: '−', n: '' }, { t: 'Arabinose', r: '−', n: 'KEY' }, { t: 'Lactose', r: '−', n: '' }, { t: 'Sucrose', r: '+', n: '' }, { t: 'Salicin', r: '−', n: '' }, { t: 'Esculin', r: '−', n: '' }, { t: '0% NaCl', r: '+', n: '' }, { t: '1% NaCl', r: '+', n: '' }, { t: '6% NaCl', r: '−', n: '' }],
+    biochem: [{ t: 'Oxidase', r: '+', n: '' }, { t: 'TCBS', r: 'No growth', n: '' }, { t: 'TSI', r: 'A/A gas', n: '' }, { t: 'Motile', r: '+', n: '' }, { t: 'VP', r: '±', n: 'From IMG_8022' }, { t: 'LDC', r: '+', n: '' }, { t: 'ODC', r: '−', n: '' }, { t: 'Arabinose', r: '−', n: 'KEY' }, { t: 'Lactose', r: '−', n: '' }, { t: 'Sucrose', r: '+', n: '' }, { t: 'Salicin', r: '−', n: '' }, { t: 'Esculin', r: '−', n: '' }, { t: '0% NaCl', r: '+', n: '' }, { t: '1% NaCl', r: '+', n: '' }, { t: '6% NaCl', r: '−', n: '' }],
     media: ['Blood agar'], condition: '37°C',
     notes: 'Arabinose negative compared to A. hydrophila.'
   },
@@ -1223,7 +1223,7 @@ export const LIBRARY_BATCH3 = [
     clinical: { habitat: 'Water, soil, hospital environment', diseases: ['Opportunistic infection'], transmission: 'Nosocomial', factors: 'Biofilm formation' },
     colony: { BAP: 'Grey colony', MAC: 'NLF' },
     gramStain: 'GNB',
-    biochem: [{ t: 'Oxidase', r: '−', n: '' }, { t: 'TSI', r: 'A/A', n: 'From Serratia profile' }, { t: 'Indole', r: '−', n: 'N/A in source table' }, { t: 'MR', r: '−', n: 'N/A in source table' }, { t: 'VP', r: '+', n: 'N/A in source table' }, { t: 'Citrate', r: '+', n: 'N/A in source table' }, { t: 'Urease', r: '−', n: 'N/A in source table' }, { t: 'Motility', r: '+', n: 'N/A in source table' }, { t: 'LDC', r: '−', n: 'N/A in source table' }, { t: 'ODC', r: '+', n: '' }, { t: 'PDC', r: '−', n: 'N/A in source table' }, { t: 'Malonate', r: '−', n: '' }, { t: 'Mannitol', r: 'A', n: 'N/A in source table' }, { t: 'Arabinose', r: '+', n: '' }, { t: 'Adonitol', r: '−', n: '' }, { t: 'Sorbitol', r: '—', n: 'N/A' }],
+    biochem: [{ t: 'Oxidase', r: '−', n: '' }, { t: 'TSI', r: 'A/A', n: 'From Serratia profile' }, { t: 'Indole', r: '−', n: 'N/A in source table' }, { t: 'MR', r: '−', n: 'N/A in source table' }, { t: 'VP', r: '+', n: 'N/A in source table' }, { t: 'Citrate', r: '+', n: 'N/A in source table' }, { t: 'Urease', r: '−', n: 'N/A in source table' }, { t: 'Motility', r: '+', n: 'N/A in source table' }, { t: 'LDC', r: '+', n: '' }, { t: 'ODC', r: '+', n: '' }, { t: 'PDC', r: '−', n: 'N/A in source table' }, { t: 'Malonate', r: '−', n: '' }, { t: 'Mannitol', r: 'A', n: 'N/A in source table' }, { t: 'Arabinose', r: '+', n: '' }, { t: 'Adonitol', r: '−', n: '' }, { t: 'Sorbitol', r: '—', n: 'N/A' }],
     media: ['MacConkey'], condition: '37°C',
     notes: 'Added from IMG_8017 Serratia table.'
   },
@@ -1273,7 +1273,7 @@ export const LIBRARY_BATCH3 = [
     clinical: { habitat: 'Oral flora of cats/dogs', diseases: ['Cellulitis after animal bite', 'Bacteremia'], transmission: 'Animal bite/scratch', factors: 'Capsule' },
     colony: { BAP: 'Small grey colony, non-hemolytic', MAC: 'No growth' },
     gramStain: 'Small GN coccobacilli',
-    biochem: [{ t: 'Oxidase', r: '+', n: '' }, { t: 'TSI', r: 'A/A', n: '' }, { t: 'Urease', r: '−', n: '' }, { t: 'Motile', r: '−', n: '' }, { t: 'Mannitol', r: '+', n: '' }, { t: 'Indole', r: '+', n: '' }, { t: 'Growth on Nutrient agar', r: '+', n: 'N/A in image flowchart' }],
+    biochem: [{ t: 'Oxidase', r: '+', n: '' }, { t: 'Catalase', r: '+', n: '' }, { t: 'Hemolysis', r: 'γ', n: 'Non-hemolytic' }, { t: 'TSI', r: 'A/A', n: '' }, { t: 'Urease', r: '−', n: '' }, { t: 'Motile', r: '−', n: '' }, { t: 'Glucose', r: '+', n: '' }, { t: 'Sucrose', r: '+', n: '' }, { t: 'Mannitol', r: '+', n: '' }, { t: 'Indole', r: '+', n: '' }, { t: 'Growth on Nutrient agar', r: '+', n: 'N/A in image flowchart' }],
     media: ['Blood agar', 'Chocolate agar'], condition: '35–37°C',
     notes: 'Added from Unknown3 coccobacilli branch.'
   },
@@ -1285,7 +1285,7 @@ export const LIBRARY_BATCH3 = [
     clinical: { habitat: 'Human urogenital flora', diseases: ['Genital tract infection', 'Neonatal bacteremia (rare)'], transmission: 'Endogenous', factors: 'Low virulence' },
     colony: { BAP: 'Small, non-hemolytic', MAC: '±' },
     gramStain: 'GN coccobacilli',
-    biochem: [{ t: 'Oxidase', r: '±', n: '' }, { t: 'Catalase', r: '−', n: '' }, { t: 'Indole', r: '+', n: '' }, { t: 'Motile', r: '−', n: '' }, { t: 'Nitrate', r: '+', n: '' }, { t: 'Glucose', r: '+gas', n: '' }, { t: 'Mannitol', r: '−', n: '' }, { t: 'Maltose', r: '−', n: '' }, { t: 'Sucrose', r: '−', n: '' }, { t: 'Urease', r: '−', n: '' }],
+    biochem: [{ t: 'Oxidase', r: '±', n: '' }, { t: 'Catalase', r: '−', n: '' }, { t: 'Hemolysis', r: 'γ', n: 'Non-hemolytic' }, { t: 'Indole', r: '+', n: '' }, { t: 'Motile', r: '−', n: '' }, { t: 'Nitrate', r: '+', n: '' }, { t: 'Glucose', r: '+gas', n: '' }, { t: 'Mannitol', r: '−', n: '' }, { t: 'Maltose', r: '−', n: '' }, { t: 'Sucrose', r: '−', n: '' }, { t: 'Urease', r: '−', n: '' }],
     media: ['Blood agar', 'Chocolate agar'], condition: '35–37°C',
     notes: 'P. bettyae: genital tract Pasteurella. Oxidase variable, Catalase−.'
   },
@@ -1295,7 +1295,7 @@ export const LIBRARY_BATCH3 = [
     clinical: { habitat: 'Oral flora of dogs', diseases: ['Cellulitis after dog bite', 'Bacteremia'], transmission: 'Dog bite/scratch', factors: 'Capsule' },
     colony: { BAP: 'Small, non-hemolytic', MAC: 'No growth' },
     gramStain: 'GN coccobacilli',
-    biochem: [{ t: 'Oxidase', r: '+', n: '' }, { t: 'Catalase', r: '+', n: '' }, { t: 'Indole', r: '+', n: '' }, { t: 'Motile', r: '−', n: '' }, { t: 'Nitrate', r: '+', n: '' }, { t: 'Glucose', r: '+', n: '' }, { t: 'Mannitol', r: '−', n: 'KEY vs P. multocida (Mannitol+)' }, { t: 'Maltose', r: '−', n: '' }, { t: 'Sucrose', r: '+', n: '' }, { t: 'Urease', r: '−', n: '' }],
+    biochem: [{ t: 'Oxidase', r: '+', n: '' }, { t: 'Catalase', r: '+', n: '' }, { t: 'Hemolysis', r: 'γ', n: 'Non-hemolytic' }, { t: 'Indole', r: '+', n: '' }, { t: 'Motile', r: '−', n: '' }, { t: 'Nitrate', r: '+', n: '' }, { t: 'Glucose', r: '+', n: '' }, { t: 'Mannitol', r: '−', n: 'KEY vs P. multocida (Mannitol+)' }, { t: 'Maltose', r: '−', n: '' }, { t: 'Sucrose', r: '+', n: '' }, { t: 'Urease', r: '−', n: '' }],
     media: ['Blood agar', 'Chocolate agar'], condition: '35–37°C',
     notes: 'Dog bite wound pathogen. Mannitol− แยกจาก P. multocida (Mannitol+).'
   },
@@ -1305,7 +1305,7 @@ export const LIBRARY_BATCH3 = [
     clinical: { habitat: 'Oral flora of cats/dogs', diseases: ['Wound infection after bite', 'Bacteremia'], transmission: 'Animal bite', factors: 'Capsule' },
     colony: { BAP: 'Small, non-hemolytic', MAC: 'No growth' },
     gramStain: 'GN coccobacilli',
-    biochem: [{ t: 'Oxidase', r: '+', n: '' }, { t: 'Catalase', r: '+', n: '' }, { t: 'Indole', r: '+', n: '' }, { t: 'Motile', r: '−', n: '' }, { t: 'Nitrate', r: '+', n: '' }, { t: 'Glucose', r: '+gas', n: '' }, { t: 'Mannitol', r: '−', n: '' }, { t: 'Maltose', r: '+', n: 'KEY vs P. multocida (−)' }, { t: 'Sucrose', r: '+', n: '' }, { t: 'Urease', r: '+', n: 'KEY vs P. multocida (−)' }],
+    biochem: [{ t: 'Oxidase', r: '+', n: '' }, { t: 'Catalase', r: '+', n: '' }, { t: 'Hemolysis', r: 'γ', n: 'Non-hemolytic' }, { t: 'Indole', r: '+', n: '' }, { t: 'Motile', r: '−', n: '' }, { t: 'Nitrate', r: '+', n: '' }, { t: 'Glucose', r: '+gas', n: '' }, { t: 'Mannitol', r: '−', n: '' }, { t: 'Maltose', r: '+', n: 'KEY vs P. multocida (−)' }, { t: 'Sucrose', r: '+', n: '' }, { t: 'Urease', r: '+', n: 'KEY vs P. multocida (−)' }],
     media: ['Blood agar', 'Chocolate agar'], condition: '35–37°C',
     notes: 'Urease+ + Maltose+ แยกจาก P. multocida (Urease−, Maltose−).'
   },
@@ -1315,7 +1315,7 @@ export const LIBRARY_BATCH3 = [
     clinical: { habitat: 'Oral flora of rodents/cats/dogs', diseases: ['Bite wound infection', 'Respiratory infection (rodents)'], transmission: 'Rodent bite or contact', factors: 'Zoonotic' },
     colony: { BAP: 'Small, non-hemolytic', MAC: '±' },
     gramStain: 'GN coccobacilli',
-    biochem: [{ t: 'Oxidase', r: '+', n: '' }, { t: 'Catalase', r: '+', n: '' }, { t: 'Indole', r: '+', n: '' }, { t: 'Motile', r: '−', n: '' }, { t: 'Nitrate', r: '+', n: '' }, { t: 'Glucose', r: '+', n: '' }, { t: 'Mannitol', r: '+', n: 'Similar to P. multocida' }, { t: 'Maltose', r: '+', n: '' }, { t: 'Sucrose', r: '+', n: '' }, { t: 'Urease', r: '+', n: '' }],
+    biochem: [{ t: 'Oxidase', r: '+', n: '' }, { t: 'Catalase', r: '+', n: '' }, { t: 'Hemolysis', r: 'γ', n: 'Non-hemolytic' }, { t: 'Indole', r: '+', n: '' }, { t: 'Motile', r: '−', n: '' }, { t: 'Nitrate', r: '+', n: '' }, { t: 'Glucose', r: '+', n: '' }, { t: 'Mannitol', r: '+', n: 'Similar to P. multocida' }, { t: 'Maltose', r: '+', n: '' }, { t: 'Sucrose', r: '+', n: '' }, { t: 'Urease', r: '+', n: '' }],
     media: ['Blood agar', 'Chocolate agar'], condition: '35–37°C',
     notes: 'Rodent-associated Pasteurella. Urease+ + OD+ แยกจาก P. multocida (Urease−, OD+).'
   },
@@ -1325,7 +1325,7 @@ export const LIBRARY_BATCH3 = [
     clinical: { habitat: 'Oral flora of cats/dogs', diseases: ['Wound infection after bite'], transmission: 'Animal bite', factors: 'Zoonotic' },
     colony: { BAP: 'Small, non-hemolytic', MAC: 'No growth' },
     gramStain: 'GN coccobacilli',
-    biochem: [{ t: 'Oxidase', r: '+', n: '' }, { t: 'Catalase', r: '+', n: '' }, { t: 'Indole', r: '+', n: '' }, { t: 'Motile', r: '−', n: '' }, { t: 'Nitrate', r: '+', n: '' }, { t: 'Glucose', r: '+', n: '' }, { t: 'Mannitol', r: '−', n: '' }, { t: 'Maltose', r: '+', n: '' }, { t: 'Sucrose', r: '−', n: 'KEY vs P. dagmatis (Sucrose+)' }, { t: 'Urease', r: '−', n: '' }],
+    biochem: [{ t: 'Oxidase', r: '+', n: '' }, { t: 'Catalase', r: '+', n: '' }, { t: 'Hemolysis', r: 'γ', n: 'Non-hemolytic' }, { t: 'Indole', r: '+', n: '' }, { t: 'Motile', r: '−', n: '' }, { t: 'Nitrate', r: '+', n: '' }, { t: 'Glucose', r: '+', n: '' }, { t: 'Mannitol', r: '−', n: '' }, { t: 'Maltose', r: '+', n: '' }, { t: 'Sucrose', r: '−', n: 'KEY vs P. dagmatis (Sucrose+)' }, { t: 'Urease', r: '−', n: '' }],
     media: ['Blood agar', 'Chocolate agar'], condition: '35–37°C',
     notes: 'Urease− + Maltose+ + Sucrose− แยกจาก P. dagmatis (Sucrose+) และ P. multocida (Maltose−).'
   },
@@ -1335,7 +1335,7 @@ export const LIBRARY_BATCH3 = [
     clinical: { habitat: 'Oral flora of animals', diseases: ['Wound infection after animal bite'], transmission: 'Animal bite', factors: 'Zoonotic' },
     colony: { BAP: 'Small, non-hemolytic', MAC: 'No growth' },
     gramStain: 'GN coccobacilli',
-    biochem: [{ t: 'Oxidase', r: '+', n: '' }, { t: 'Catalase', r: '+', n: '' }, { t: 'Indole', r: '+', n: '' }, { t: 'Motile', r: '−', n: '' }, { t: 'Nitrate', r: '−', n: 'KEY: Nitrate− (vs most Pasteurella +)' }, { t: 'Glucose', r: '−', n: 'KEY: Glucose− unusual in Pasteurella' }, { t: 'Urease', r: '+', n: '' }],
+    biochem: [{ t: 'Oxidase', r: '+', n: '' }, { t: 'Catalase', r: '+', n: '' }, { t: 'Hemolysis', r: 'γ', n: 'Non-hemolytic' }, { t: 'Indole', r: '+', n: '' }, { t: 'Motile', r: '−', n: '' }, { t: 'Nitrate', r: '−', n: 'KEY: Nitrate− (vs most Pasteurella +)' }, { t: 'Glucose', r: '−', n: 'KEY: Glucose− unusual in Pasteurella' }, { t: 'Urease', r: '+', n: '' }],
     media: ['Blood agar', 'Chocolate agar'], condition: '35–37°C',
     notes: 'Glucose− + Nitrate− ผิดปกติในกลุ่ม Pasteurella. Urease+.'
   },
@@ -1387,7 +1387,7 @@ export const LIBRARY_BATCH3 = [
     clinical: { habitat: 'Respiratory tract flora', diseases: ['Endocarditis (HACEK)', 'Sinusitis', 'Otitis media', 'Bacteremia'], transmission: 'Endogenous', factors: 'HACEK organism' },
     colony: { ChocAgar: 'Small, non-hemolytic; satellitism' },
     gramStain: 'GN coccobacilli',
-    biochem: [{ t: 'Factor X (Hemin)', r: '−', n: 'KEY: Does NOT require X factor' }, { t: 'Factor V (NAD)', r: '+', n: 'Requires V factor' }, { t: 'Hemolysis', r: 'γ', n: '' }, { t: 'Glucose', r: '+', n: '' }, { t: 'Sucrose', r: '+', n: '' }, { t: 'Mannose', r: '+', n: '' }, { t: 'Catalase', r: '±', n: '' }],
+    biochem: [{ t: 'Factor X (Hemin)', r: '−', n: 'KEY: Does NOT require X factor' }, { t: 'Factor V (NAD)', r: '+', n: 'Requires V factor' }, { t: 'Hemolysis', r: 'γ', n: '' }, { t: 'Glucose', r: '+', n: '' }, { t: 'Sucrose', r: '+', n: '' }, { t: 'Mannose', r: '+', n: '' }, { t: 'Catalase', r: '±', n: '' }, { t: 'Urease', r: '+', n: '' }],
     media: ['Blood agar', 'Chocolate agar'], condition: '37°C, ± CO₂',
     notes: 'X−V+. Non-hemolytic. HACEK group. ต่างจาก H. influenzae (X+V+).'
   },
@@ -1407,7 +1407,7 @@ export const LIBRARY_BATCH3 = [
     clinical: { habitat: 'Oral flora', diseases: ['Rare opportunistic infection', 'Endocarditis'], transmission: 'Endogenous', factors: 'Low virulence' },
     colony: { ChocAgar: 'Very small; slow growing' },
     gramStain: 'GN coccobacilli',
-    biochem: [{ t: 'Factor X (Hemin)', r: '−', n: '' }, { t: 'Factor V (NAD)', r: '+', n: '' }, { t: 'Hemolysis', r: 'γ', n: '' }, { t: 'Glucose', r: '+weak', n: 'Weak fermentation' }, { t: 'Sucrose', r: '+weak', n: 'Weak fermentation' }, { t: 'Catalase', r: '±', n: '' }],
+    biochem: [{ t: 'Factor X (Hemin)', r: '−', n: '' }, { t: 'Factor V (NAD)', r: '+', n: '' }, { t: 'Hemolysis', r: 'γ', n: '' }, { t: 'Glucose', r: '+weak', n: 'Weak fermentation' }, { t: 'Sucrose', r: '+weak', n: 'Weak fermentation' }, { t: 'Mannose', r: '−', n: 'Non-fermenter' }, { t: 'Catalase', r: '±', n: '' }, { t: 'Urease', r: '−', n: '' }],
     media: ['Chocolate agar'], condition: '37°C, 5% CO₂',
     notes: 'X−V+. Weak sugar fermentation distinguishes from H. parainfluenzae (stronger reactions).'
   },
@@ -1453,7 +1453,7 @@ export const LIBRARY_BATCH3 = [
     notes: 'Added from IMG_8026.'
   },
   {
-    id: 'neisseria_elongata', group: 'gn_coccobacilli', name: 'Neisseria elongata', thai: 'ไนซีเรีย อีลองกาตา', gram: '−', morph: 'Diplococci/short rods',
+    id: 'neisseria_elongata', group: 'gn_coccobacilli', name: 'Neisseria elongata', thai: 'ไนซีเรีย อีลองกาตา', gram: '−', morph: 'Coccobacilli',
     importance: 'low', tags: ['Rod-like Neisseria'],
     clinical: { habitat: 'Oral flora', diseases: ['Endocarditis (rare)'], transmission: 'Respiratory', factors: 'Commensal' },
     colony: { ChocAgar: 'Small colony' },
@@ -1463,17 +1463,17 @@ export const LIBRARY_BATCH3 = [
     notes: 'Added from IMG_8026.'
   },
   {
-    id: 'neisseria_weaveri', group: 'gn_coccobacilli', name: 'Neisseria weaveri', thai: 'ไนซีเรีย วีเวอรี', gram: '−', morph: 'Diplococci',
+    id: 'neisseria_weaveri', group: 'gn_coccobacilli', name: 'Neisseria weaveri', thai: 'ไนซีเรีย วีเวอรี', gram: '−', morph: 'Rods',
     importance: 'low', tags: ['Animal-associated'],
     clinical: { habitat: 'Dog oral flora', diseases: ['Bite wound infection'], transmission: 'Animal bite', factors: 'Zoonotic commensal' },
     colony: { ChocAgar: 'Small colony' },
     gramStain: 'GN diplococci',
-    biochem: [{ t: 'Oxidase', r: '+', n: '' }, { t: 'Growth on Nutrient agar', r: '+', n: '' }, { t: 'CTA Glucose', r: '−', n: '' }, { t: 'CTA Maltose', r: '−', n: '' }, { t: 'CTA Lactose', r: '−', n: '' }, { t: 'CTA Sucrose', r: '−', n: '' }, { t: 'CTA Fructose', r: '−', n: '' }, { t: 'Nitrate reduction', r: '−', n: '' }, { t: 'DNase', r: '−', n: '' }],
+    biochem: [{ t: 'Oxidase', r: '+', n: '' }, { t: 'Growth on Nutrient agar', r: '+', n: '' }, { t: 'growth_macconkey', r: '+', n: 'Grows on MacConkey' }, { t: 'CTA Glucose', r: '−', n: '' }, { t: 'CTA Maltose', r: '−', n: '' }, { t: 'CTA Lactose', r: '−', n: '' }, { t: 'CTA Sucrose', r: '−', n: '' }, { t: 'CTA Fructose', r: '−', n: '' }, { t: 'Nitrate reduction', r: '−', n: '' }, { t: 'DNase', r: '−', n: '' }],
     media: ['Chocolate agar'], condition: '37°C',
     notes: 'Added from IMG_8026.'
   },
   {
-    id: 'neisseria_bacilliformis', group: 'gn_coccobacilli', name: 'Neisseria bacilliformis', thai: 'ไนซีเรีย บาซิลลิฟอร์มิส', gram: '−', morph: 'Bacilliform',
+    id: 'neisseria_bacilliformis', group: 'gn_coccobacilli', name: 'Neisseria bacilliformis', thai: 'ไนซีเรีย บาซิลลิฟอร์มิส', gram: '−', morph: 'Rods',
     importance: 'low', tags: ['Rare Neisseria', 'Fructose ND'],
     clinical: { habitat: 'Oral flora', diseases: ['Rare opportunistic infection'], transmission: 'Respiratory', factors: 'Commensal' },
     colony: { ChocAgar: 'Small colony' },
@@ -1550,7 +1550,7 @@ export const LIBRARY_BATCH3 = [
     clinical: { habitat: 'Skin flora', diseases: ['Erythrasma (coral red fluorescence under Wood lamp)'], transmission: 'Endogenous', factors: 'Porphyrin production' },
     colony: { BAP: 'Small, white, non-hemolytic' },
     gramStain: 'GP club-shaped rods',
-    biochem: [{ t: 'Catalase', r: '+', n: '' }, { t: 'Urease', r: '−', n: '' }, { t: 'Glucose', r: '+', n: '' }, { t: 'Maltose', r: '−', n: '' }, { t: 'Sucrose', r: '±', n: '' }, { t: 'Nitrate', r: '±', n: '' }, { t: 'CAMP test', r: '−', n: '' }],
+    biochem: [{ t: 'Catalase', r: '+', n: '' }, { t: 'Urease', r: '−', n: '' }, { t: 'Glucose', r: '+', n: '' }, { t: 'Maltose', r: '+', n: '' }, { t: 'Sucrose', r: '±', n: '' }, { t: 'Nitrate', r: '−', n: '' }, { t: 'CAMP test', r: '−', n: '' }],
     media: ['Blood agar'], condition: '37°C',
     notes: 'Erythrasma — coral red fluorescence under Wood lamp. Maltose− แยกจาก C. diphtheriae (Maltose+)'
   },
@@ -1674,7 +1674,7 @@ export const LIBRARY_BATCH3 = [
     clinical: { habitat: 'Soil, environment', diseases: ['Rarely pathogenic', 'Food contamination'], transmission: 'Environmental', factors: 'Low virulence' },
     colony: { BAP: 'Large, rhizoid (root-like spreading) colony; β-hemolysis' },
     gramStain: 'GP large rods; endospore (central/subterminal)',
-    biochem: [{ t: 'Catalase', r: '+', n: '' }, { t: 'Hemolysis', r: 'β', n: '' }, { t: 'Motile', r: '−', n: 'KEY: Non-motile (vs B. cereus motile)' }, { t: 'Lecithinase', r: '+', n: '' }, { t: 'Penicillin', r: 'R', n: '' }],
+    biochem: [{ t: 'Catalase', r: '+', n: '' }, { t: 'Hemolysis', r: 'β', n: '' }, { t: 'Motile', r: '−', n: 'KEY: Non-motile (vs B. cereus motile)' }, { t: 'Lecithinase', r: '+', n: '' }, { t: 'Penicillin', r: 'R', n: '' }, { t: 'CAMP test', r: '−', n: '' }, { t: 'Rhamnose', r: '−', n: '' }, { t: 'Esculin', r: '+', n: '' }, { t: 'Urease', r: '−', n: '' }, { t: 'Glucose', r: '+', n: '' }, { t: 'Maltose', r: '+', n: '' }, { t: 'Sucrose', r: '+', n: '' }, { t: 'Nitrate', r: '+', n: '' }],
     media: ['Blood agar'], condition: '37°C aerobic',
     notes: 'Rhizoid colony + Non-motile แยกจาก B. cereus (motile). ไม่ค่อยก่อโรคในคน'
   },
@@ -1684,7 +1684,7 @@ export const LIBRARY_BATCH3 = [
     clinical: { habitat: 'Soil, environment', diseases: ['Rarely pathogenic'], transmission: 'Environmental', factors: 'Low virulence; large cell size' },
     colony: { BAP: 'Large colony; ± hemolysis; flat, irregular' },
     gramStain: 'GP very large rods (largest Bacillus); endospore',
-    biochem: [{ t: 'Catalase', r: '+', n: '' }, { t: 'Hemolysis', r: '±', n: '' }, { t: 'Motile', r: '+', n: '' }, { t: 'Lecithinase', r: '−', n: 'KEY: Lecithinase− (vs B. cereus +)' }, { t: 'Penicillin', r: 'S', n: 'KEY: Penicillin S (vs B. cereus R)' }],
+    biochem: [{ t: 'Catalase', r: '+', n: '' }, { t: 'Hemolysis', r: '±', n: '' }, { t: 'Motile', r: '+', n: '' }, { t: 'Lecithinase', r: '−', n: 'KEY: Lecithinase− (vs B. cereus +)' }, { t: 'Penicillin', r: 'S', n: 'KEY: Penicillin S (vs B. cereus R)' }, { t: 'CAMP test', r: '−', n: '' }, { t: 'Rhamnose', r: '−', n: '' }, { t: 'Esculin', r: '+', n: '' }, { t: 'Urease', r: '−', n: '' }, { t: 'Glucose', r: '+', n: '' }, { t: 'Maltose', r: '+', n: '' }, { t: 'Sucrose', r: '+', n: '' }, { t: 'Nitrate', r: '+', n: '' }],
     media: ['Blood agar'], condition: '37°C aerobic',
     notes: 'Lecithinase− + Penicillin S แยกจาก B. cereus (Lecithinase+, Penicillin R). Largest Bacillus species.'
   },
@@ -1694,7 +1694,7 @@ export const LIBRARY_BATCH3 = [
     clinical: { habitat: 'Soil; commercial bioinsecticide', diseases: ['Rarely pathogenic to humans'], transmission: 'Environmental', factors: 'Parasporal crystal toxic to insects (not humans)' },
     colony: { BAP: 'Medium-large colony; β-hemolysis' },
     gramStain: 'GP large rods; endospore + parasporal crystal',
-    biochem: [{ t: 'Catalase', r: '+', n: '' }, { t: 'Hemolysis', r: 'β', n: '' }, { t: 'Motile', r: '+', n: '' }, { t: 'Lecithinase', r: '+', n: '' }, { t: 'Penicillin', r: 'R', n: '' }],
+    biochem: [{ t: 'Catalase', r: '+', n: '' }, { t: 'Hemolysis', r: 'β', n: '' }, { t: 'Motile', r: '+', n: '' }, { t: 'Lecithinase', r: '+', n: '' }, { t: 'Penicillin', r: 'R', n: '' }, { t: 'CAMP test', r: '−', n: '' }, { t: 'Rhamnose', r: '−', n: '' }, { t: 'Esculin', r: '+', n: '' }, { t: 'Urease', r: '−', n: '' }, { t: 'Glucose', r: '+', n: '' }, { t: 'Maltose', r: '+', n: '' }, { t: 'Sucrose', r: '+', n: '' }, { t: 'Nitrate', r: '+', n: '' }],
     media: ['Blood agar'], condition: '37°C aerobic',
     notes: 'KEY: parasporal crystal (protein toxin ต่อแมลง). แยกจาก B. cereus ด้วย phase contrast microscopy ดู parasporal crystal'
   },

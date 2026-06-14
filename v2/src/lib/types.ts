@@ -7,6 +7,8 @@ export interface BiochemRow {
   r: string
   /** Optional note. Tests prefixed with 'KEY' are key discriminators. */
   n?: string
+  /** Canonical test ID mapping */
+  id?: string
 }
 
 export interface Species {

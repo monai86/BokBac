@@ -835,6 +835,7 @@ export const BIOCHEMICAL_TEST_REGISTRY: BiochemicalTestDefinition[] = [
     options: ['+', '−'],
     mcmKey: undefined,
     category: 'fastidious',
+    hardExclusion: true,
     estimatedTime: '18-24 hrs',
     timePenalty: 2,
     costLevel: 'low',

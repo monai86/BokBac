@@ -79,12 +79,16 @@ function getTraitProb(traits: Record<string, number | undefined>, ...keys: strin
  */
 export function tsiLikelihoodFromTraits(
   traits: Record<string, number | undefined>,
-  outcome: string
+  outcome: string,
+  group?: string
 ): number | null {
   const normalized = normalizeTsiOutcome(outcome);
   if (!normalized) return 0.5;
 
-  const pGlucose = getTraitProb(traits, 'glucose_acid');
+  let pGlucose = getTraitProb(traits, 'glucose_acid');
+  if (group === 'nfb') {
+    pGlucose = 0.0; // Non-fermenters do not ferment glucose in TSI butt (anaerobic)
+  }
   const pLactose = getTraitProb(traits, 'lactose');
   const pSucrose = getTraitProb(traits, 'sucrose');
   const pH2s = getTraitProb(traits, 'h2s');
@@ -141,8 +145,8 @@ export const OUTCOME_MODELS: Record<string, CategoricalOutcomeModel> = {
   tsi: {
     testId: 'tsi',
     outcomes: ['A/A', 'A/A (gas+)', 'A/A (gas−)', 'K/A', 'K/A (gas+)', 'K/A H2S', 'K/AG H2S', 'K/K', 'K/N', 'K/NC'],
-    computeLikelihood: (_pct, outcome) => tsiLikelihoodFromTraits({}, outcome),
-    computeLikelihoodFromTraits: (traits, outcome) => tsiLikelihoodFromTraits(traits, outcome)
+    computeLikelihood: (_pct, outcome, group) => tsiLikelihoodFromTraits({}, outcome, group),
+    computeLikelihoodFromTraits: (traits, outcome, group) => tsiLikelihoodFromTraits(traits, outcome, group)
   },
   urease: {
     testId: 'urease',

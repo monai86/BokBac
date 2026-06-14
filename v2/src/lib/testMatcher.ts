@@ -105,6 +105,10 @@ export const TEST_ALIASES: Record<string, string[]> = {
   camp: ['camp'],
   hippurate: ['hippurate'],
   '6.5_nacl': ['6.5% nacl', '6.5 nacl', '6 5 nacl', 'salt 6'],
+  nacl_6_5: ['6.5% nacl', '6.5 nacl', '6 5 nacl', 'salt 6', 'salt tolerance', 'salt_tolerance', '6.5% nacl growth'],
+  salt_tolerance: ['6.5% nacl', '6.5 nacl', '6 5 nacl', 'salt 6', 'salt tolerance', 'salt_tolerance', '6.5% nacl growth'],
+  growth_45: ['growth 45', 'growth45', '45c', '45 c', 'growth at 45c', 'growth 45°c'],
+  ppr: ['ppr', 'ppr test', 'ppr agar', 'granada', 'granada agar'],
   growth_42: ['growth 42', 'growth42', '42c', '42 c'],
   king_p: ['king p', 'pyocyanin'],
   king_f: ['king f', 'pyoverdin', 'pyoverdine'],
@@ -114,14 +118,23 @@ export const TEST_ALIASES: Record<string, string[]> = {
   string_test: ['string test'],
   indole: ['indole'],
   motility: ['motility', 'motile'],
+  motile: ['motility', 'motile'],
   vp: ['vp', 'voges-proskauer', 'voges proskauer'],
   citrate: ['citrate', 'simmons citrate'],
   urease: ['urease', 'urea'],
-  h2s: ['h2s', 'h₂s'],
+  h2s: ['h2s', 'h₂s', 'h2s in tsi', 'h₂s in tsi', 'h2s (tsi)', 'h₂s (tsi)'],
+  tsi: ['tsi', 'tsi slant/butt', 'tsi slant butt', 'slant/butt'],
+  tsi_nfb: ['tsi', 'tsi slant/butt', 'tsi slant butt', 'slant/butt'],
+  tsi_v: ['tsi', 'tsi slant/butt', 'tsi slant butt', 'slant/butt'],
+  tsi_gnc: ['tsi', 'tsi slant/butt', 'tsi slant butt', 'slant/butt'],
+  tsi_gpb: ['tsi', 'tsi slant/butt', 'tsi slant butt', 'slant/butt'],
+  h2s_nfb: ['h2s', 'h₂s', 'h2s in tsi', 'h₂s in tsi', 'h2s (tsi)', 'h₂s (tsi)'],
+  h2s_gpb: ['h2s', 'h₂s', 'h2s in tsi', 'h₂s in tsi', 'h2s (tsi)', 'h₂s (tsi)'],
   ldc: ['ldc', 'lysine'],
   odc: ['odc', 'ornithine'],
   pdc: ['pdc', 'phenylalanine'],
-  adh: ['adh', 'arginine'],
+  adh: ['adh', 'arginine', 'adc', 'ad'],
+  adc: ['adh', 'arginine', 'adc', 'ad'],
   lactose: ['lactose'],
   sucrose: ['sucrose'],
   mannitol: ['mannitol'],
@@ -164,11 +177,55 @@ export function isTestMatchByAlias(rowName: string, suiteTest: SuiteTest): boole
   const rn = normalizeKey(rowName)
   const sn = normalizeKey(suiteTest.label)
   if (!rn || !sn) return false
-  if (rn === sn || rn.includes(sn) || sn.includes(rn)) return true
-  const aliases = TEST_ALIASES[suiteTest.id] || []
+
+  // 1. Check exact match
+  if (rn === sn) return true
+
+  // 2. Check alias match of test ID
+  const baseId = suiteTest.id.split('_')[0]
+  const aliases = TEST_ALIASES[baseId] || TEST_ALIASES[suiteTest.id] || []
+  const hasAliasMatch = aliases.some((a) => {
+    const an = normalizeKey(a)
+    return !!an && rn === an
+  })
+  if (hasAliasMatch) return true
+
+  // 3. Substring match fallback, but exclude bad cross-matching between h2s/tsi and gas/glucose
+  if (rn.includes(sn) || sn.includes(rn)) {
+    if (sn === 'tsi' && rn.includes('h2s')) return false
+    if (rn === 'tsi' && sn.includes('h2s')) return false
+    if (sn === 'glucose' && rn.includes('gas')) return false
+    if (rn === 'glucose' && sn.includes('gas')) return false
+    if (sn.includes('vp') && !rn.includes('vp')) return false
+    if (rn.includes('vp') && !sn.includes('vp')) return false
+    
+    // If both contain a number, they must have the same number to match
+    const numRn = rn.match(/\d+/)?.[0]
+    const numSn = sn.match(/\d+/)?.[0]
+    if (numRn !== undefined && numSn !== undefined && numRn !== numSn) return false
+
+    return true
+  }
+
+  // Check substring on aliases
   return aliases.some((a) => {
     const an = normalizeKey(a)
-    return !!an && (rn === an || rn.includes(an) || an.includes(rn))
+    if (!an) return false
+    if (rn.includes(an) || an.includes(rn)) {
+      if (an === 'tsi' && rn.includes('h2s')) return false
+      if (rn === 'tsi' && an.includes('h2s')) return false
+      if (an === 'glucose' && rn.includes('gas')) return false
+      if (rn === 'glucose' && an.includes('gas')) return false
+      if (an.includes('vp') && !rn.includes('vp')) return false
+      if (rn.includes('vp') && !an.includes('vp')) return false
+      
+      const numRn = rn.match(/\d+/)?.[0]
+      const numAn = an.match(/\d+/)?.[0]
+      if (numRn !== undefined && numAn !== undefined && numRn !== numAn) return false
+
+      return true
+    }
+    return false
   })
 }
 
@@ -183,9 +240,9 @@ export function getCanonicalBiochemRows(bug: Species, suites: Record<string, Sui
     const idx = rows.findIndex((r, i) => !used.has(i) && isTestMatchByAlias(r.t, st))
     if (idx >= 0) {
       used.add(idx)
-      return { ...rows[idx], t: st.label }
+      return { ...rows[idx], t: st.label, id: st.id }
     }
-    return { t: st.label, r: '—', n: 'N/A' }
+    return { t: st.label, r: '—', n: 'N/A', id: st.id }
   })
   const extras = rows.filter((_, i) => !used.has(i))
   return [...canonical, ...extras]
@@ -209,7 +266,7 @@ export function normalizeBiochemNamesForBug(bug: Species, suites: Record<string,
     let result = ''
     if (rawXld.includes('yellow')) {
       result = 'Yellow (xylose+)'
-    } else if (rawXld.includes('black') || rawXld.includes('h2s') || rawXld.includes('center')) {
+    } else if ((rawXld.includes('black') || rawXld.includes('h2s') || rawXld.includes('center')) && !rawXld.includes('no black') && !rawXld.includes('without black')) {
       result = 'Red with black center (H₂S+)'
     } else if (rawXld.includes('red') || rawXld.includes('pink') || rawXld.includes('colorless')) {
       result = 'Red (xylose−)'

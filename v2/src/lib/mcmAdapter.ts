@@ -65,6 +65,7 @@ export const MCM_TEST_MAP: Record<string, string | null> = {
   kingf: 'pyoverdin',
   growth42: 'growth_42c',
   growth42c: 'growth_42c',
+  growthmacconkey: 'macconkey_growth',
   '42c': 'growth_42c',
   cetrimide: 'cetrimide_growth',
   nitrate: 'nitrate_reduction',

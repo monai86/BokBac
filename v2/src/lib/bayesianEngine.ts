@@ -18,11 +18,13 @@ import {
   getCanonicalBiochemRows,
   getKeyTestsForBug,
   testMatch,
+  TEST_ALIASES,
 } from './testMatcher'
 import { lookupMcmTest, mcmLikelihood, PRIOR_MAP } from './mcmAdapter'
 import { lookupTestDefinition, BIOCHEMICAL_TEST_REGISTRY } from '../data/tests/biochemicalTestRegistry'
 import { TEST_CORRELATION_GROUPS } from './correlationConfig'
 import { categoricalLikelihood, OUTCOME_MODELS } from './outcomeModels'
+import { normalizeTestKeyToId } from './suiteCatalog'
 
 export interface BayesOptions {
   /** Library of all candidate species. */
@@ -60,6 +62,18 @@ function getCorrelationWeight(ansKey: string, answeredCanonicalKeys: string[]): 
   })
 
   return alreadyProcessed ? 0.5 : 1.0
+}
+
+function getBaseId(id: string): string {
+  const suffixes = ['_cluster', '_chain', '_nfb', '_gnc', '_gpb', '_v'];
+  let base = id.toLowerCase();
+  for (const suffix of suffixes) {
+    if (base.endsWith(suffix)) {
+      base = base.substring(0, base.length - suffix.length);
+      break;
+    }
+  }
+  return base;
 }
 
 function getGroupDefaultTestResult(group: string, testId: string): string | undefined {
@@ -207,8 +221,20 @@ export function calcProbabilityBayes(
 
       const mcmHasData = mcm && mcmTestId && mcm.tests && mcm.tests[mcmTestId] != null
       let bugBiochemRow = tests.find((b) => {
+        if (b.id) {
+          const bNorm = normalizeTestKeyToId(b.id)
+          const kNorm = normalizeTestKeyToId(cleanKey)
+          const bidClean = getBaseId(bNorm).replace(/[^a-z0-9]/g, '')
+          const testIdClean = getBaseId(kNorm).replace(/[^a-z0-9]/g, '')
+          return bidClean === testIdClean || b.id === cleanKey || bNorm === kNorm
+        }
         const bk = b.t.toLowerCase().replace(/[^a-z0-9]/g, '')
-        return bk === cleanKey || cleanKey.includes(bk) || bk.includes(cleanKey)
+        if (bk === cleanKey || cleanKey.includes(bk) || bk.includes(cleanKey)) return true
+        const aliases = TEST_ALIASES[cleanKey] || []
+        return aliases.some(alias => {
+          const normAlias = alias.toLowerCase().replace(/[^a-z0-9]/g, '')
+          return bk === normAlias || bk.includes(normAlias) || normAlias.includes(bk)
+        })
       })
 
       // If missing from biochem rows, check group default
