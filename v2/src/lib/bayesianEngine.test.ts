@@ -112,7 +112,7 @@ const SCENARIOS: Scenario[] = [
   {
     name: 'Y. enterocolitica',
     group: 'enterobacterales',
-    answers: { Motility: '+', Urease: '+', VP: '+', Indole: '−', Sucrose: '−', Citrate: '−', ODC: '+' },
+    answers: { Motility: '−', Urease: '+', VP: '−', Indole: '−', Sucrose: '+', Citrate: '−', ODC: '+' },
     expected: { topId: 'yersinia_enterocolitica', minPct: 15 },
   },
   {
@@ -173,7 +173,7 @@ const SCENARIOS: Scenario[] = [
   },
   {
     name: 'Enterobacter cloacae',
-    answers: { Oxidase: '−', VP: '+', Indole: '−', Motility: '+', ODC: '+', LDC: '−', Lactose: '+' },
+    answers: { Oxidase: '−', VP: '+', Indole: '−', Motility: '+', ODC: '+', LDC: '−', Lactose: '+', Sorbitol: '+' },
     expected: { topId: ['enterobacter_cloacae', 'enterobacter'], minPct: 10 },
   },
   {
