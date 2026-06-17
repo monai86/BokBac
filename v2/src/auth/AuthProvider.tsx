@@ -61,6 +61,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Process Google sign-in redirect result (triggered after loginWithGoogle redirect)
     authService.handleGoogleRedirectResult().catch((err) => {
       console.error('Google redirect processing error:', err)
+      alert('❌ Firebase Auth Error: ' + err.message + '\n\n(หากเกิดจากสิทธิ์การเข้าใช้งาน กรุณาตรวจสอบการตั้งค่า Sign-in method ใน Firebase Console)')
     })
 
     const unsubscribe = authService.onAuthStateChanged(async (usr) => {

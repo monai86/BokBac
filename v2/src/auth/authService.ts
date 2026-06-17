@@ -3,7 +3,7 @@ import {
   createUserWithEmailAndPassword, 
   signOut, 
   updateProfile, 
-  signInWithRedirect,
+  signInWithPopup,
   getRedirectResult,
   GoogleAuthProvider,
   onAuthStateChanged as fbOnAuthStateChanged
@@ -27,13 +27,13 @@ export const signupWithEmail = async (email: string, pass: string, name: string)
 }
 
 /**
- * Initiates Google Sign-in via redirect (works on Safari + all browsers).
- * The page will navigate away; call handleGoogleRedirectResult() on return.
+ * Initiates Google Sign-in via popup (more reliable on Safari + local dev).
  */
-export const loginWithGoogle = async (): Promise<void> => {
+export const loginWithGoogle = async (): Promise<User> => {
   if (!isFirebaseActive || !auth) throw new Error('Firebase is not active')
   const provider = new GoogleAuthProvider()
-  await signInWithRedirect(auth, provider)
+  const result = await signInWithPopup(auth, provider)
+  return result.user
 }
 
 /**
@@ -47,7 +47,7 @@ export const handleGoogleRedirectResult = async (): Promise<User | null> => {
     return result?.user ?? null
   } catch (error) {
     console.error('Google redirect result error:', error)
-    return null
+    throw error
   }
 }
 

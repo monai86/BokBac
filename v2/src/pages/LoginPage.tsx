@@ -128,8 +128,7 @@ export function LoginPage() {
     try {
       setLoading(true)
       await loginWithGoogle()
-      // Page will redirect to Google — execution stops here
-      // On return, handleGoogleRedirectResult() in AuthProvider handles the rest
+      handleSuccess()
     } catch (err: any) {
       console.error(err)
       setLoading(false)
