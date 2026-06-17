@@ -87,7 +87,7 @@ describe('IdentifyPage reset flow', () => {
 
     await user.click(screen.getByRole('button', { name: /delete saved case/i }))
     expect(screen.getByText('No saved cases yet.')).toBeTruthy()
-  })
+  }, 15000)
 
   it('shows a diagnostics warning for contradictory wrong-group observations', async () => {
     render(

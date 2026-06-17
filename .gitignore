@@ -72,3 +72,11 @@ scripts/mcm_extract/*.txt
 
 # Local archive of deprecated files; active sources live in root, js/, scripts/, and v2/.
 archive/
+
+# Validation runner temporary files
+validation/temp/
+validation/temp_predictions.json
+__pycache__/
+*.pyc
+
+
