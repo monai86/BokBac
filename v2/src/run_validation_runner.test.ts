@@ -34,7 +34,7 @@ describe('BokBac Validation Runner Engine', () => {
         const { case_id, expected_organism, gram_reaction, morphology, arrangement, specimen_type, answers } = c;
 
         // Try to find expected organism in library to determine group
-        let bug = LIBRARY_CLEAN.find(b => 
+        const bug = LIBRARY_CLEAN.find(b =>
           b.name.toLowerCase() === expected_organism.toLowerCase() ||
           b.id.toLowerCase() === expected_organism.toLowerCase()
         );

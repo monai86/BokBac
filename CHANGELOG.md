@@ -26,6 +26,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Disabled background Firebase initialization during automated Vitest runs to prevent network and timer hangs, resolving local test timeouts.
 
+## [4.0.5] - 2026-06-18
+
+### Fixed
+- **v4 production Google sign-in deployment** — fixed the lint failure that prevented the updated Firebase/Google CSP policy from reaching Cloudflare Pages.
+- **v4 Firebase config loading** — removed the ignored `/firebase-config.js` runtime request that Cloudflare rewrote to `index.html`, eliminating the MIME-type and inline CSP errors on the login page.
+
 ## [4.0.4] - 2026-06-12
 
 ### Added

@@ -16,7 +16,7 @@ The maintained modern app uses a login-first workflow. Users start at the login 
 
 | Track | Version | Release Date | Status | Description |
 |---|---|---|---|---|
-| **Modern v4** | **4.0.0** | 2026-06-10 | **Maintained** | Modern Vite rewrite, TypeScript type safety, custom suites, information-gain recommendation |
+| **Modern v4** | **4.0.5** | 2026-06-18 | **Maintained** | Fixed production Google sign-in deployment and CSP handling |
 | **Legacy v3** | **3.1.1** | 2026-04-27 | *Archived* | Expanded Validation Suite (50 scenarios, 8 groups, Dichotomous Key concordance) |
 | **Legacy v3** | **3.1.0** | 2026-04-26 | *Archived* | MCM coverage expanded to 157 species (93 with full positivity data) |
 | **Legacy v3** | **3.0.0** | 2026-04-26 | *Archived* | MCM 11th Edition Bayesian Probability Engine (Naive Bayes + clinical priors) |
