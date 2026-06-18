@@ -5,6 +5,7 @@ import { auth, isFirebaseActive } from '@/auth/firebase'
 import { sendPasswordResetEmail } from 'firebase/auth'
 import { loginWithEmail, signupWithEmail, loginWithGoogle } from '@/auth/authService'
 import { LoadingSplash } from '@/components/LoadingSplash'
+import { Logo } from '@/components/Logo'
 
 export function LoginPage() {
   const { setGuest } = useAuth()
@@ -148,7 +149,9 @@ export function LoginPage() {
         <div className="lg-caustic" />
         <div className="lg-content relative z-10 flex flex-col gap-6">
           <div className="text-center">
-            <span className="login-logo-mark" aria-hidden="true">🦠</span>
+            <span className="login-logo-mark" aria-hidden="true" style={{ filter: 'drop-shadow(0 0 26px rgba(139, 92, 246, 0.55))' }}>
+              <Logo size={56} />
+            </span>
             <h1 className="login-brand-title">BOK BAC</h1>
             <p className="login-kicker">Educational Support Engine</p>
             <p className="login-subtitle">ระบบจำแนกชนิดแบคทีเรียเพื่อการศึกษา</p>

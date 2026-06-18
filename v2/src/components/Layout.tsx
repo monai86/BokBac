@@ -1,6 +1,7 @@
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { useAuth } from '@/auth/useAuth'
+import { Logo } from './Logo'
 
 const NAV = [
   { to: '/specimen', label: 'ตัวอย่างตรวจ', emoji: '🧫', short: '🧫 ตัวอย่าง' },
@@ -113,8 +114,8 @@ export function Layout() {
   return (
     <div className="min-h-screen flex flex-col app-shell">
       <header className="nav-bar">
-        <Link to="/" className="brand">
-          <span className="emoji">🦠</span>
+        <Link to="/" className="brand" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <Logo size={28} className="shrink-0" />
           <div>
             <div style={{ fontSize: '15px', fontWeight: 800 }}>BOK BAC</div>
             <div style={{ fontSize: '8px', color: '#a78bfa', letterSpacing: '2px', textTransform: 'uppercase', fontWeight: 600, marginTop: '-2px', WebkitTextFillColor: 'initial' }}>IDENTIFICATION ASSISTANT</div>
